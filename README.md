@@ -4,7 +4,6 @@ A time management software written as part of our senior project.
 
 
 ## Getting Started
----
 
 ### Prerequisites
 
