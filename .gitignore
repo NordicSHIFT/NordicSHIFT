@@ -8,6 +8,7 @@ app/static/coverage
 app/static/build
 
 # misc
+app/static/package-lock.json
 /.vscode
 
 app/static/npm-debug.log*
