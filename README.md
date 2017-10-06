@@ -1,8 +1,34 @@
 # NordicSHIFT
 
-## Description
+A time management software written as part of our senior project.
+
+
+## Getting Started
+---
+
+### Prerequisites
+
+ [NPM](https://www.npmjs.com/) <br>
+This project uses ReactJS, which is installed via npm. In addition, NPM contains a lot of packages crucial in running this application. Instructions on installing NodeJS along with NPM can be found below.
+
+https://nodejs.org/en/download/package-manager/
+
+### Installation
+First, clone this repository.
+```
+git clone https://github.com/ianchrist/NordicSHIFT
+```
+
+Afterwords, we need to install all the dependencies.
+```
+cd NordicSHIFT/app/static
+npm install
+```
 
 ## Technologies
+* Python Flask
+* ReactJS
+* PostgreSQL
 
 ## Authors
 * Ian Christopherson
