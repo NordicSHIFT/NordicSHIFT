@@ -1,0 +1,51 @@
+{
+  "name": "nordicshift",
+  "version": "0.1.0",
+  "description": "A shift management software",
+  "main": "index.js",
+  "scripts": {
+    "build": "webpack -p --progress --config webpack.config.js",
+    "dev-build": "webpack --progress -d --config webpack.config.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "watch": "webpack --progress -d --config webpack.config.js --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/ianchrist/NordicSHIFT.git"
+  },
+  "keywords": [
+    "nordicshift",
+    "python",
+    "flask",
+    "react",
+    "npm",
+    "webpack"
+  ],
+  "author": "Ian Christopherson, Linh Nguyen, Taylor Gades",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ianchrist/NordicSHIFT/issues"
+  },
+  "homepage": "https://github.com/ianchrist/NordicSHIFT#readme",
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
+    "css-loader": "^0.28.7",
+    "react": "^16.0.0",
+    "react-dom": "^16.0.0",
+    "style-loader": "^0.19.0",
+    "webpack": "^3.6.0"
+  },
+  "babel": {
+    "presets": [
+      "es2015",
+      "react"
+    ]
+  },
+  "dependencies": {
+    "bootstrap": "^4.0.0-beta",
+    "reactstrap": "^5.0.0-alpha.3"
+  }
+}

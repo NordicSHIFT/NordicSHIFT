@@ -1,0 +1,15 @@
+# dependencies
+app/static/node_modules
+
+# testing
+app/static/coverage
+
+# production
+app/static/build
+
+# misc
+/.vscode
+
+app/static/npm-debug.log*
+app/static/yarn-debug.log*
+app/static/yarn-error.log*
