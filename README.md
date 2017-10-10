@@ -24,6 +24,16 @@ cd NordicSHIFT/app/static
 npm install
 ```
 
+and we will run a build from that same directory.
+```
+npm run build
+```
+
+Finally, we can run our application back from the base directory (/NordicSHIFT) with
+```
+./start.sh
+```
+
 ## Technologies
 * Python Flask
 * ReactJS
