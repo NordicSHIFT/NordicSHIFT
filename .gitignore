@@ -4,12 +4,18 @@ app/static/node_modules
 # testing
 app/static/coverage
 
+# pycache
+app/server/__pycache__
+
+
+
 # production
 app/static/build
 
 # misc
 /.vscode
 
+src/npm-debug.log*
 app/static/npm-debug.log*
 app/static/yarn-debug.log*
 app/static/yarn-error.log*
