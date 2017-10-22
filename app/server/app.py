@@ -1,5 +1,5 @@
 # server.py
-from flask import Flask, render_template
+from flask import Flask, render_template, jsonify
 from calRetrieve import *
 
 app = Flask(__name__, static_folder="../static/dist", template_folder="../static")
@@ -10,9 +10,11 @@ app = Flask(__name__, static_folder="../static/dist", template_folder="../static
 #   return render_template("index.html") 
 #   # return calendarCall(); 
 
-@app.route("/calendar")
+@app.route("/calendar2")
 def calendar():
-  return render_template("calendar.html")
+  print("In calendar!!")
+  data = {"calData": "Calendar Data"}
+  return jsonify(data)
 
 @app.route('/oauth2callback')
 def oauth2callback():
@@ -20,9 +22,16 @@ def oauth2callback():
   app.secret_key = str(uuid.uuid4())
   return mainOauth2callback(); 
 
+@app.route('/nordicshift.ico')
+def icon():
+  print("in icon route")
+  return render_template("index.html")
+
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def catch_all(path):
+  print("in catch_all")
+  print(path)
   return render_template("index.html")
 
 if __name__ == "__main__":
