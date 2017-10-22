@@ -30,7 +30,7 @@ def icon():
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def catch_all(path):
-  print("in catch_all")
+  print("test test test test test")
   print(path)
   return render_template("index.html")
 
