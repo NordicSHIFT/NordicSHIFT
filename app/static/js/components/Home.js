@@ -8,9 +8,12 @@ const Home = () => (
     <h4> Controlling shift management seamlessly.</h4>
     <hr/>
     <h6> New here? Click one of the links below to get started, depending on your role. </h6>
-    <h6> Otherwise, you can log in above. </h6>
-    <Button color="primary" className="mx-3"> Managers </Button>
-    <Button color="primary" className="mx-3"> Worker </Button>
+    <h6> Otherwise, you can login above. </h6>
+
+    <a href="login">
+      <Button color="primary" className="mx-3"> Login </Button>
+    </a>
+    
   </Jumbotron>
 )
 
