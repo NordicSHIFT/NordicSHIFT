@@ -27,17 +27,16 @@ def login():
     print("hello from login")
     return render_template("login.html")
 
-def loginSuccess():
-    login()
-    if request.form['password'] == 'password' and request.form['username'] == 'admin':
-        return render_template('calendar.html')
-    else:
-        return login()
-
-@app.route('/nordicshift.ico')
-def icon():
-  print("in icon route")
-  return render_template("index.html")
+# def loginSuccess():
+#     if request.form['password'] == 'password' and request.form['username'] == 'admin':
+#         return render_template('calendar.html')
+#     else:
+#         return login()
+#
+# @app.route('/nordicshift.ico')
+# def icon():
+#   print("in icon route")
+#   return render_template("index.html")
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
