@@ -67,17 +67,41 @@ const style = {
 };
 
 class Login extends Component {
+  constructor(props){
+   super(props);
+   this.state={inputusername: "", inputpassword: ""};
+   this.handleClick = this.handleClick.bind(this);
+   this.updateInputValueUserName = this.updateInputValueUserName.bind(this);
+   this.updateInputValuePassword = this.updateInputValuePassword.bind(this);
+  }
+
+  handleClick(){
+    console.log("you put in the username");
+    console.log("value of username: "+this.state.inputusername);
+    console.log("you put in the password");
+    console.log("value of password"+this.state.inputpassword);
+  }
+
+  updateInputValueUserName(evt){
+    this.setState({inputusername: evt.target.value});
+  }
+
+  updateInputValuePassword(evt){
+    this.setState({inputpassword: evt.target.value});
+  }
+
+
   render() {
     return (
-      <form id ='login' action="">
+      <div id ='login'>
         <div id="container">
           <label><b>Username</b></label>
-          <input type="text" id ='username' placeholder="Enter Username" className="uname" required />
+          <input type="text" id ='username' placeholder="Enter Username" className="inputusername" value = {this.state.inputusername} onChange={this.updateInputValueUserName} required />
 
           <label><b>Password</b></label>
-          <input type="password" id ='password' placeholder="Enter Password" className="psw" required />
+          <input type="password" id ='password' placeholder="Enter Password" className="inputpassword" value ={this.state.inputpassword} onChange={this.updateInputValuePassword} required />
 
-          <button type="submit" id='loginButton'> Login</button>
+          <button type="submit" id='loginButton' onClick ={this.handleClick}> Login</button>
           <input type="checkbox" checked="checked" id='rememberCheckBox' /> Remember me
         </div>
 
@@ -85,7 +109,7 @@ class Login extends Component {
           <button type="button" id="cancelButton">Cancel</button>
           <span id="forgotPassword">Forgot <a href="#">password?</a></span>
         </div>
-      </form>
+      </div>
     );
   }
 }
