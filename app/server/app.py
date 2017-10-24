@@ -1,5 +1,5 @@
 # server.py
-from flask import Flask, flash, redirect, render_template, request, session, abort
+from flask import Flask, flash, redirect, render_template, request, session, abort, jsonify
 from calRetrieve import *
 
 app = Flask(__name__, static_folder="../static/dist", template_folder="../static")
@@ -10,9 +10,11 @@ app = Flask(__name__, static_folder="../static/dist", template_folder="../static
 #   return render_template("index.html")
 #   # return calendarCall();
 
-@app.route("/calendar")
+@app.route("/calendar2")
 def calendar():
-  return render_template("calendar.html")
+  print("In calendar!!")
+  data = {"calData": "Calendar Data"}
+  return jsonify(data)
 
 @app.route('/oauth2callback')
 def oauth2callback():
@@ -31,6 +33,11 @@ def loginSuccess():
         return render_template('calendar.html')
     else:
         return login()
+
+@app.route('/nordicshift.ico')
+def icon():
+  print("in icon route")
+  return render_template("index.html")
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
