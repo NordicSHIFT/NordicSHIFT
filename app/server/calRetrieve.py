@@ -44,7 +44,7 @@ def calendarCall():
 @app.route('/oauth2callback')
 def mainOauth2callback():
   print("in callback")
-  curr_dir = os.path.dirname(os.path.realpath(__file__)) 
+  curr_dir = os.path.dirname(os.path.realpath(__file__))
   security_path = os.path.join(curr_dir, 'security')
   cred_path =  os.path.join(security_path,
                                    'client_secrets.json')

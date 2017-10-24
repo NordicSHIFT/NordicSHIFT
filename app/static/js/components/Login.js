@@ -69,7 +69,7 @@ const style = {
 class Login extends Component {
   render() {
     return (
-      <form id ='login' action="{loginSuccess()}">
+      <form id ='login' action="">
         <div id="container">
           <label><b>Username</b></label>
           <input type="text" id ='username' placeholder="Enter Username" className="uname" required />
@@ -77,7 +77,7 @@ class Login extends Component {
           <label><b>Password</b></label>
           <input type="password" id ='password' placeholder="Enter Password" className="psw" required />
 
-          <button type="submit" id='loginButton'>Login</button>
+          <button type="submit" id='loginButton'> Login</button>
           <input type="checkbox" checked="checked" id='rememberCheckBox' /> Remember me
         </div>
 
