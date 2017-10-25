@@ -4,16 +4,17 @@ import { Card, CardTitle, CardText, CardImg, CardImgOverlay } from 'reactstrap';
 class CardDash extends Component {
   render() { return (
     <div width="30%">
+      <a href={this.props.linkto}>
       <Card inverse>
         <CardImg width="30%" src={this.props.source} alt="Card image cap" />
         <CardImgOverlay>
-          <CardTitle>Card Title</CardTitle>
-          <CardText>This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</CardText>
+          <CardTitle>{this.props.title}</CardTitle>
           <CardText>
-            <small className="text-muted">Last updated 3 mins ago</small>
+            <small className="text-muted">{this.props.descr}</small>
           </CardText>
         </CardImgOverlay>
       </Card>
+      </a>
     </div>
   )};
 };
