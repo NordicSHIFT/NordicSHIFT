@@ -1,5 +1,6 @@
 # dependencies
 app/static/node_modules
+node_modules
 
 # testing
 app/static/coverage

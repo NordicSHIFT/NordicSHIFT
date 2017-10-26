@@ -13,7 +13,7 @@ class Calendar extends Component {
   }
 
   componentDidMount() {
-    var url =  origin + '/calendar2'
+    var url =  origin + '/api/calendar'
     axios.get(url)
     .then(res => {
       const results = res.data.calData
