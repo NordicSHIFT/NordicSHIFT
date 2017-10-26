@@ -1,12 +1,8 @@
 // Dashboard.js
 import React, { Component } from 'react';
 import { CardColumns } from 'reactstrap';
-//import 'image-webpack-loader';
 import CardDash from './CardDash'; 
-//importing images, figure out how to implement image-webpack-loader
-//import goat1 from './../../img/goat1.png';
-//import goat2 from './../../img/goat2.png';
-//import goat3 from './../../img/goat3.png';
+import './../../css/index.css'
 
 class StudentDashboard extends Component {
   render() {
@@ -21,9 +17,9 @@ class StudentDashboard extends Component {
       </div>
       
       <CardColumns>
-        <CardDash source={pic.uri} title={"MyProfile"} descr={"Edit your profile"} linkto={"/myProfile"}/>
-        <CardDash source={pic.uri} title={"Availablilty"} descr={"Review Availability"} linkto={"/availability"}/>
-        <CardDash source={pic.uri} title={"Schedule"} descr={"See Current Schedule"} linkto={"/schedule"}/>
+        <CardDash source={require("./../../img/goat1.png")} title={"MyProfile"} descr={"Edit your profile"} linkto={"/myprofile"}/>
+        <CardDash source={require("./../../img/goat2.png")} title={"Availablilty"} descr={"Review Availability"} linkto={"/availability"}/>
+        <CardDash source={require("./../../img/goat3.png")} title={"Schedule"} descr={"See Current Schedule"} linkto={"/schedule"}/>
       </CardColumns>
       </div>
     );
