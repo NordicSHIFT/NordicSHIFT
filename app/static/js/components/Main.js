@@ -3,6 +3,10 @@ import { Switch, Route } from 'react-router-dom'
 import Home from './Home'
 import Calendar from './Calendar'
 import Dashboard from './Dashboard'
+import StudentDashboard from './StudDash'
+import Availability from './Availability'
+import MyProfile from './MyProfile'
+import Schedule from './Schedule'
 
 // The Main component renders one of the three provided
 // Routes (provided that one matches). Both the /roster
@@ -15,6 +19,10 @@ const Main = () => (
       <Route exact path='/' component={Home}/>
       <Route path='/calendar' component={Calendar}/>
       <Route path='/dashboard' component={Dashboard}/>
+      <Route path='/studentdashboard' component={StudentDashboard}/>
+      <Route path='/availability' component={Availability}/>
+      <Route path='/myprofile' component={MyProfile}/>
+      <Route path='/schedule' component={Schedule}/>
     </Switch>
   </main>
 )

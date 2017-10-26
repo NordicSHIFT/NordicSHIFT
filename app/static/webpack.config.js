@@ -27,6 +27,11 @@ const config = {
                 test: /\.css$/,
                 exclude: /node_modules/,
                 loaders: ['style-loader', 'css-loader']
+            },
+            {
+                // Loads images
+                test: /\.(png|jpg)$/,
+                loader: 'url-loader'
             }
         ]
     }
