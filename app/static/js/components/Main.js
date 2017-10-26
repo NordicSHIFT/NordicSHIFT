@@ -6,7 +6,7 @@ import Dashboard from './Dashboard'
 import StudentDashboard from './StudDash'
 import Availability from './Availability'
 import MyProfile from './MyProfile'
-import Schedule from './Schedule
+import Schedule from './Schedule'
 import Login from './Login'
 
 
