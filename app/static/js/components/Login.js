@@ -1,65 +1,4 @@
-// var Parent = React.createClass({
-//   getInitialState:function(){
-//     return {signup:false, login:true}
-//   },
-//   switch:function(word){
-//     var signup, login;
-//     if (word==="signup"){
-//       signup = true;
-//       login = false;
-//     } else {
-//       signup = false;
-//       login = true;
-//     }
-//     return this.setState({login:login, signup: signup})
-//   },
-//   render:function(){
-//     var self = this;
-//     return (
-//       <div>
-//         <div id='buttons'>
-//           <p id='signupButton' onClick={self.switch.bind(null,"signup")} className ={self.state.signup?"yellow":"blue"}>Sign In</p>
-//           <p id='loginButton' onClick={self.switch.bind(null,"login")} className={self.state.login?"blue":"yellow"}>Login</p>
-//         </div>
-//         {self.state.signup?<Signup/>:null}
-//         {self.state.login?<Login/>:null}
-//       </div>
-//     )
-//   }
-// })
-//
-// var Signup = React.createClass({
-//   render:function(){
-//     return (
-//       <div>
-//         <div id='signup'>
-//           <input type='text' id='first' placeholder='First Name'/>
-//           <input type='text' id='last' placeholder='Last Name'/>
-//           <input type='text' id='email' placeholder='Email'/>
-//           <input type='text' id='password' placeholder='Password'/>
-//           <input type='text' id='confirm' placeholder='Confirm Password'/>
-//           <button id='send'>Send</button>
-//         </div>
-//       </div>
-//     )
-//   }
-// })
-//
-// var Login = React.createClass({
-//   render:function(){
-//     return (
-//       <div>
-//       <div id='login'>
-//         <input type='text' id='email' placeholder='Email'/>
-//         <input type='text' id='password' placeholder='Password'/>
-//         <button id='send'>Send</button>
-//       </div>
-//       </div>
-//     )
-//   }
-// })
-//
-// ReactDOM.render(<Parent/>,document.getElementById('container'))
+import axios from 'axios';
 import React, { Component } from 'react';
 
 const style = {
@@ -96,12 +35,12 @@ class Login extends Component {
       <div id ='login'>
         <div id="container">
           <label><b>Username</b></label>
-          <input type="text" id ='username' placeholder="Enter Username" className="inputusername" value = {this.state.inputusername} onChange={this.updateInputValueUserName} required />
+          <input type="text" id ='username' placeholder="Enter Username" className="inputusername" value = {this.state.inputusername} onChange={this.updateInputValueUserName.bind(this)} required />
 
           <label><b>Password</b></label>
-          <input type="password" id ='password' placeholder="Enter Password" className="inputpassword" value ={this.state.inputpassword} onChange={this.updateInputValuePassword} required />
+          <input type="password" id ='password' placeholder="Enter Password" className="inputpassword" value ={this.state.inputpassword} onChange={this.updateInputValuePassword.bind(this)} required />
 
-          <button type="submit" id='loginButton' onClick ={this.handleClick}> Login</button>
+          <button type="submit" id='loginButton' onClick ={this.sendInfo.bind(this)}> Login</button>
           <input type="checkbox" checked="checked" id='rememberCheckBox' /> Remember me
         </div>
 
@@ -111,6 +50,23 @@ class Login extends Component {
         </div>
       </div>
     );
+  }
+
+  sendInfo(){
+    var config = { headers: {
+                      'Content-Type': 'application/json',
+                      'Access-Control-Allow-Origin': '*'}
+    }
+    axios.post('/loginC', {
+      inputusername: this.state.inputusername,
+      inputpassword: this.state.inputpassword
+    }, config)
+    .then(function (response) {
+       window.location = response.data;
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
   }
 }
 
