@@ -48,6 +48,8 @@
   "dependencies": {
     "babel-preset-env": "^1.6.1",
     "bootstrap": "^4.0.0-beta",
+    "moment": "^2.19.1",
+    "react-big-calendar": "^0.16.1",
     "react-router-dom": "^4.2.2",
     "reactstrap": "^5.0.0-alpha.3"
   }
