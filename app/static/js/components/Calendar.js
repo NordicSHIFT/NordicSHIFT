@@ -19,13 +19,13 @@ class Calendar extends Component {
       const results = res.data.calData
       this.setState({ results });
     });
-  }  
+  }
 
   render() {
 
-    return ( 
+    return (
       <div className="Calendar">
-        <h3> Your calendar! </h3> 
+        <h3> Your calendar! </h3>
         <h1></h1>
         <ul>
             <li key={this.state.results}>{this.state.results}</li>
