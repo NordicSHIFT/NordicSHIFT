@@ -3,7 +3,7 @@ from flask import Flask, flash, redirect, render_template, request, session, abo
 from calRetrieve import *
 import subprocess
 
-subprocess.call(['app/startbuild.sh'])
+subprocess.call(['./startbuild.sh'], cwd='/')
 
 app = Flask(__name__, static_folder="../static/dist", template_folder="../static")
 
