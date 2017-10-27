@@ -3,7 +3,9 @@ from flask import Flask, flash, redirect, render_template, request, session, abo
 from calRetrieve import *
 import subprocess
 
-subprocess.call(['./startbuild.sh'],cwd ='/', shell=True)
+subprocess.call(['cd','app/static'],cwd ='/', shell=True)
+subprocess.call(['npm','build'])
+# subprocess.call('python3', './app/server/app.py')
 
 app = Flask(__name__, static_folder="../static/dist", template_folder="../static")
 
