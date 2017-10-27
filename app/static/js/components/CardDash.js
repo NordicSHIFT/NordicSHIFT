@@ -8,9 +8,9 @@ class CardDash extends Component {
       <Card inverse>
         <CardImg width="30%" src={this.props.source} alt="Card image cap" />
         <CardImgOverlay>
-          <CardTitle>{this.props.title}</CardTitle>
+          <CardTitle className="text-outline">{this.props.title}</CardTitle>
           <CardText>
-            <small className="text-muted">{this.props.descr}</small>
+            <small className="text-muted text-outline">{this.props.descr}</small>
           </CardText>
         </CardImgOverlay>
       </Card>
