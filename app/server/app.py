@@ -1,9 +1,9 @@
 # server.py
 from flask import Flask, flash, redirect, render_template, request, session, abort, jsonify
 from calRetrieve import *
-# import subprocess
-#
-# subprocess.call(['../../startbuild.sh'])
+import subprocess
+
+subprocess.call(['app/startbuild.sh'])
 
 app = Flask(__name__, static_folder="../static/dist", template_folder="../static")
 
