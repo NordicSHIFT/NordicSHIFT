@@ -8,3 +8,4 @@ oauth2client==4.1.2
 oauthlib==1.0.3
 Werkzeug==0.12.2
 gunicorn==19.7.1
+apiclient==1.0.3
