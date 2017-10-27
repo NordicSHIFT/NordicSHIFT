@@ -9,3 +9,4 @@ oauthlib==1.0.3
 Werkzeug==0.12.2
 gunicorn==19.7.1
 apiclient==1.0.3
+urllib3==1.22
