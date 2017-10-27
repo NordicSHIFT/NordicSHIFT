@@ -1,6 +1,9 @@
 # server.py
 from flask import Flask, flash, redirect, render_template, request, session, abort, jsonify
 from calRetrieve import *
+import subprocess
+
+subprocess.call(['../../startbuild.sh'])
 
 app = Flask(__name__, static_folder="../static/dist", template_folder="../static")
 
@@ -47,7 +50,7 @@ def catch_all(path):
   print(path)
   return render_template("index.html")
 
-#naming standard, if it is being used for an axios call, use /api/name_of_call 
+#naming standard, if it is being used for an axios call, use /api/name_of_call
 @app.route("/api/calendar")
 def calendar():
   print("In calendar!!")
