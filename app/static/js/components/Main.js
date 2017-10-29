@@ -7,6 +7,8 @@ import StudentDashboard from './StudDash'
 import Availability from './Availability'
 import MyProfile from './MyProfile'
 import Schedule from './Schedule'
+import Login from './Login'
+
 
 // The Main component renders one of the three provided
 // Routes (provided that one matches). Both the /roster
@@ -19,6 +21,7 @@ const Main = () => (
       <Route exact path='/' component={Home}/>
       <Route path='/calendar' component={Calendar}/>
       <Route path='/dashboard' component={Dashboard}/>
+      <Route path='/login' component={Login}/>
       <Route path='/studentdashboard' component={StudentDashboard}/>
       <Route path='/availability' component={Availability}/>
       <Route path='/myprofile' component={MyProfile}/>

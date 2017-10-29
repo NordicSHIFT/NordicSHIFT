@@ -5,14 +5,14 @@ import httplib2
 import os
 import datetime
 
-from apiclient import discovery
+from googleapiclient import discovery
 from oauth2client import client
-
-from app import app
+#
+# from app import app
 # app = flask.Flask(__name__)
 # app routes don't seem to work if they are imported
 
-@app.route('/cal')
+# @app.route('/cal')
 def calendarCall():
   print("in index")
   if 'credentials' not in flask.session:
@@ -41,10 +41,10 @@ def calendarCall():
     return json.dumps(eventsResult)
 
 
-@app.route('/oauth2callback')
+# @app.route('/oauth2callback')
 def mainOauth2callback():
   print("in callback")
-  curr_dir = os.path.dirname(os.path.realpath(__file__)) 
+  curr_dir = os.path.dirname(os.path.realpath(__file__))
   security_path = os.path.join(curr_dir, 'security')
   cred_path =  os.path.join(security_path,
                                    'client_secrets.json')
@@ -67,5 +67,5 @@ def mainOauth2callback():
 if __name__ == '__main__':
   import uuid
   app.secret_key = str(uuid.uuid4())
-  app.debug = False
-  app.run()
+  # app.debug = False
+  # app.run()

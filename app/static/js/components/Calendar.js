@@ -25,7 +25,7 @@ class Calendar extends Component {
 
   render() {
 
-    return ( 
+    return (
       <div className="Calendar">
         <ManagerCal /> 
       </div>
