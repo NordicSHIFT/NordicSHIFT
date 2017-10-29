@@ -12,3 +12,8 @@ text-outline {
     -1px 1px 0 #000,
     1px 1px 0 #000;  
 }
+
+.rbc-addons-dnd.rbc-addons-dnd-is-dragging .rbc-event {
+  z-index: -1;
+}
+

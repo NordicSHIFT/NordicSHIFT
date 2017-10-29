@@ -28,7 +28,7 @@ def catch_all(path):
 @app.route("/api/calendar")
 def calendar():
   myevents = [{
-  "title": 'Python Event',
+  "title": 'Your Shift',
   "start":  datetime.datetime(2017, 10, 25, 13),
   "end": datetime.datetime(2017, 10, 25, 15),
   "hexColor" : "#ee5f5b"
@@ -45,10 +45,22 @@ def addEvent():
   #print("title: ", title)
   data = request.get_json(silent=True)
   myEvent = data.get('myEvent')
-  myEvent['title'] = 'From Py title' 
+  myEvent['title'] = 'New Shift' 
   myEvent['hexColor'] = '#f89406'
   print('myEvent: ', myEvent)
   data = myEvent
+  #TODO write change to database
+  return jsonify(data)
+
+@app.route("/api/moveEvent", methods = ['POST'])
+def moveEvent():
+  print ('IN MOVE EVENT!')
+  #title = request.args.get("title")
+  #print("title: ", title)
+  data = request.get_json(silent=True)
+  myEvent = data.get('myEvent')
+  data = myEvent
+  #TODO write change to database 
   return jsonify(data)
 
 if __name__ == "__main__":

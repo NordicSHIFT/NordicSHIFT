@@ -1,14 +1,21 @@
-//MyCalendar.js
+//ManagerCal.js
+import axios from 'axios';
+import moment from 'moment'; 
+import HTML5Backend from 'react-dnd-html5-backend'; 
+
 import React, { Component } from 'react';
 import BigCalendar from 'react-big-calendar'; 
-import axios from 'axios';
-import moment from 'moment';  
+import { DragDropContext } from 'react-dnd'
+import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop';
+
 import 'react-big-calendar/lib/css/react-big-calendar.css'; 
 
 BigCalendar.setLocalizer(
   BigCalendar.momentLocalizer(moment)
 );
 var origin = window.location.origin;
+
+const DragAndDropCalendar = withDragAndDrop(BigCalendar);
 
 function convertEvent(event) {
   return {
@@ -19,21 +26,7 @@ function convertEvent(event) {
   }
 }
 
-function postEventHelper (eventInfo) {
-  var eventResponse = postEvent(eventInfo); 
-  console.log("eventResponse", eventResponse); 
-  // return axios.all([postEvent(eventInfo)])
-  // .then(function(arr){
-  //   console.log("ARRG", arr); 
-  //   return {
-  //     title: arr[0].data.eventTitle,
-  //   }
-  // })
-
-  
-}
-
-class MyCalendar extends Component {
+class ManagerCal extends Component {
   constructor() {
     super();
     
@@ -48,7 +41,7 @@ class MyCalendar extends Component {
 
     let scrollToTime = new Date().setHours(7); 
 
-    this.retrieveEvents();  
+     
     this.state = {
       format: formats,
       scrollTime : scrollToTime,
@@ -58,6 +51,8 @@ class MyCalendar extends Component {
     this.retrieveEvents = this.retrieveEvents.bind(this);
     this.addEvent = this.addEvent.bind(this); 
     this.eventStyleGetter = this.eventStyleGetter.bind(this); 
+    this.moveEvent = this.moveEvent.bind(this); 
+    this.retrieveEvents(); 
   }  
 
   retrieveEvents() {
@@ -102,9 +97,7 @@ class MyCalendar extends Component {
       })
       .catch(function (error) {
         console.log(error);
-      });
-      
-      //TODO add interaction with backend, to save event to the db  
+      }); 
       //TODO possibly a pop-up form to enter in other details of shift 
       //TODO ask if you want to create the shift or not  
     }
@@ -126,26 +119,56 @@ class MyCalendar extends Component {
     };
   }
 
+  moveEvent({ event, start, end }) {
+    var config = { headers: {
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': '*'}
+    }
+    const theEvents = this.state.events;
+    const idx = theEvents.indexOf(event); 
+    event.start = start; 
+    event.end = end; 
+    theEvents.splice(idx, 1, event); 
+
+    this.setState({
+      events: theEvents
+    })
+    //alert(`${event.title} was dropped onto ${event.start}`);
+
+    axios.post('/api/moveEvent', {
+      myEvent: event
+    }, config) 
+    .then( (response) => {
+      //alert('event posted to db'); 
+    })
+    .catch(function (error) {
+      console.log(error);
+    }); 
+  }
+
   render() {
     const now = moment(); 
     return (
       <div height="100px">
-        <BigCalendar
+        <DragAndDropCalendar
           selectable
           defaultView='week'
           popup='true'
+          step = {15}
+          timeslots = {4}
+          style={{height: 550}}
           events={this.state.events}
-          style={{height: 500}}
           formats={this.state.format}
           scrollToTime={this.state.scrollTime}
           onSelectEvent={event => alert(event.title + event.hexColor)}
           onSelectSlot={(slotInfo) => this.addEvent(slotInfo)}
           eventPropGetter={(this.eventStyleGetter)}
+          onEventDrop={this.moveEvent}
         />
-        <p>{this.state.results}</p>
       </div>
     )
   }
 }
 
-export default MyCalendar; 
+
+export default ManagerCal; 

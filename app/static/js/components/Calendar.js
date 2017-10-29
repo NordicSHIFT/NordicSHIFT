@@ -1,7 +1,7 @@
 // Calendar.js
 import React, { Component } from 'react';
 import axios from 'axios';
-import MyCalendar from './MyCalendar'; 
+import ManagerCal from './ManagerCal'; 
 
 var origin = window.location.origin;
 
@@ -27,7 +27,7 @@ class Calendar extends Component {
 
     return ( 
       <div className="Calendar">
-        <MyCalendar /> 
+        <ManagerCal /> 
       </div>
     );
   }
