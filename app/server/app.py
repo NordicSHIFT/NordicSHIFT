@@ -1,13 +1,22 @@
 # server.py
 from flask import Flask, flash, redirect, render_template, request, session, abort, jsonify
 from calRetrieve import *
-import subprocess
-
-subprocess.call(['cd','app/static'],cwd ='/', shell=True)
-subprocess.call(['npm','build'], shell = True)
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import Table, Column, Integer, String, create_engine, Sequence, ForeignKey
+from sqlalchemy.orm import sessionmaker, relationship
+# import subprocess
+#
+# subprocess.call(['cd','app/static'],cwd ='/', shell=True)
+# subprocess.call(['npm','build'])
 # subprocess.call('python3', './app/server/app.py')
 
 app = Flask(__name__, static_folder="../static/dist", template_folder="../static")
+
+# engine=create_engine('postgresql://nguyli03:@localhost:2345')
+# Session = sessionmaker(bind=engine)
+# db = Session()
+# Base.metadata.drop_all(engine)
+# Base.metadata.create_all(engine)
 
 @app.route("/")
 def index():
@@ -40,6 +49,26 @@ def loginC():
         print("wrong login")
         return "/login"
 
+@app.route('/signup')
+def signup():
+    print("sign up is  here")
+    return render_template('index.html')
+
+@app.route('/signupC', methods = ['POST'])
+def signupC():
+    inputusername = request.args.get("inputusername")
+    inputpassword = request.args.get("inputpassword")
+    inputrole = request.args.get("inputrole")
+    data = request.get_json(silent=True)
+    item = {'username': data.get('inputusername'), 'password': data.get('inputpassword')}
+    print(item)
+    return '/'
+    # if item['password'] == 'password' and item['username'] == 'admin':
+    #     print('right login')
+    #     return "/"
+    # else:
+    #     print("wrong login")
+    #     return "/login"
 # @app.route('/nordicshift.ico')
 # def icon():
 #   print("in icon route")

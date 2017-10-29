@@ -9,11 +9,15 @@ const Home = () => (
     <hr/>
     <h6> New here? Click one of the links below to get started, depending on your role. </h6>
     <h6> Otherwise, you can login above. </h6>
-
+    <p> Somthing here</p>
     <a href="login">
       <Button color="primary" className="mx-3"> Login </Button>
     </a>
-    
+
+    <a href="signup">
+      <Button color="primary" className="mx-3"> Signup </Button>
+    </a>
+
   </Jumbotron>
 )
 
