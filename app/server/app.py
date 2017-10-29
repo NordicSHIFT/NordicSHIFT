@@ -3,8 +3,6 @@ from flask import Flask, flash, redirect, render_template, request, session, abo
 from calRetrieve import *
 import os
 
-os.system("(cd ../../app/static; npm run build)")
-
 app = Flask(__name__, static_folder="../static/dist", template_folder="../static")
 
 @app.route("/")
