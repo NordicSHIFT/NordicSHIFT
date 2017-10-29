@@ -1,11 +1,9 @@
 # server.py
 from flask import Flask, flash, redirect, render_template, request, session, abort, jsonify
 from calRetrieve import *
-import subprocess
+import os
 
-subprocess.call(['cd','app/static'],cwd ='/', shell=True)
-subprocess.call(['npm','build'], shell = True)
-# subprocess.call('python3', './app/server/app.py')
+os.system("(cd app/static; npm run build)")
 
 app = Flask(__name__, static_folder="../static/dist", template_folder="../static")
 
