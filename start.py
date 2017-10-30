@@ -1,5 +1,9 @@
 import subprocess
 
+subprocess.check_call('npm install',
+                      cwd='./app/static',
+                      shell=True)
+
 subprocess.check_call('npm run build',
                       cwd='./app/static',
                       shell=True)
