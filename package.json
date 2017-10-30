@@ -5,6 +5,7 @@
         "postinstall": "cd app/static && npm install && npm run build"
     },
     "dependencies": {
+        "babel-loader": "^7.1.2",        
         "webpack": "^3.8.1"        
     },
     "engines": {
