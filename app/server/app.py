@@ -2,7 +2,7 @@
 from flask import Flask, flash, redirect, render_template, request, session, abort, jsonify
 from calRetrieve import *
 import datetime
-import os
+
 
 app = Flask(__name__, static_folder="../static/dist", template_folder="../static")
 
@@ -89,4 +89,4 @@ def moveEvent():
   return jsonify(data)
 
 if __name__ == "__main__":
-  app.run()
+  app.run(debug=True)
