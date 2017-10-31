@@ -4,6 +4,7 @@ from calRetrieve import *
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Table, Column, Integer, String, create_engine, Sequence, ForeignKey
 from sqlalchemy.orm import sessionmaker, relationship
+import createTables
 # import subprocess
 #
 # subprocess.call(['cd','app/static'],cwd ='/', shell=True)
@@ -12,11 +13,12 @@ from sqlalchemy.orm import sessionmaker, relationship
 
 app = Flask(__name__, static_folder="../static/dist", template_folder="../static")
 
-# engine=create_engine('postgresql://nguyli03:@localhost:2345')
-# Session = sessionmaker(bind=engine)
-# db = Session()
-# Base.metadata.drop_all(engine)
-# Base.metadata.create_all(engine)
+Base=declarative_base()
+postgresql_uri='postgres://fhscjkxvzpcgky:6b3962c83e75cd9864ef296dd8d45f4ea58a2fd129875a65d74040eaec8b0e92@ec2-23-21-220-152.compute-1.amazonaws.com:5432/d2ijd81slr7fhm'
+engine=create_engine(postgresql_uri)
+
+Session = sessionmaker(bind=engine)
+db = Session()
 
 @app.route("/")
 def index():
@@ -56,13 +58,21 @@ def signup():
 
 @app.route('/signupC', methods = ['POST'])
 def signupC():
-    inputusername = request.args.get("inputusername")
-    inputpassword = request.args.get("inputpassword")
+    inputusername = str(request.args.get("inputusername"))
+    inputpassword = str(request.args.get("inputpassword"))
     inputrole = request.args.get("inputrole")
     data = request.get_json(silent=True)
-    item = {'username': data.get('inputusername'), 'password': data.get('inputpassword')}
+    item = {'username': data.get('inputusername'), 'password': data.get('inputpassword'),'role': data.get('inputrole')}
     print(item)
-    return '/'
+    res = db.execute("""SELECT id from %s where username = '%s' and password= '%s';"""%(item['role'], item['username'], item['password']))
+    res = res.fetchall()
+    if len(res) >0:
+        return '/login'
+    else:
+        db.execute("""INSERT into %s(username, password) VALUES ('%s','%s');"""%(item['role'],item['username'],item['password']))
+        db.commit()
+        print("insert is executed")
+        return '/'
     # if item['password'] == 'password' and item['username'] == 'admin':
     #     print('right login')
     #     return "/"
@@ -89,4 +99,5 @@ def calendar():
   return jsonify(data)
 
 if __name__ == "__main__":
-  app.run()
+    createTables.createTables()
+    app.run()
