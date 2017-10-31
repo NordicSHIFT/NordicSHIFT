@@ -14,6 +14,7 @@ class Calendar extends Component {
     this.state = {
       res: []
     };
+    this.formCalInteraction = this.formCalInteraction.bind(this);
   }
 
   formCalInteraction(slotInfo) {
@@ -28,26 +29,17 @@ class Calendar extends Component {
       start: new Date(slotInfo.start),
       end: new Date(slotInfo.end),
     }; 
-    return theEvent; 
+    var theevents = this.refs.calendar.state.events.concat([theEvent]);
+    this.refs.calendar.setState({events: theevents}); 
   }
-
-  componentDidMount() {
-    // var url =  origin + '/api/calendar'
-    // axios.get(url)
-    // .then(res => {
-    //   const results = res.data.calData
-    //   this.setState({ results });
-    // });
-      
-  }  
 
   render() {
 
     return (
       <div className="Calendar">
         <Row>
-          <Col xs="9"><ManagerCal id="calobj" ref="calobj" formCalInt = {this.formCalInteraction} /></Col>
-          <Col xs="3"><ShiftForm /></Col>
+          <Col xs="9"><ManagerCal id="calendar" ref="calendar" formCalInt = {this.formCalInteraction} /></Col>
+          <Col xs="3" id="form" ref="form"><ShiftForm /></Col>
         </Row>
       </div>
     );

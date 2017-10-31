@@ -87,15 +87,7 @@ class ManagerCal extends Component {
       .then( (response) => {
         const responseData = response.data 
         console.log(responseData); 
-        // const theEvent = {
-        //   title: responseData.title,
-        //   hexColor: responseData.hexColor, 
-        //   start: new Date(responseData.start),
-        //   end: new Date(responseData.end),
-        // }; 
         const theEvent = this.props.formCalInt(slotInfo); 
-        var theevents = this.state.events.concat([theEvent]);
-        this.setState({events: theevents}); 
       })
       .catch(function (error) {
         console.log(error);
