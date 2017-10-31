@@ -100,4 +100,7 @@ def calendar():
 
 if __name__ == "__main__":
     createTables.createTables()
-    app.run()
+    app.run(debug=True)
+
+  
+
