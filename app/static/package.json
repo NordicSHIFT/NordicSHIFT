@@ -49,6 +49,7 @@
   "dependencies": {
     "babel-preset-env": "^1.6.1",
     "bootstrap": "^4.0.0-beta",
+    "react-dnd-html5-backend": "^3.10.10",
     "moment": "^2.19.1",
     "react-big-calendar": "^0.16.1",
     "react-dnd": "^2.5.4",
