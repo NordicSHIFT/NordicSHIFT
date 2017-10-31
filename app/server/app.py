@@ -1,6 +1,8 @@
 # server.py
 from flask import Flask, flash, redirect, render_template, request, session, abort, jsonify
 from calRetrieve import *
+import datetime
+
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Table, Column, Integer, String, create_engine, Sequence, ForeignKey
 from sqlalchemy.orm import sessionmaker, relationship
@@ -25,7 +27,7 @@ def index():
 @app.route('/oauth2callback')
 def oauth2callback():
     return mainOauth2callback();
-
+  
 @app.route('/login')
 def login():
     print("hello from login")
@@ -38,16 +40,34 @@ def loginC():
     data = request.get_json(silent=True)
     item = {'username': data.get('inputusername'), 'password': data.get('inputpassword')}
     print(item)
-    if item['password'] == 'password' and item['username'] == 'admin':
-        session['username'] = item['username']
-        session['role'] = None
-        session['logged_in'] = True
 
-        print('right login')
-        return "/"
+    res = db.execute("""SELECT id from student where username = '%s' and password= '%s';"""%(item['username'], item['password']))
+    res1 = res.fetchall()
+    res = db.execute("""SELECT id from manager where username = '%s' and password= '%s';"""%(item['username'], item['password']))
+    res2 = res.fetchall()
+    if len(res1) > 0:
+        session['username'] = item['username']
+        session['role'] = 'student'
+        session['logged_in'] = True
+        
+        print('right student login')
+        return '/'
+    elif len(res2)> 0:
+        session['username'] = item['username']
+        session['role'] = 'manager'
+        session['logged_in'] = True
+        
+        print('right manager login')
+        return '/'
     else:
-        print("wrong login")
-        return "/login"
+        print('wrong combination for username and password')
+        return '/login'
+    # if item['password'] == 'password' and item['username'] == 'admin':
+    #     print('right login')
+    #     return "/"
+    # else:
+    #     print("wrong login")
+    #     return "/login"
 
 @app.route('/signup')
 def signup():
@@ -101,8 +121,40 @@ def catch_all(path):
 #naming standard, if it is being used for an axios call, use /api/name_of_call
 @app.route("/api/calendar")
 def calendar():
+  myevents = [{
+  "title": 'Your Shift',
+  "start":  datetime.datetime(2017, 10, 25, 13),
+  "end": datetime.datetime(2017, 10, 25, 15),
+  "hexColor" : "#ee5f5b"
+  }]
+  #color scheme colors: #62c462, #5bc0de, #f89406,  #ee5f5b
   print("In calendar!!")
-  data = {"calData": "Calendar Data"}
+  data = {"calData": "Calendar Data", "events": myevents}
+  return jsonify(data)
+
+@app.route("/api/addEvent", methods = ['POST'])
+def addEvent():
+  print ('IN ADD EVENT!')
+  #title = request.args.get("title")
+  #print("title: ", title)
+  data = request.get_json(silent=True)
+  myEvent = data.get('myEvent')
+  myEvent['title'] = 'New Shift' 
+  myEvent['hexColor'] = '#f89406'
+  print('myEvent: ', myEvent)
+  data = myEvent
+  #TODO write change to database
+  return jsonify(data)
+
+@app.route("/api/moveEvent", methods = ['POST'])
+def moveEvent():
+  print ('IN MOVE EVENT!')
+  #title = request.args.get("title")
+  #print("title: ", title)
+  data = request.get_json(silent=True)
+  myEvent = data.get('myEvent')
+  data = myEvent
+  #TODO write change to database 
   return jsonify(data)
 
 if __name__ == "__main__":

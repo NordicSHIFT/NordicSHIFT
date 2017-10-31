@@ -23,14 +23,14 @@ export class Menubar extends Component {
       <div>
         <Navbar color="faded" light toggleable>
         <NavbarToggler right onClick={this.toggle} />
-        <NavbarBrand>NordicSHIFT</NavbarBrand>
+        <NavbarBrand> <Link to="/" style={{ textDecoration: 'none', color:'black'}}>NordicSHIFT</Link></NavbarBrand>
         <Collapse isOpen={this.state.isOpen} navbar>
           <Nav className="ml-auto" navbar>
             <NavItem>
-                <NavLink><Link to='/calendar'>Calendar</Link></NavLink>
+                <NavLink href="/calendar">Calendar</NavLink>
             </NavItem>
             <NavItem>
-                <NavLink><Link to='/dashboard'>Dashboard</Link></NavLink>
+                <NavLink href="/dashboard">Dashboard</NavLink>
             </NavItem>
             <NavItem>
                 <NavLink href="/my_profile">My Profile</NavLink>
