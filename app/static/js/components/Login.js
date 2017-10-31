@@ -29,6 +29,9 @@ class Login extends Component {
     this.setState({inputpassword: evt.target.value});
   }
 
+  redirectSignUp(){
+    return window.location = '/signup';
+  }
 
   render() {
     return (
@@ -44,9 +47,9 @@ class Login extends Component {
           <input type="checkbox" checked="checked" id='rememberCheckBox' /> Remember me
         </div>
 
-        <div id="container" style={style}>
-          <button type="button" id="cancelButton">Cancel</button>
-          <span id="forgotPassword">Forgot <a href="#">password?</a></span>
+        <div id ="signup" style = {style}>
+          <span> Do not have an account?</span>
+          <button type ="button" id ='signupButton' onClick = {this.redirectSignUp}>Signup</button>
         </div>
       </div>
     );
@@ -62,7 +65,12 @@ class Login extends Component {
       inputpassword: this.state.inputpassword
     }, config)
     .then(function (response) {
-       window.location = response.data;
+      if (response.data == '/login'){
+        alert('Wrong login, please login again');
+        console.log("wrong login");
+
+      }
+      window.location = response.data;
     })
     .catch(function (error) {
       console.log(error);

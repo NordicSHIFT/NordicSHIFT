@@ -46,12 +46,25 @@ def loginC():
     data = request.get_json(silent=True)
     item = {'username': data.get('inputusername'), 'password': data.get('inputpassword')}
     print(item)
-    if item['password'] == 'password' and item['username'] == 'admin':
-        print('right login')
-        return "/"
+    res = db.execute("""SELECT id from student where username = '%s' and password= '%s';"""%(item['username'], item['password']))
+    res1 = res.fetchall()
+    res = db.execute("""SELECT id from manager where username = '%s' and password= '%s';"""%(item['username'], item['password']))
+    res2 = res.fetchall()
+    if len(res1) > 0:
+        print('right student login')
+        return '/'
+    elif len(res2)> 0:
+        print('right manager login')
+        return '/'
     else:
-        print("wrong login")
-        return "/login"
+        print('wrong combination for username and password')
+        return '/login'
+    # if item['password'] == 'password' and item['username'] == 'admin':
+    #     print('right login')
+    #     return "/"
+    # else:
+    #     print("wrong login")
+    #     return "/login"
 
 @app.route('/signup')
 def signup():
@@ -135,6 +148,3 @@ def moveEvent():
 if __name__ == "__main__":
     createTables.createTables()
     app.run(debug=True)
-
-  
-

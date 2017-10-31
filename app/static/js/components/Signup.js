@@ -52,10 +52,6 @@ class Signup extends Component {
           <input type="checkbox" checked="checked" id='rememberCheckBox' /> Remember me
         </div>
 
-        <div id="container" style={style}>
-          <button type="button" id="cancelButton">Cancel</button>
-          <span id="forgotPassword">Forgot <a href="#">password?</a></span>
-        </div>
       </div>
     );
   }
@@ -71,6 +67,9 @@ class Signup extends Component {
       inputrole: this.state.inputrole
     }, config)
     .then(function (response) {
+      if (response.data == '/'){
+        alert("You have successfully sign up!");
+      }
        window.location = response.data;
     })
     .catch(function (error) {
