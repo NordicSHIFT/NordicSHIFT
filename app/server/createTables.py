@@ -10,6 +10,8 @@ db = Session()
 # Base.metadata.drop_all(engine)
 # Base.metadata.create_all(engine)
 def createTables():
+    # delete the tables, just for this test:
+    # db.execute('drop table unavailability; drop table shift; drop table student; drop table manager; drop table department;')
     # Create tables if not exists
     db.execute("""CREATE table if not exists department(\
                             id serial primary key,\
@@ -25,6 +27,7 @@ def createTables():
                             username text not null,\
                             password text not null,\
                             name text,\
+                            hours float,\
                             dept integer references department(id));""")
     db.execute("""CREATE table if not exists shift(\
                             id serial primary key,
