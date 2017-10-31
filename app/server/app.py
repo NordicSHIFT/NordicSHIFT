@@ -7,13 +7,10 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Table, Column, Integer, String, create_engine, Sequence, ForeignKey
 from sqlalchemy.orm import sessionmaker, relationship
 import createTables
-# import subprocess
-#
-# subprocess.call(['cd','app/static'],cwd ='/', shell=True)
-# subprocess.call(['npm','build'])
-# subprocess.call('python3', './app/server/app.py')
+import uuid
 
 app = Flask(__name__, static_folder="../static/dist", template_folder="../static")
+app.secret_key = str(uuid.uuid4())
 
 Base=declarative_base()
 postgresql_uri='postgres://fhscjkxvzpcgky:6b3962c83e75cd9864ef296dd8d45f4ea58a2fd129875a65d74040eaec8b0e92@ec2-23-21-220-152.compute-1.amazonaws.com:5432/d2ijd81slr7fhm'
@@ -24,16 +21,13 @@ db = Session()
 
 @app.route("/")
 def index():
-  calendarCall()
-  return render_template("index.html")
-  #return calendarCall()
+    calendarCall()
+    return render_template("index.html")
 
 @app.route('/oauth2callback')
 def oauth2callback():
-  import uuid
-  app.secret_key = str(uuid.uuid4())
-  return mainOauth2callback()
-
+    return mainOauth2callback();
+  
 @app.route('/login')
 def login():
     print("hello from login")
@@ -46,12 +40,34 @@ def loginC():
     data = request.get_json(silent=True)
     item = {'username': data.get('inputusername'), 'password': data.get('inputpassword')}
     print(item)
-    if item['password'] == 'password' and item['username'] == 'admin':
-        print('right login')
-        return "/"
+
+    res = db.execute("""SELECT id from student where username = '%s' and password= '%s';"""%(item['username'], item['password']))
+    res1 = res.fetchall()
+    res = db.execute("""SELECT id from manager where username = '%s' and password= '%s';"""%(item['username'], item['password']))
+    res2 = res.fetchall()
+    if len(res1) > 0:
+        session['username'] = item['username']
+        session['role'] = 'student'
+        session['logged_in'] = True
+        
+        print('right student login')
+        return '/'
+    elif len(res2)> 0:
+        session['username'] = item['username']
+        session['role'] = 'manager'
+        session['logged_in'] = True
+        
+        print('right manager login')
+        return '/'
     else:
-        print("wrong login")
-        return "/login"
+        print('wrong combination for username and password')
+        return '/login'
+    # if item['password'] == 'password' and item['username'] == 'admin':
+    #     print('right login')
+    #     return "/"
+    # else:
+    #     print("wrong login")
+    #     return "/login"
 
 @app.route('/signup')
 def signup():
@@ -73,14 +89,22 @@ def signupC():
     else:
         db.execute("""INSERT into %s(username, password) VALUES ('%s','%s');"""%(item['role'],item['username'],item['password']))
         db.commit()
+
+        session['username'] = item['username']
+        session['role'] = item['role']
+        session['logged_in'] = True
+
         print("insert is executed")
         return '/'
-    # if item['password'] == 'password' and item['username'] == 'admin':
-    #     print('right login')
-    #     return "/"
-    # else:
-    #     print("wrong login")
-    #     return "/login"
+
+@app.route("/logout")
+def logout():
+    session['username'] = None
+    session['role'] = None
+    session['logged_in'] = False
+    
+    return redirect('/')
+
 # @app.route('/nordicshift.ico')
 # def icon():
 #   print("in icon route")
@@ -89,9 +113,10 @@ def signupC():
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def catch_all(path):
-  print("test test test test test")
-  print(path)
-  return render_template("index.html")
+    if session.get("logged_in") == True or path == '/':
+        return render_template("index.html")
+    else:
+        return redirect("/login")
 
 #naming standard, if it is being used for an axios call, use /api/name_of_call
 @app.route("/api/calendar")
@@ -135,6 +160,3 @@ def moveEvent():
 if __name__ == "__main__":
     createTables.createTables()
     app.run(debug=True)
-
-  
-

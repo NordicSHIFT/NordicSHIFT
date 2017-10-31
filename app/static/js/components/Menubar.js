@@ -36,7 +36,7 @@ export class Menubar extends Component {
                 <NavLink href="/my_profile">My Profile</NavLink>
             </NavItem>
             <NavItem>
-                <NavLink href="/log_out">Log Out</NavLink>
+                <NavLink href="/logout">Log Out</NavLink>
             </NavItem>
           </Nav>
         </Collapse>
