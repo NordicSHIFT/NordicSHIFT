@@ -36,7 +36,7 @@ class Login extends Component {
   render() {
     return (
       <div id ='login'>
-        <div id="container">
+        <div>
           <label><b>Username</b></label>
           <input type="text" id ='username' placeholder="Enter Username" className="inputusername" value = {this.state.inputusername} onChange={this.updateInputValueUserName.bind(this)} required />
 
