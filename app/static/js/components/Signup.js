@@ -68,7 +68,7 @@ class Signup extends Component {
     }, config)
     .then(function (response) {
       if (response.data == '/'){
-        alert("You have successfully sign up!");
+        alert("You have successfully signed up!");
       }
        window.location = response.data;
     })

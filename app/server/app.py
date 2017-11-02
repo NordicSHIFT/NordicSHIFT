@@ -71,7 +71,7 @@ def loginC():
 
 @app.route('/signup')
 def signup():
-    print("sign up is  here")
+    print("sign up is here")
     return render_template('index.html')
 
 @app.route('/signupC', methods = ['POST'])
@@ -109,14 +109,6 @@ def logout():
 # def icon():
 #   print("in icon route")
 #   return render_template("index.html")
-
-@app.route('/', defaults={'path': ''})
-@app.route('/<path:path>')
-def catch_all(path):
-    if session.get("logged_in") == True or path == '/':
-        return render_template("index.html")
-    else:
-        return redirect("/login")
 
 #naming standard, if it is being used for an axios call, use /api/name_of_call
 @app.route("/api/calendar")
@@ -156,6 +148,14 @@ def moveEvent():
   data = myEvent
   #TODO write change to database 
   return jsonify(data)
+
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def catch_all(path):
+    if session.get("logged_in") == True or path == '/':
+        return render_template("index.html")
+    else:
+        return redirect("/login")
 
 if __name__ == "__main__":
     createTables.createTables()

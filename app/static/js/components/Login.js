@@ -66,7 +66,7 @@ class Login extends Component {
     }, config)
     .then(function (response) {
       if (response.data == '/login'){
-        alert('Wrong login, please login again');
+        alert('Wrong login, please try again');
         console.log("wrong login");
 
       }
