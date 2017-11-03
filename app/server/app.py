@@ -141,9 +141,9 @@ def addEvent():
   myEvent = data.get('myEvent')
   myEvent['title'] = 'New Shift' 
   myEvent['hexColor'] = '#f89406'
-  print('myEvent: ', myEvent)
+  #print('myEvent: ', myEvent)
   data = myEvent
-  #TODO write change to database
+  #TODO write change to database, add new shift
   return jsonify(data)
 
 @app.route("/api/moveEvent", methods = ['POST'])
@@ -154,7 +154,7 @@ def moveEvent():
   data = request.get_json(silent=True)
   myEvent = data.get('myEvent')
   data = myEvent
-  #TODO write change to database 
+  #TODO write change to database , need to remove/modify old shift
   return jsonify(data)
 
 if __name__ == "__main__":
