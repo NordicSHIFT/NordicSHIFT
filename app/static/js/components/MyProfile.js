@@ -9,6 +9,7 @@ class MyProfile extends Component {
   constructor(props){
    super(props);
    this.state={department: "", student: ""};
+   this.sendInfo = this.sendInfo.bind(this);
   }
 
   handleClick(){
@@ -29,14 +30,14 @@ class MyProfile extends Component {
       <div id ='myprofile'>
         <div>
           <label><b>Department</b></label>
-          <input type="text" id ='username' placeholder="Enter Department" className="department" value = {this.state.department} onChange={this.updateInputValueDepartment.bind(this)} required />
+          <input type="text" id ='department' placeholder="Enter Department" className="department" value = {this.state.department} onChange={this.updateInputValueDepartment.bind(this)} required />
           <button type="submit" id='departmentButton' onClick ={this.sendInfo.bind(this)}>Submit</button>
         </div>
 
         <div>
-          <p><i>You can enter your student user name here. It should be in the format of username@luther.edu</i></p>
+          <p><i>Enter your students usernames here to add them to your roster. It should be in the format of username@luther.edu</i></p>
           <label><b>Student</b></label>
-          <input type="password" id ='password' placeholder="Enter Student Id" className="student" value ={this.state.student} onChange={this.updateInputValueStudent.bind(this)} required />
+          <input type="text" id ='student' placeholder="Enter Student Id" className="student" value ={this.state.student} onChange={this.updateInputValueStudent.bind(this)} required />
 
           <button type="submit" id='studentButton' onClick ={this.sendInfo.bind(this)}>Submit</button>
         </div>
@@ -47,12 +48,16 @@ class MyProfile extends Component {
   sendInfo(){
     var config = { headers: {
                       'Content-Type': 'application/json'}};
-    axios.post('/myprofileC',{foo:'bar'},config)
-    .then(function (response) {
+    axios.post('/api/myprofileC',{
+      student: this.state.student,
+      department: this.state.department
+    }, this.state,config)
+    .then(response => {
       if (response.data == '/myprofile'){
+        console.log("this.state: ", this.state);
         alert('Your changes have been saved');
       }
-      window.location = '/myprofile';
+      //window.location = '/myprofile';
     })
     .catch(function (error) {
       console.log(error);
