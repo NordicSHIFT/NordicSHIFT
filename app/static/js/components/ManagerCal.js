@@ -70,35 +70,13 @@ class ManagerCal extends Component {
     });  
   }
 
-  addEvent(slotInfo) {
-    // alert(
-    //   `selected slot: \n\nstart ${slotInfo.start.toLocaleString()} ` +
-    //   `\nend: ${slotInfo.end.toLocaleString()}` + ` ${slotInfo.action} `
-    // );  
+  addEvent(slotInfo) { 
     if (slotInfo.action == 'select') { 
-      
-      var config = { headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'}
-      }
-      var respData = axios.post('/api/addEvent', {
-        myEvent: slotInfo
-      }, config) 
-      .then( (response) => {
-        const responseData = response.data 
-        console.log(responseData); 
-        const theEvent = this.props.formCalInt(slotInfo); 
-      })
-      .catch(function (error) {
-        console.log(error);
-      }); 
-      //TODO possibly a pop-up form to enter in other details of shift 
-      //TODO ask if you want to create the shift or not  
+      const theEvent = this.props.formCalInt(slotInfo);   
     }
   }
 
   eventStyleGetter(event) {
-    console.log(event);
     var backgroundColor = event.hexColor;
     var style = {
         backgroundColor: backgroundColor,

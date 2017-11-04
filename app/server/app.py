@@ -51,14 +51,14 @@ def loginC():
         session['logged_in'] = True
 
         print('right student login')
-        return '/'
+        return '/studentdashboard'
     elif len(res2)> 0:
         session['username'] = item['username']
         session['role'] = 'manager'
         session['logged_in'] = True
 
         print('right manager login')
-        return '/'
+        return '/managerdashboard'
     else:
         print('wrong combination for username and password')
         return '/login'
@@ -123,8 +123,8 @@ def myprofileC():
 def calendar():
   myevents = [{
   "title": 'Your Shift',
-  "start":  datetime.datetime(2017, 10, 25, 13),
-  "end": datetime.datetime(2017, 10, 25, 15),
+  "start":  datetime.datetime(2017, 10, 31, 13),
+  "end": datetime.datetime(2017, 10, 31, 15),
   "hexColor" : "#ee5f5b"
   }]
   #color scheme colors: #62c462, #5bc0de, #f89406,  #ee5f5b
@@ -141,9 +141,9 @@ def addEvent():
   myEvent = data.get('myEvent')
   myEvent['title'] = 'New Shift'
   myEvent['hexColor'] = '#f89406'
-  print('myEvent: ', myEvent)
+  #print('myEvent: ', myEvent)
   data = myEvent
-  #TODO write change to database
+  #TODO write change to database, add new shift
   return jsonify(data)
 
 @app.route("/api/moveEvent", methods = ['POST'])
@@ -154,7 +154,7 @@ def moveEvent():
   data = request.get_json(silent=True)
   myEvent = data.get('myEvent')
   data = myEvent
-  #TODO write change to database
+  #TODO write change to database , need to remove/modify old shift
   return jsonify(data)
 
 @app.route('/', defaults={'path': ''})
