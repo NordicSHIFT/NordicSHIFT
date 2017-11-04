@@ -33,7 +33,7 @@ export class Menubar extends Component {
                 <NavLink href="/dashboard">Dashboard</NavLink>
             </NavItem>
             <NavItem>
-                <NavLink href="/my_profile">My Profile</NavLink>
+                <NavLink href="/myprofile">My Profile</NavLink>
             </NavItem>
             <NavItem>
                 <NavLink href="/logout">Log Out</NavLink>
