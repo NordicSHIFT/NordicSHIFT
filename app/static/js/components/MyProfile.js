@@ -46,14 +46,10 @@ class MyProfile extends Component {
 
   sendInfo(){
     var config = { headers: {
-                      'Content-Type': 'application/json',
-                      'Access-Control-Allow-Origin': '*'}
-    }
-    var self = this;
-    axios.post('/myprofileC',self.state,config)
+                      'Content-Type': 'application/json'}};
+    axios.post('/myprofileC',{foo:'bar'},config)
     .then(function (response) {
       if (response.data == '/myprofile'){
-        console.log(this.state);
         alert('Your changes have been saved');
       }
       window.location = '/myprofile';
