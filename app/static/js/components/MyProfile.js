@@ -1,5 +1,6 @@
 import axios from 'axios';
 import React, { Component } from 'react';
+import Menubar from './Menubar'; 
 
 const style = {
   backgroundColor:"#f1f1f1"
@@ -28,6 +29,7 @@ class MyProfile extends Component {
   render() {
     return (
       <div id ='myprofile'>
+        <Menubar />
         <div>
           <label><b>Department</b></label>
           <input type="text" id ='department' placeholder="Enter Department" className="department" value = {this.state.department} onChange={this.updateInputValueDepartment.bind(this)} required />
@@ -51,7 +53,7 @@ class MyProfile extends Component {
     axios.post('/api/myprofileC',{
       student: this.state.student,
       department: this.state.department
-    }, this.state,config)
+    }, config)
     .then(response => {
       if (response.data == '/myprofile'){
         console.log("this.state: ", this.state);
