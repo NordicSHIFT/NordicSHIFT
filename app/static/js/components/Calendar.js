@@ -31,22 +31,6 @@ function extractEventDetails(slotInfo) {
   return stateReturn; 
 }
 
-function postEvent(theEvent) {
-  var config = { headers: {
-    'Content-Type': 'application/json',
-    'Access-Control-Allow-Origin': '*'}
-  }
-  var respData = axios.post('/api/addEvent', {
-    myEvent: theEvent
-  }, config) 
-  .then( (response) => {
-    const responseData = response.data 
-  })
-  .catch(function (error) {
-    console.log(error);
-  });
-}
-
 class Calendar extends Component {
   constructor() {
     super();
@@ -55,6 +39,7 @@ class Calendar extends Component {
     };
     this.slotInfoToForm = this.slotInfoToForm.bind(this);
     this.formInfoToCal = this.formInfoToCal.bind(this); 
+    this.postEvent = this.postEvent.bind(this); 
   }
 
   slotInfoToForm(slotInfo) {
@@ -90,11 +75,36 @@ class Calendar extends Component {
       start: start,
       end: end, 
     }; 
+    this.postEvent(theEvent); 
     //TODO send to back end to add to DB 
-    var theevents = this.refs.calendar.state.events.concat([theEvent]);
-    postEvent(theEvent); 
-    this.refs.calendar.setState({events: theevents}); 
   }
+
+  postEvent(theEvent) {
+    var config = { headers: {
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': '*'}
+    }
+    var respData = axios.post('/api/addEvent', {
+      myEvent: theEvent
+    }, config) 
+    .then( (response) => {
+      const responseData = response.data 
+      const newEvent = {
+        title: responseData.title, 
+        start: new Date(responseData.start),
+        end: new Date(responseData.end), 
+        hexColor: responseData.hexColor
+      }
+      console.log("newEvent: ", newEvent); 
+      console.log("this.refs.calendar.state", this.refs.calendar.state); 
+      const theevents = this.refs.calendar.state.events.concat([newEvent]); 
+      this.refs.calendar.setState({events: theevents}); 
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+  }
+  
 
   render() {
     return (

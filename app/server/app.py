@@ -51,14 +51,14 @@ def loginC():
         session['logged_in'] = True
         
         print('right student login')
-        return '/'
+        return '/studentdashboard'
     elif len(res2)> 0:
         session['username'] = item['username']
         session['role'] = 'manager'
         session['logged_in'] = True
         
         print('right manager login')
-        return '/'
+        return '/managerdashboard'
     else:
         print('wrong combination for username and password')
         return '/login'
@@ -115,8 +115,8 @@ def logout():
 def calendar():
   myevents = [{
   "title": 'Your Shift',
-  "start":  datetime.datetime(2017, 10, 25, 13),
-  "end": datetime.datetime(2017, 10, 25, 15),
+  "start":  datetime.datetime(2017, 10, 31, 13),
+  "end": datetime.datetime(2017, 10, 31, 15),
   "hexColor" : "#ee5f5b"
   }]
   #color scheme colors: #62c462, #5bc0de, #f89406,  #ee5f5b
@@ -130,8 +130,7 @@ def addEvent():
   #title = request.args.get("title")
   #print("title: ", title)
   data = request.get_json(silent=True)
-  myEvent = data.get('myEvent')
-  myEvent['title'] = 'New Shift' 
+  myEvent = data.get('myEvent') 
   myEvent['hexColor'] = '#f89406'
   #print('myEvent: ', myEvent)
   data = myEvent
