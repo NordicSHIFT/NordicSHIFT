@@ -27,7 +27,7 @@ def index():
 @app.route('/oauth2callback')
 def oauth2callback():
     return mainOauth2callback();
-  
+#
 @app.route('/login')
 def login():
     print("hello from login")
@@ -49,14 +49,14 @@ def loginC():
         session['username'] = item['username']
         session['role'] = 'student'
         session['logged_in'] = True
-        
+
         print('right student login')
         return '/studentdashboard'
     elif len(res2)> 0:
         session['username'] = item['username']
         session['role'] = 'manager'
         session['logged_in'] = True
-        
+
         print('right manager login')
         return '/managerdashboard'
     else:
@@ -102,13 +102,21 @@ def logout():
     session['username'] = None
     session['role'] = None
     session['logged_in'] = False
-    
+
     return redirect('/')
 
 # @app.route('/nordicshift.ico')
 # def icon():
 #   print("in icon route")
 #   return render_template("index.html")
+
+@app.route('/api/myprofileC', methods = ['POST'])
+def myprofileC():
+    print(session)
+    data = request.get_json(silent=True)
+    print("department: ", data.get("department"))
+    print("student: ", data.get("student"))
+    return '/myprofile'
 
 #naming standard, if it is being used for an axios call, use /api/name_of_call
 @app.route("/api/calendar")
@@ -130,7 +138,8 @@ def addEvent():
   #title = request.args.get("title")
   #print("title: ", title)
   data = request.get_json(silent=True)
-  myEvent = data.get('myEvent') 
+  myEvent = data.get('myEvent')
+  myEvent['title'] = 'New Shift'
   myEvent['hexColor'] = '#f89406'
   #print('myEvent: ', myEvent)
   data = myEvent
