@@ -110,10 +110,12 @@ def logout():
 #   print("in icon route")
 #   return render_template("index.html")
 
-@app.route('/myprofileC', methods = ['POST'])
+@app.route('/api/myprofileC', methods = ['POST'])
 def myprofileC():
     print(session)
-    print(request.args)
+    data = request.get_json(silent=True)
+    print("department: ", data.get("department"))
+    print("student: ", data.get("student"))
     return '/myprofile'
 
 #naming standard, if it is being used for an axios call, use /api/name_of_call
