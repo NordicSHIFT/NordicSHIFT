@@ -51,6 +51,7 @@ class ShiftForm extends Component {
   render() {
     return (
       <div>
+        <h1>Add shift</h1> 
         <Form>
         <FormGroup>
           <Label for="shiftTitle">Title</Label>
