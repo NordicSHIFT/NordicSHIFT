@@ -1,12 +1,12 @@
 import axios from 'axios';
 import React, { Component } from 'react';
-import Menubar from './Menubar'; 
+import Menubar from './Menubar';
 
 const style = {
   backgroundColor:"#f1f1f1"
 };
 
-class MyProfile extends Component {
+class ManagerProfile extends Component {
   constructor(props){
    super(props);
    this.state={department: "", student: ""};
@@ -28,7 +28,7 @@ class MyProfile extends Component {
 
   render() {
     return (
-      <div id ='myprofile'>
+      <div id ='managerprofile'>
         <Menubar />
         <div>
           <label><b>Department</b></label>
@@ -50,16 +50,16 @@ class MyProfile extends Component {
   sendInfo(){
     var config = { headers: {
                       'Content-Type': 'application/json'}};
-    axios.post('/api/myprofileC',{
+    axios.post('/api/managerprofile',{
       student: this.state.student,
       department: this.state.department
     }, config)
     .then(response => {
-      if (response.data == '/myprofile'){
-        console.log("this.state: ", this.state);
-        alert('Your changes have been saved');
+      if (response.data == 'error'){
+        alert('Invalid student username. Please enter a different username');
       }
-      //window.location = '/myprofile';
+      else alert('Your changes have been saved');
+      window.location = '/myprofile';
     })
     .catch(function (error) {
       console.log(error);
@@ -67,4 +67,4 @@ class MyProfile extends Component {
   }
 }
 
-export default MyProfile;
+export default ManagerProfile;

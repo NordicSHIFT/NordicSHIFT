@@ -34,8 +34,7 @@ def createTables():
                             name text,\
                             hours float,\
                             seniority int);""")
-    db.execute("""CREATE table if not exists dms(\
-                            manager integer references manager(id),\
+    db.execute("""CREATE table if not exists ds(\
                             department integer references department(id),\
                             student integer references student(id)); """)
     db.execute("""CREATE table if not exists shift(\

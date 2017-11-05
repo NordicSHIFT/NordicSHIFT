@@ -6,7 +6,8 @@ import Dashboard from './Dashboard'
 import StudentDashboard from './StudDash'
 import ManagerDashboard from './ManagerDash'
 import Availability from './Availability'
-import MyProfile from './MyProfile'
+import ManagerProfile from './ManagerProfile'
+import StudentProfile from './StudentProfile'
 import Schedule from './Schedule'
 import Login from './Login'
 import Signup from './Signup'
@@ -27,7 +28,7 @@ const Main = () => (
       <Route path='/studentdashboard' component={StudentDashboard}/>
       <Route path='/managerdashboard' component={ManagerDashboard}/>
       <Route path='/availability' component={Availability}/>
-      <Route path='/myprofile' component={MyProfile}/>
+      <Route path='/managerprofile' component={ManagerProfile}/>
       <Route path='/schedule' component={Schedule}/>
     </Switch>
   </main>
