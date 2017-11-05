@@ -143,7 +143,8 @@ class Calendar extends Component {
 
     this.setState({
       events: theEvents,
-      deleteFormInvisible: true
+      deleteFormInvisible: true,
+      shiftToDelete: null
     })
 
     axios.post('/api/deleteEvent', {
