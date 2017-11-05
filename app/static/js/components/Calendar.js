@@ -87,6 +87,15 @@ class Calendar extends Component {
     console.log("this.refs", this.refs); 
     console.log("this.state", this.state); 
     console.log("this.refs.form",this.refs.form); 
+    if (this.state.shiftToDelete != null) {
+      var event = this.state.shiftToDelete; 
+      var theEvents = this.refs.calendar.state.events;
+      const idx = theEvents.indexOf(event);  
+      event.hexColor = "#f89406"; 
+      theEvents.splice(idx,1,event); 
+      console.log("theEvents", theEvents); 
+      this.refs.calendar.setState({events: theEvents}); 
+    }
     this.refs.form.setState(extractEventDetails(slotInfo)); 
   }
 
@@ -109,15 +118,17 @@ class Calendar extends Component {
   }
 
   stopDelete() {
-    console.log("in shift to edit"); 
-    const event = this.state.shiftToDelete; 
-    var theEvents = this.refs.calendar.state.events;
-    const idx = theEvents.indexOf(event);  
-    event.hexColor = "#f89406"; //TODO or whatever color...
-    theEvents.splice(idx,1,event); 
-    console.log("theEvents", theEvents); 
-    this.refs.calendar.setState({events: theEvents}); 
-    this.setState({shiftToDelete: null, deleteFormInvisible: true});
+    if (this.state.shiftToDelete != null) {
+      const event = this.state.shiftToDelete; 
+      var theEvents = this.refs.calendar.state.events;
+      const idx = theEvents.indexOf(event);  
+      event.hexColor = "#f89406"; //TODO or whatever color...
+      theEvents.splice(idx,1,event); 
+      console.log("theEvents", theEvents); 
+      this.refs.calendar.setState({events: theEvents}); 
+      this.setState({shiftToDelete: null, deleteFormInvisible: true});
+    }
+
   }
 
   deleteShift() {
@@ -179,7 +190,7 @@ class Calendar extends Component {
       <div className="Calendar">
         <Menubar /> 
         <Row>
-          <Col xs="9"><ManagerCal id="calendar" ref="calendar" formCalInt = {this.slotInfoToForm} shiftToEdit = {this.shiftToEdit} /></Col>
+          <Col xs="9"><ManagerCal id="calendar" ref="calendar" formCalInt = {this.slotInfoToForm} shiftToEdit = {this.shiftToEdit} removeToDelete={this.stopDelete}/></Col>
           {this.state.formInvisible ? 
             null
             : <Col xs="3"><ShiftForm id="form" ref="form" submitForm = {this.formInfoToCal} style={{hidden: true}} /></Col>} 

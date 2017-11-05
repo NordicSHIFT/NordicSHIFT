@@ -84,7 +84,7 @@ class ManagerCal extends Component {
     var backgroundColor = event.hexColor;
     var style = {
         backgroundColor: backgroundColor,
-        borderRadius: '0px',
+        borderRadius: '5px',
         opacity: 0.8,
         color: 'black',
         border: '0px',
@@ -100,6 +100,7 @@ class ManagerCal extends Component {
       'Content-Type': 'application/json',
       'Access-Control-Allow-Origin': '*'}
     }
+    this.props.removeToDelete(); 
     const theEvents = this.state.events;
     const idx = theEvents.indexOf(event); 
     event.start = start; 
@@ -126,7 +127,7 @@ class ManagerCal extends Component {
     const now = moment(); 
     return (
       <div height="100px">
-        <h6>Drag a slot on the calendar to create a shift. Click an existing shift to delete.</h6>
+        <h6>Drag a slot on the calendar to create a shift. Click an existing shift to have the option to delete.</h6>
         <DragAndDropCalendar
           selectable
           defaultView='week'
