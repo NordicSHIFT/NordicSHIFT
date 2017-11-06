@@ -194,9 +194,9 @@ def catch_all(path):
 # It will check to see if you tried to access the page and redirect you to it if needed
 # else, it will redirect you to the alt_url.
 def check_and_redirect_back(alt_url):
-    if session.get('attempted_url') and session.get('attempted_url') != 'none':
+    if session.get('attempted_url'):
         redir = session.get('attempted_url')
-        session['attempted_url'] = 'none'
+        del session['attempted_url']
         return '/' + redir
     else:
         return alt_url
