@@ -1,8 +1,8 @@
-// Dashboard.js
+//StudentDash.js
 import React, { Component } from 'react';
 import { CardColumns } from 'reactstrap';
-import CardDash from './CardDash'; 
-import Menubar from './Menubar';
+import CardDash from './children/CardDash'; 
+import StudentMenubar from './children/StudentMenubar';
 import './../../css/index.css'
 
 class StudentDashboard extends Component {
@@ -13,15 +13,15 @@ class StudentDashboard extends Component {
     }; 
     return ( 
       <div>
-        <Menubar />
+        <StudentMenubar />
         <div className="Dashboard">
           <h3>Student Dashboard! </h3> 
         </div>
         
         <CardColumns>
-          <CardDash source={require("./../../img/goat1.png")} title={"MyProfile"} descr={"Edit your profile"} linkto={"/myprofile"}/>
+          <CardDash source={require("./../../img/goat1.png")} title={"MyProfile"} descr={"Edit your profile"} linkto={"/studentprofile"}/>
           <CardDash source={require("./../../img/goat2.png")} title={"Availablilty"} descr={"Review Availability"} linkto={"/availability"}/>
-          <CardDash source={require("./../../img/goat3.png")} title={"Schedule"} descr={"See Current Schedule"} linkto={"/schedule"}/>
+          <CardDash source={require("./../../img/goat3.png")} title={"Schedule"} descr={"See Current Schedule"} linkto={"/studentschedule"}/>
         </CardColumns>
       </div>
     );

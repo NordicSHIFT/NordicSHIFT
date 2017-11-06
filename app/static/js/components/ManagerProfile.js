@@ -1,12 +1,12 @@
 import axios from 'axios';
 import React, { Component } from 'react';
-import Menubar from './Menubar'; 
+import ManagerMenubar from './children/ManagerMenubar'; 
 
 const style = {
   backgroundColor:"#f1f1f1"
 };
 
-class MyProfile extends Component {
+class ManagerProfile extends Component {
   constructor(props){
    super(props);
    this.state={department: "", student: ""};
@@ -29,7 +29,7 @@ class MyProfile extends Component {
   render() {
     return (
       <div id ='myprofile'>
-        <Menubar />
+        <ManagerMenubar />
         <div>
           <label><b>Department</b></label>
           <input type="text" id ='department' placeholder="Enter Department" className="department" value = {this.state.department} onChange={this.updateInputValueDepartment.bind(this)} required />
@@ -67,4 +67,4 @@ class MyProfile extends Component {
   }
 }
 
-export default MyProfile;
+export default ManagerProfile;

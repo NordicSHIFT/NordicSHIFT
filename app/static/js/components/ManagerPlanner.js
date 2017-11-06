@@ -3,10 +3,10 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import { Container, Row, Col } from 'reactstrap';
 import axios from 'axios';
-import Menubar from './Menubar'; 
-import ManagerCal from './ManagerCal'; 
-import ShiftForm from './ShiftForm'; 
-import EditShiftForm from './EditShiftForm'; 
+import ManagerMenubar from './children/ManagerMenubar'; 
+import ManagerCal from './children/ManagerCal'; 
+import ShiftForm from './children/ShiftForm'; 
+import EditShiftForm from './children/EditShiftForm'; 
 
 var origin = window.location.origin;
 
@@ -66,7 +66,7 @@ function changeEventFromForm(form) {
 
 }
 
-class Calendar extends Component {
+class ManagerPlanner extends Component {
   constructor() {
     super();
     this.state = {
@@ -189,7 +189,7 @@ class Calendar extends Component {
   render() {
     return (
       <div className="Calendar">
-        <Menubar /> 
+        <ManagerMenubar /> 
         <Row>
           <Col xs="9"><ManagerCal id="calendar" ref="calendar" formCalInt = {this.slotInfoToForm} shiftToEdit = {this.shiftToEdit} removeToDelete={this.stopDelete}/></Col>
           {this.state.formInvisible ? 
@@ -204,4 +204,4 @@ class Calendar extends Component {
   }
 }
 
-export default Calendar;
+export default ManagerPlanner;

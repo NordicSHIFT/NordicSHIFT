@@ -1,28 +1,23 @@
-// Dashboard.js
+// ManagerDash.js
 import React, { Component } from 'react';
 import { CardColumns } from 'reactstrap';
-import CardDash from './CardDash'; 
-import Menubar from './Menubar';
+import CardDash from './children/CardDash'; 
+import ManagerMenubar from './children/ManagerMenubar';
 import './../../css/index.css'
 
 class ManagerDashboard extends Component {
   render() {
-    var origin = window.location.origin;
-    let pic = {
-      uri : "https://fthmb.tqn.com/7cjfKKFOXeCFABIbpMoGWM3Mw2g=/1280x853/filters:no_upscale()/goats-resized-57bb57ee3df78c8763fba0c8.jpg"
-    }; 
     return ( 
       <div>
-        <Menubar />
+        <ManagerMenubar />
         <div className="Dashboard">
-          <h3>Manager Dashboard! </h3> 
+          <h3>Your Manager Dashboard</h3> 
         </div>
         
         <CardColumns>
           <CardDash source={require("./../../img/goat1.png")} title={"MyProfile"} descr={"Edit your profile"} linkto={"/myprofile"}/>
-          <CardDash source={require("./../../img/goat2.png")} title={"Availablilty"} descr={"Review Availability"} linkto={"/availability"}/>
-          <CardDash source={require("./../../img/goat3.png")} title={"Schedule"} descr={"See Current Schedule"} linkto={"/schedule"}/>
-          <CardDash source={require("./../../img/goat1.png")} title={"Shift Calendar"} descr={"Add and Remove desired Shifts"} linkto={"/calendar"}/>
+          <CardDash source={require("./../../img/goat2.png")} title={"Schedule"} descr={"See Current Schedule"} linkto={"/managerschedule"}/>
+          <CardDash source={require("./../../img/goat3.png")} title={"Shift Planner"} descr={"Add and Remove desired Shifts"} linkto={"/planner"}/>
         </CardColumns>
       </div>
     );

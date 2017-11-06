@@ -1,13 +1,14 @@
 import React from 'react'
 import { Switch, Route } from 'react-router-dom'
 import Home from './Home'
-import Calendar from './Calendar'
-import Dashboard from './Dashboard'
-import StudentDashboard from './StudDash'
+import ManagerPlanner from './ManagerPlanner'
+import StudentDashboard from './StudentDash'
 import ManagerDashboard from './ManagerDash'
 import Availability from './Availability'
-import MyProfile from './MyProfile'
-import Schedule from './Schedule'
+import ManagerProfile from './ManagerProfile'
+import StudentProfile from './StudentProfile'
+import StudentSchedule from './StudentSchedule'
+import ManagerSchedule from './ManagerSchedule'
 import Login from './Login'
 import Signup from './Signup'
 
@@ -20,15 +21,16 @@ const Main = () => (
   <main>
     <Switch>
       <Route exact path='/' component={Home}/>
-      <Route path='/calendar' component={Calendar}/>
-      <Route path='/dashboard' component={Dashboard}/>
+      <Route path='/planner' component={ManagerPlanner}/>
       <Route path='/login' component={Login}/>
       <Route path='/signup' component={Signup}/>
       <Route path='/studentdashboard' component={StudentDashboard}/>
       <Route path='/managerdashboard' component={ManagerDashboard}/>
       <Route path='/availability' component={Availability}/>
-      <Route path='/myprofile' component={MyProfile}/>
-      <Route path='/schedule' component={Schedule}/>
+      <Route path='/myprofile' component={ManagerProfile}/>
+      <Route path='/studentschedule' component={StudentSchedule}/>
+      <Route path='/managerschedule' component={ManagerSchedule}/>
+      <Route path='/studentprofile' component={StudentProfile}/>
     </Switch>
   </main>
 )
