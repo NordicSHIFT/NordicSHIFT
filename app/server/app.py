@@ -190,7 +190,15 @@ def moveEvent():
   data = request.get_json(silent=True)
   myEvent = data.get('myEvent')
   data = myEvent
+  date_str = "2016-03-28T20:23:46+0800"
+  old_format = "%Y-%m-%dT%H:%M:%S.%fZ"
+  new_format = '%Y-%m-%d %H:%M:%S'
+  startTime = data.get('start')
+  start=datetime.datetime.strptime(startTime, old_format).strftime(new_format)
+  endTime = data.get('end')
+  end = datetime.datetime.strptime(endTime, old_format).strftime(new_format)
   #TODO write change to database , need to remove/modify old shift
+  db.execute("""UPDATE shift SET startTime ='%s' and endTime='%s'""")
   return jsonify(data)
 
 @app.route('/', defaults={'path': ''})
