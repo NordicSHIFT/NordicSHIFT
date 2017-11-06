@@ -26,11 +26,16 @@ def index():
 
 @app.route('/oauth2callback')
 def oauth2callback():
-    return mainOauth2callback();
-#
+    return mainOauth2callback()
+
 @app.route('/login')
 def login():
-    print("hello from login")
+    # If you are logged in already, redirect you to the proper webpage
+    if session.get('logged_in') == True:
+        if session['role'] == 'Manager':
+            return redirect('/managerdashboard')
+        elif session['role'] == 'Student':
+            return redirect('/studentdashboard')
     return render_template("login.html")
 
 @app.route('/loginC', methods = ['POST'])
@@ -39,7 +44,6 @@ def loginC():
     inputpassword = request.args.get("inputpassword")
     data = request.get_json(silent=True)
     item = {'username': data.get('inputusername'), 'password': data.get('inputpassword')}
-    print(item)
 
     res = db.execute("""SELECT id from student where username = '%s' and password= '%s';"""%(item['username'], item['password']))
     res1 = res.fetchall()
@@ -47,31 +51,35 @@ def loginC():
     res2 = res.fetchall()
     if len(res1) > 0:
         session['username'] = item['username']
-        session['role'] = 'student'
+        session['role'] = 'Student'
         session['logged_in'] = True
 
-        print('right student login')
-        return '/studentdashboard'
+        print('student logged in')
+
+        go_to = check_and_redirect_back('/studentdashboard')
+        return go_to
+
     elif len(res2)> 0:
         session['username'] = item['username']
-        session['role'] = 'manager'
+        session['role'] = 'Manager'
         session['logged_in'] = True
 
-        print('right manager login')
-        return '/managerdashboard' 
+        print('manager logged in')
+
+        go_to = check_and_redirect_back('/managerdashboard')
+        return  go_to
     else:
         print('wrong combination for username and password')
         return '/login'
-    # if item['password'] == 'password' and item['username'] == 'admin':
-    #     print('right login')
-    #     return "/"
-    # else:
-    #     print("wrong login")
-    #     return "/login"
 
 @app.route('/signup')
 def signup():
-    print("sign up is here")
+    # If you are logged in already, redirect you to the proper webpage
+    if session.get('logged_in') == True:
+        if session['role'] == 'Manager':
+            return redirect('/managerdashboard')
+        elif session['role'] == 'Student':
+            return redirect('/studentdashboard')
     return render_template('index.html')
 
 @app.route('/signupC', methods = ['POST'])
@@ -95,6 +103,13 @@ def signupC():
         session['logged_in'] = True
 
         print("insert is executed")
+        
+        if item['role'] == 'Manager':
+            go_to = check_and_redirect_back('/managerdashboard')
+            return  go_to
+        elif item['role'] == 'Student':
+            go_to = check_and_redirect_back('/studentdashboard')
+            return  go_to
         return '/'
 
 @app.route("/logout")
@@ -172,7 +187,19 @@ def catch_all(path):
     if session.get("logged_in") == True or path == '/':
         return render_template("index.html")
     else:
+        session['attempted_url'] = path
         return redirect("/login")
+
+# This is a function that will redirect you to a credential protected page.
+# It will check to see if you tried to access the page and redirect you to it if needed
+# else, it will redirect you to the alt_url.
+def check_and_redirect_back(alt_url):
+    if session.get('attempted_url'):
+        redir = session.get('attempted_url')
+        del session['attempted_url']
+        return '/' + redir
+    else:
+        return alt_url
 
 if __name__ == "__main__":
     createTables.createTables()
