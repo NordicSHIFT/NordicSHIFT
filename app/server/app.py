@@ -58,7 +58,7 @@ def loginC():
         session['logged_in'] = True
 
         print('right manager login')
-        return '/managerdashboard'
+        return '/managerdashboard' 
     else:
         print('wrong combination for username and password')
         return '/login'
@@ -200,6 +200,15 @@ def moveEvent():
   #TODO write change to database , need to remove/modify old shift
   db.execute("""UPDATE shift SET startTime ='%s' and endTime='%s'""")
   return jsonify(data)
+
+@app.route("/api/deleteEvent", methods = ['POST'])
+def deleteEvent():
+  print ("IN DELETE EVENT")
+  data = request.get_json(silent=True)
+  myEvent = data.get('myEvent') 
+  #TODO delete shift from database 
+  #maybe return new list of events, or leave it to the front end
+  return "done"
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
