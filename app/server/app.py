@@ -26,8 +26,8 @@ def index():
 
 @app.route('/oauth2callback')
 def oauth2callback():
-    return mainOauth2callback();
-#
+    return mainOauth2callback()
+
 @app.route('/login')
 def login():
     # If you are logged in already, redirect you to the proper webpage
