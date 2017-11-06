@@ -170,6 +170,15 @@ def addEvent():
   #print('myEvent: ', myEvent)
   data = myEvent
   #TODO write change to database, add new shift
+  date_str = "2016-03-28T20:23:46+0800"
+  old_format = "%Y-%m-%dT%H:%M:%S.%fZ"
+  new_format = '%Y-%m-%d %H:%M:%S'
+  startTime = data.get('start')
+  start=datetime.datetime.strptime(startTime, old_format).strftime(new_format)
+  endTime = data.get('end')
+  end = datetime.datetime.strptime(endTime, old_format).strftime(new_format)
+  db.execute("""INSERT into shift(dept, startTime, endTime) VALUES ((SELECT dept from manager where username = '%s'), '%s', '%s');"""%(session.get('username'),start, end))
+  db.commit()
   print(myEvent)
   return jsonify(data)
 
@@ -182,8 +191,6 @@ def moveEvent():
   myEvent = data.get('myEvent')
   data = myEvent
   #TODO write change to database , need to remove/modify old shift
-  # db.execute("""INSERT into shift(dept, startTime, endTime) VALUES ((SELECT dept from manager where username = '%s'), %s, %s);"""%(session.get('username'),data.get('start'),data.get('end')))
-  # db.commit()
   return jsonify(data)
 
 @app.route('/', defaults={'path': ''})
