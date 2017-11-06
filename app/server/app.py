@@ -30,7 +30,12 @@ def oauth2callback():
 #
 @app.route('/login')
 def login():
-    print("hello from login")
+    # If you are logged in already, redirect you to the proper webpage
+    if session.get('logged_in') == True:
+        if session['role'] == 'manager':
+            return redirect('/managerdashboard')
+        elif session['role'] == 'student':
+            return redirect('/studentdashboard')
     return render_template("login.html")
 
 @app.route('/loginC', methods = ['POST'])
@@ -71,7 +76,13 @@ def loginC():
 
 @app.route('/signup')
 def signup():
-    print("sign up is here")
+    # If you are logged in already, redirect you to the proper webpage
+    if session.get('logged_in') == True:
+        if session['role'] == 'manager':
+            return redirect('/managerdashboard')
+        elif session['role'] == 'student':
+            return redirect('/studentdashboard')
+
     return render_template('index.html')
 
 @app.route('/signupC', methods = ['POST'])
