@@ -9,11 +9,11 @@ from sqlalchemy.orm import sessionmaker, relationship
 import createTables
 import os
 import hashlib, uuid
+import bcrypt
 
 app = Flask(__name__, static_folder="../static/dist", template_folder="../static")
 app.secret_key = str(uuid.uuid4())
-salt =  uuid.uuid4().hex
-
+salt = os.environ['salt']
 Base=declarative_base()
 postgresql_uri=os.environ['DATABASE_URL']
 engine=create_engine(postgresql_uri)
@@ -44,33 +44,41 @@ def login():
 def loginC():
     data = request.get_json(silent=True)
     item = {'username': data.get('inputusername'), 'password': data.get('inputpassword')}
-
-    hashed_password = hashlib.sha512(item['password'].encode('utf-8') + salt.encode('utf-8')).hexdigest()
-    item['password'] = hashed_password
-    res = db.execute("""SELECT id from student where username = '%s' and password= '%s';"""%(item['username'], item['password']))
-    res1 = res.fetchall()
-    res = db.execute("""SELECT id from manager where username = '%s' and password= '%s';"""%(item['username'], item['password']))
+    res = db.execute("""SELECT password from student where username = '%s';"""%(item['username']))
+    res1= res.fetchall()
+    res = db.execute("""SELECT password from manager where username = '%s';"""%(item['username']))
     res2 = res.fetchall()
     if len(res1) > 0:
-        session['username'] = item['username']
-        session['role'] = 'Student'
-        session['logged_in'] = True
+        hashed_password = hashlib.sha512(item['password'].encode('utf-8') + salt.encode('utf-8')).hexdigest()
+        dbpass = res1[0][0]
+        if hashed_password == dbpass:
+            session['username'] = item['username']
+            session['role'] = 'Student'
+            session['logged_in'] = True
 
-        print('student logged in')
+            print('student logged in')
 
-        go_to = check_and_redirect_back('/studentdashboard')
-        return go_to
-
+            go_to = check_and_redirect_back('/studentdashboard')
+            return go_to
+        else:
+            print('wrong combination for username and password for student')
+            return '/login'
     elif len(res2)> 0:
-        session['username'] = item['username']
-        session['role'] = 'Manager'
-        session['logged_in'] = True
-        print('manager logged in')
-        go_to = check_and_redirect_back('/managerdashboard')
-        return  go_to
+        hashed_password = hashlib.sha512(item['password'].encode('utf-8') + salt.encode('utf-8')).hexdigest()
+        dbpass = res2[0][0]
+        if hashed_password == dbpass:
+            session['username'] = item['username']
+            session['role'] = 'Manager'
+            session['logged_in'] = True
+            print('manager logged in')
+            go_to = check_and_redirect_back('/managerdashboard')
+            return  go_to
+        else:
+            print('wrong combination for username and password for manager')
+            return '/login'
     else:
-        print('wrong combination for username and password')
-        return '/login'
+        print('Username does not exists, please sign up')
+        return '/signup'
 
 @app.route('/signup')
 def signup():
@@ -86,7 +94,10 @@ def signup():
 def signupC():
     data = request.get_json(silent=True)
     item = {'username': data.get('inputusername'), 'password': data.get('inputpassword'),'role': data.get('inputrole')}
+    # salt =  uuid.uuid4().hex
     hashed_password = hashlib.sha512(item['password'].encode('utf-8') + salt.encode('utf-8')).hexdigest()
+    # item['password'] = hashed_password
+    # hashed_password = bcrypt.hashpw('password'.encode('utf-8'), bcrypt.gensalt())
     item['password'] = hashed_password
     print(item)
     res = db.execute("""SELECT id from %s where username = '%s' and password= '%s';"""%(item['role'], item['username'], item['password']))
@@ -184,7 +195,6 @@ def addEvent():
   #print('myEvent: ', myEvent)
   data = myEvent
   #TODO write change to database, add new shift
-  date_str = "2016-03-28T20:23:46+0800"
   old_format = "%Y-%m-%dT%H:%M:%S.%fZ"
   new_format = '%Y-%m-%d %H:%M:%S'
   startTime = data.get('start')
@@ -204,7 +214,7 @@ def moveEvent():
   data = request.get_json(silent=True)
   myEvent = data.get('myEvent')
   data = myEvent
-  date_str = "2016-03-28T20:23:46+0800"
+  print(data)
   old_format = "%Y-%m-%dT%H:%M:%S.%fZ"
   new_format = '%Y-%m-%d %H:%M:%S'
   startTime = data.get('start')
@@ -212,7 +222,7 @@ def moveEvent():
   endTime = data.get('end')
   end = datetime.datetime.strptime(endTime, old_format).strftime(new_format)
   #TODO write change to database , need to remove/modify old shift
-  db.execute("""UPDATE shift SET startTime ='%s' and endTime='%s'""")
+  # db.execute("""UPDATE shift SET startTime ='%s' and endTime='%s' where """)
   return jsonify(data)
 
 @app.route("/api/deleteEvent", methods = ['POST'])
@@ -222,6 +232,13 @@ def deleteEvent():
   myEvent = data.get('myEvent')
   #TODO delete shift from database
   #maybe return new list of events, or leave it to the front end
+  old_format = "%Y-%m-%dT%H:%M:%S.%fZ"
+  new_format = '%Y-%m-%d %H:%M:%S'
+  startTime = data.get('start')
+  start=datetime.datetime.strptime(startTime, old_format).strftime(new_format)
+  endTime = data.get('end')
+  end = datetime.datetime.strptime(endTime, old_format).strftime(new_format)
+  db.execute("""DELETE from shift WHERE startTime ='%s' and endTime='%s'"""%(start,end))
   return "done"
 
 @app.route('/', defaults={'path': ''})
