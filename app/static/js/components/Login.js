@@ -70,6 +70,9 @@ class Login extends Component {
         console.log("wrong login");
 
       }
+      else if (response.data =='/signup') {
+        alert('Your username is invalid, please create an account or double check the username')
+      } 
       window.location = response.data;
     })
     .catch(function (error) {
