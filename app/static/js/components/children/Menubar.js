@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import { Collapse, Navbar, NavbarToggler, NavbarBrand, Nav, NavItem, NavLink } from 'reactstrap';
 import { Switch, Route, Link } from 'react-router-dom'
-
+//TODO this shouldn't be used anywhere anymore...
 export class Menubar extends Component {
   constructor(props) {
     super(props);
@@ -27,13 +27,13 @@ export class Menubar extends Component {
         <Collapse isOpen={this.state.isOpen} navbar>
           <Nav className="ml-auto" navbar>
             <NavItem>
-                <NavLink href="/calendar">Calendar</NavLink>
+                <NavLink href="/managerplanner">Planner</NavLink>
             </NavItem>
             <NavItem>
                 <NavLink href="/dashboard">Dashboard</NavLink>
             </NavItem>
             <NavItem>
-                <NavLink href="/myprofile">My Profile</NavLink>
+                <NavLink href="/managerprofile">My Profile</NavLink>
             </NavItem>
             <NavItem>
                 <NavLink href="/logout">Log Out</NavLink>

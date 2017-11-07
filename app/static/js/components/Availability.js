@@ -1,11 +1,13 @@
 // Availability.js
 import React, { Component } from 'react';
+import StudentMenubar from './children/StudentMenubar'
 
 class Availability extends Component {
   render() {
     return ( 
       <div className="Availability">
-        <h3> Availability! </h3> 
+        <StudentMenubar />
+        <h3> Availability! (for students)</h3> 
       </div>
     );
   }

@@ -179,7 +179,6 @@ def addEvent():
   #print("title: ", title)
   data = request.get_json(silent=True)
   myEvent = data.get('myEvent')
-  # myEvent['title'] = 'New Shift'
   myEvent['hexColor'] = '#f89406'
   #print('myEvent: ', myEvent)
   data = myEvent

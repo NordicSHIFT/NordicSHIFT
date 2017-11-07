@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, { Component } from 'react';
-import Menubar from './Menubar';
+import ManagerMenubar from './children/ManagerMenubar';
 
 const style = {
   backgroundColor:"#f1f1f1"
@@ -50,7 +50,7 @@ class ManagerProfile extends Component {
   render() {
     return (
       <div id ='managerprofile'>
-        <Menubar />
+        <ManagerMenubar />
         <div>
           <label><b>Department</b></label>
           <p> Current department:{this.state.department} </p>
