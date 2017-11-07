@@ -17,7 +17,7 @@ class ManagerDashboard extends Component {
         <CardColumns>
           <CardDash source={require("./../../img/goat1.png")} title={"MyProfile"} descr={"Edit your profile"} linkto={"/managerprofile"}/>
           <CardDash source={require("./../../img/goat2.png")} title={"Schedule"} descr={"See Current Schedule"} linkto={"/managerschedule"}/>
-          <CardDash source={require("./../../img/goat3.png")} title={"Shift Planner"} descr={"Add and Remove desired Shifts"} linkto={"/planner"}/>
+          <CardDash source={require("./../../img/goat3.png")} title={"Shift Planner"} descr={"Add and Remove desired Shifts"} linkto={"/managerplanner"}/>
         </CardColumns>
       </div>
     );
