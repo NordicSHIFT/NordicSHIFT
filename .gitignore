@@ -23,4 +23,4 @@ app/static/yarn-debug.log*
 app/static/yarn-error.log*
 
 #environment variable
-app/server/.env
+.env

@@ -2,7 +2,7 @@
 from flask import Flask, flash, redirect, render_template, request, session, abort, jsonify
 from calRetrieve import *
 import datetime
-
+import os
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Table, Column, Integer, String, create_engine, Sequence, ForeignKey
 from sqlalchemy.orm import sessionmaker, relationship
@@ -13,7 +13,8 @@ app = Flask(__name__, static_folder="../static/dist", template_folder="../static
 app.secret_key = str(uuid.uuid4())
 
 Base=declarative_base()
-postgresql_uri='postgres://fhscjkxvzpcgky:6b3962c83e75cd9864ef296dd8d45f4ea58a2fd129875a65d74040eaec8b0e92@ec2-23-21-220-152.compute-1.amazonaws.com:5432/d2ijd81slr7fhm'
+# postgresql_uri='postgres://fhscjkxvzpcgky:6b3962c83e75cd9864ef296dd8d45f4ea58a2fd129875a65d74040eaec8b0e92@ec2-23-21-220-152.compute-1.amazonaws.com:5432/d2ijd81slr7fhm'
+postgresql_uri = os.environ.get('DATABASE_URL')
 engine=create_engine(postgresql_uri)
 
 Session = sessionmaker(bind=engine)
@@ -58,7 +59,7 @@ def loginC():
         session['logged_in'] = True
 
         print('right manager login')
-        return '/managerdashboard' 
+        return '/managerdashboard'
     else:
         print('wrong combination for username and password')
         return '/login'
@@ -205,8 +206,8 @@ def moveEvent():
 def deleteEvent():
   print ("IN DELETE EVENT")
   data = request.get_json(silent=True)
-  myEvent = data.get('myEvent') 
-  #TODO delete shift from database 
+  myEvent = data.get('myEvent')
+  #TODO delete shift from database
   #maybe return new list of events, or leave it to the front end
   return "done"
 

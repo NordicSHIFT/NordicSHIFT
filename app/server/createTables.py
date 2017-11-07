@@ -7,8 +7,8 @@ import os
 # content = f.readline().split('=')[1].strip('\n')
 # os.environ['DATABASE_URL'] = content
 # f.close()
-# postgresql_uri= os.environ['DATABASE_URL']
-postgresql_uri='postgres://fhscjkxvzpcgky:6b3962c83e75cd9864ef296dd8d45f4ea58a2fd129875a65d74040eaec8b0e92@ec2-23-21-220-152.compute-1.amazonaws.com:5432/d2ijd81slr7fhm'
+postgresql_uri= os.environ['DATABASE_URL']
+# postgresql_uri='postgres://fhscjkxvzpcgky:6b3962c83e75cd9864ef296dd8d45f4ea58a2fd129875a65d74040eaec8b0e92@ec2-23-21-220-152.compute-1.amazonaws.com:5432/d2ijd81slr7fhm'
 engine=create_engine(postgresql_uri)
 
 Session = sessionmaker(bind=engine)
