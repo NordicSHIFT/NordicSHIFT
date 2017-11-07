@@ -7,10 +7,12 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Table, Column, Integer, String, create_engine, Sequence, ForeignKey
 from sqlalchemy.orm import sessionmaker, relationship
 import createTables
-import uuid
 import os
+import hashlib, uuid
+
 app = Flask(__name__, static_folder="../static/dist", template_folder="../static")
 app.secret_key = str(uuid.uuid4())
+salt =  uuid.uuid4().hex
 
 Base=declarative_base()
 postgresql_uri=os.environ['DATABASE_URL']
@@ -40,11 +42,11 @@ def login():
 
 @app.route('/loginC', methods = ['POST'])
 def loginC():
-    inputusername = request.args.get("inputusername")
-    inputpassword = request.args.get("inputpassword")
     data = request.get_json(silent=True)
     item = {'username': data.get('inputusername'), 'password': data.get('inputpassword')}
 
+    hashed_password = hashlib.sha512(item['password'].encode('utf-8') + salt.encode('utf-8')).hexdigest()
+    item['password'] = hashed_password
     res = db.execute("""SELECT id from student where username = '%s' and password= '%s';"""%(item['username'], item['password']))
     res1 = res.fetchall()
     res = db.execute("""SELECT id from manager where username = '%s' and password= '%s';"""%(item['username'], item['password']))
@@ -82,11 +84,10 @@ def signup():
 
 @app.route('/signupC', methods = ['POST'])
 def signupC():
-    inputusername = str(request.args.get("inputusername"))
-    inputpassword = str(request.args.get("inputpassword"))
-    inputrole = request.args.get("inputrole")
     data = request.get_json(silent=True)
     item = {'username': data.get('inputusername'), 'password': data.get('inputpassword'),'role': data.get('inputrole')}
+    hashed_password = hashlib.sha512(item['password'].encode('utf-8') + salt.encode('utf-8')).hexdigest()
+    item['password'] = hashed_password
     print(item)
     res = db.execute("""SELECT id from %s where username = '%s' and password= '%s';"""%(item['role'], item['username'], item['password']))
     res = res.fetchall()
