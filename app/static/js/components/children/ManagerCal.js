@@ -101,6 +101,19 @@ class ManagerCal extends Component {
       'Access-Control-Allow-Origin': '*'}
     }
     this.props.removeToDelete(); 
+    
+    axios.post('/api/moveEvent', {
+      myEvent: event,
+      newStart: start,
+      newEnd: end
+    }, config) 
+    .then( (response) => {
+      //alert('event posted to db'); 
+    })
+    .catch(function (error) {
+      console.log(error);
+    }); 
+
     const theEvents = this.state.events;
     const idx = theEvents.indexOf(event); 
     event.start = start; 
@@ -111,16 +124,6 @@ class ManagerCal extends Component {
       events: theEvents
     })
     //alert(`${event.title} was dropped onto ${event.start}`);
-
-    axios.post('/api/moveEvent', {
-      myEvent: event
-    }, config) 
-    .then( (response) => {
-      //alert('event posted to db'); 
-    })
-    .catch(function (error) {
-      console.log(error);
-    }); 
   }
 
   render() {
