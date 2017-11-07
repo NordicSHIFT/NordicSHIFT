@@ -1,3 +1,4 @@
+//StudentProfile.js
 import axios from 'axios';
 import React, { Component } from 'react';
 import StudentMenubar from './children/StudentMenubar'; 

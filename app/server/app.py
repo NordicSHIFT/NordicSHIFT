@@ -2,7 +2,7 @@
 from flask import Flask, flash, redirect, render_template, request, session, abort, jsonify
 from calRetrieve import *
 import datetime
-
+import os
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Table, Column, Integer, String, create_engine, Sequence, ForeignKey
 from sqlalchemy.orm import sessionmaker, relationship
@@ -63,9 +63,7 @@ def loginC():
         session['username'] = item['username']
         session['role'] = 'Manager'
         session['logged_in'] = True
-
         print('manager logged in')
-
         go_to = check_and_redirect_back('/managerdashboard')
         return  go_to
     else:
@@ -103,7 +101,7 @@ def signupC():
         session['logged_in'] = True
 
         print("insert is executed")
-        
+
         if item['role'] == 'Manager':
             go_to = check_and_redirect_back('/managerdashboard')
             return  go_to
@@ -124,13 +122,40 @@ def logout():
 # def icon():
 #   print("in icon route")
 #   return render_template("index.html")
+@app.route('/myprofile')
+def myprofile():
+    print(session)
+    if session.get('role') == 'Manager':
+        return redirect('/managerprofile')
+    elif session.get('role') == 'Student':
+        return redirect('/studentprofile')
+    else:
+        return redirect('/login')
 
-@app.route('/api/myprofileC', methods = ['POST'])
-def myprofileC():
+@app.route('/api/managerprofile', methods = ['POST'])
+def managerprofile():
     print(session)
     data = request.get_json(silent=True)
+    department = data.get("department")
+    student = data.get("student")
     print("department: ", data.get("department"))
     print("student: ", data.get("student"))
+    if department!='':
+        res = db.execute("""SELECT * from department where name ='%s';"""%department)
+        res = res.fetchall()
+        if len(res) == 0:
+            db.execute("""INSERT into department(name) VALUES ('%s');"""%department)
+        db.execute("""UPDATE manager SET dept = (SELECT id from department where name ='%s') WHERE username = '%s';"""%(department, session.get('username')))
+        db.commit()
+    if student!='':
+        if '@luther.edu' not in student:
+            return 'error'
+        res = db.execute("""SELECT * from student where username ='%s'"""%student)
+        res = res.fetchall()
+        if len(res)==0:
+            db.execute("""INSERT into student(username, password) VALUES ('%s','student');"""%student)
+        db.execute("""INSERT into ds(department,student) VALUES ((SELECT dept from manager where username = '%s'),(SELECT id from student where username ='%s'));"""%(session.get("username"), student))
+        db.commit()
     return '/myprofile'
 
 #naming standard, if it is being used for an axios call, use /api/name_of_call
@@ -158,6 +183,16 @@ def addEvent():
   #print('myEvent: ', myEvent)
   data = myEvent
   #TODO write change to database, add new shift
+  date_str = "2016-03-28T20:23:46+0800"
+  old_format = "%Y-%m-%dT%H:%M:%S.%fZ"
+  new_format = '%Y-%m-%d %H:%M:%S'
+  startTime = data.get('start')
+  start=datetime.datetime.strptime(startTime, old_format).strftime(new_format)
+  endTime = data.get('end')
+  end = datetime.datetime.strptime(endTime, old_format).strftime(new_format)
+  db.execute("""INSERT into shift(dept, startTime, endTime) VALUES ((SELECT dept from manager where username = '%s'), '%s', '%s');"""%(session.get('username'),start, end))
+  db.commit()
+  print(myEvent)
   return jsonify(data)
 
 @app.route("/api/moveEvent", methods = ['POST'])
@@ -168,15 +203,23 @@ def moveEvent():
   data = request.get_json(silent=True)
   myEvent = data.get('myEvent')
   data = myEvent
+  date_str = "2016-03-28T20:23:46+0800"
+  old_format = "%Y-%m-%dT%H:%M:%S.%fZ"
+  new_format = '%Y-%m-%d %H:%M:%S'
+  startTime = data.get('start')
+  start=datetime.datetime.strptime(startTime, old_format).strftime(new_format)
+  endTime = data.get('end')
+  end = datetime.datetime.strptime(endTime, old_format).strftime(new_format)
   #TODO write change to database , need to remove/modify old shift
+  db.execute("""UPDATE shift SET startTime ='%s' and endTime='%s'""")
   return jsonify(data)
 
 @app.route("/api/deleteEvent", methods = ['POST'])
 def deleteEvent():
   print ("IN DELETE EVENT")
   data = request.get_json(silent=True)
-  myEvent = data.get('myEvent') 
-  #TODO delete shift from database 
+  myEvent = data.get('myEvent')
+  #TODO delete shift from database
   #maybe return new list of events, or leave it to the front end
   return "done"
 

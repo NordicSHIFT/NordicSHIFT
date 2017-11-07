@@ -9,6 +9,7 @@ import ManagerProfile from './ManagerProfile'
 import StudentProfile from './StudentProfile'
 import StudentSchedule from './StudentSchedule'
 import ManagerSchedule from './ManagerSchedule'
+import Schedule from './Schedule'
 import Login from './Login'
 import Signup from './Signup'
 
@@ -31,6 +32,8 @@ const Main = () => (
       <Route path='/studentschedule' component={StudentSchedule}/>
       <Route path='/managerschedule' component={ManagerSchedule}/>
       <Route path='/studentprofile' component={StudentProfile}/>
+      <Route path='/managerprofile' component={ManagerProfile}/>
+      <Route path='/schedule' component={Schedule}/>
     </Switch>
   </main>
 )
