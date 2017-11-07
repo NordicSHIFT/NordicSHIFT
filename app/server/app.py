@@ -12,8 +12,11 @@ import hashlib, uuid
 import bcrypt
 
 app = Flask(__name__, static_folder="../static/dist", template_folder="../static")
-app.secret_key = str(uuid.uuid4())
-salt = os.environ['salt']
+
+app = Flask(__name__, static_folder="../static/dist", template_folder="../static")
+app.secret_key=os.environ['SECRET_KEY']
+salt =  os.environ['SALT']
+
 Base=declarative_base()
 postgresql_uri=os.environ['DATABASE_URL']
 engine=create_engine(postgresql_uri)
