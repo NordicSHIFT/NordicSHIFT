@@ -6,13 +6,6 @@ const style = {
   backgroundColor:"#f1f1f1"
 };
 
-const editDepartment = (props) => (
-  <div id="editDepartment">
-    <input type="text" id ='department' placeholder="Enter Department" className="department" value = {ManagerProfile.state.department} onChange={ManagerProfile.updateInputValueDepartment} required />
-    <button type="submit" id='departmentButton' onClick ={ManagerProfile.sendInfo}>Submit</button>
-  </div>
-  // <p>Hello world</p>
-);
 
 class ManagerProfile extends Component {
   constructor(props){
@@ -63,7 +56,11 @@ class ManagerProfile extends Component {
           <p> Current department:{this.state.department} </p>
           <div>
             <button onClick={this.editDepartment} >Edit Department</button>
-            {!this.state.isHidden && <editDepartment />}
+            {this.state.isHidden ? null : 
+              <div id="editDepartment">
+                <input type="text" id ='department' placeholder="Enter Department" className="department" value = {this.state.department} onChange={this.updateInputValueDepartment} required />
+                <button type="submit" id='departmentButton' onClick ={this.sendInfo}>Submit</button>
+              </div>}
           </div>
         </div>
 
