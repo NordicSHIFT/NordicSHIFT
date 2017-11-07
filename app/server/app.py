@@ -11,7 +11,7 @@ import os
 import hashlib, uuid
 
 app = Flask(__name__, static_folder="../static/dist", template_folder="../static")
-app.secret_key = "AAAAAhhhhh!!!" #str(uuid.uuid4())
+app.secret_key=os.environ['SECRET_KEY']
 salt =  uuid.uuid4().hex
 
 Base=declarative_base()
