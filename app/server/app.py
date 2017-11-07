@@ -101,7 +101,7 @@ def signupC():
         session['logged_in'] = True
 
         print("insert is executed")
-        
+
         if item['role'] == 'Manager':
             go_to = check_and_redirect_back('/managerdashboard')
             return  go_to
@@ -124,9 +124,10 @@ def logout():
 #   return render_template("index.html")
 @app.route('/myprofile')
 def myprofile():
-    if session.get('role') == 'manager':
+    print(session)
+    if session.get('role') == 'Manager':
         return redirect('/managerprofile')
-    elif session.get('role') == 'student':
+    elif session.get('role') == 'Student':
         return redirect('/studentprofile')
     else:
         return redirect('/login')
