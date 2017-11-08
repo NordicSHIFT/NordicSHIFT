@@ -1,4 +1,4 @@
-#! /bin/sh -
+#!/bin/bash
 PROGNAME=$0
 
 build() {
@@ -6,7 +6,7 @@ build() {
 }
 
 run() {
-    source './.env'
+    source '.env'
     python3 ./app/server/app.py
 }
 

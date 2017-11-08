@@ -9,7 +9,6 @@ from sqlalchemy.orm import sessionmaker, relationship
 import createTables
 import os
 import hashlib, uuid
-import bcrypt
 
 app = Flask(__name__, static_folder="../static/dist", template_folder="../static")
 
@@ -216,8 +215,12 @@ def moveEvent():
   #print("title: ", title)
   data = request.get_json(silent=True)
   myEvent = data.get('myEvent')
+  oldStart = data.get('oldStart')
+  oldEnd = data.get('oldEnd')
+  print("oldStart", oldStart)
+  print("oldEnd", oldEnd)
   data = myEvent
-  print(data)
+  print(myEvent)
   old_format = "%Y-%m-%dT%H:%M:%S.%fZ"
   new_format = '%Y-%m-%d %H:%M:%S'
   startTime = data.get('start')
