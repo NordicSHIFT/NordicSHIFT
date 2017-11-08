@@ -215,21 +215,17 @@ def moveEvent():
   #print("title: ", title)
   data = request.get_json(silent=True)
   myEvent = data.get('myEvent')
-  oldStart = data.get('oldStart')
-  oldEnd = data.get('oldEnd')
-  print("oldStart", oldStart)
-  print("oldEnd", oldEnd)
-  data = myEvent
   print(myEvent)
   old_format = "%Y-%m-%dT%H:%M:%S.%fZ"
   new_format = '%Y-%m-%d %H:%M:%S'
-  startTime = data.get('start')
+  startTime = data.get('oldStart')
+  print("type of startTime", startTime)
   start=datetime.datetime.strptime(startTime, old_format).strftime(new_format)
-  endTime = data.get('end')
+  endTime = data.get('oldEnd')
   end = datetime.datetime.strptime(endTime, old_format).strftime(new_format)
   #TODO write change to database , need to remove/modify old shift
-  # db.execute("""UPDATE shift SET startTime ='%s' and endTime='%s' where """)
-  return jsonify(data)
+  #db.execute("""UPDATE shift SET startTime ='%s' and endTime='%s' where startTime='%s' and endTime='%s'"""%(start,end,start,end))
+  return jsonify(myEvent)
 
 @app.route("/api/deleteEvent", methods = ['POST'])
 def deleteEvent():
