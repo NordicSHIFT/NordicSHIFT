@@ -9,7 +9,6 @@ from sqlalchemy.orm import sessionmaker, relationship
 import createTables
 import os
 import hashlib, uuid
-import bcrypt
 
 app = Flask(__name__, static_folder="../static/dist", template_folder="../static")
 
