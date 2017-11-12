@@ -7,8 +7,8 @@ multiple shifts.
 
 class Scheduler:
     def __init__():
-        self.bad_schedules = []
-        self.good_schedules = []
+        self.bad_schedules = set()
+        self.good_schedules = set()
     
     def getBadSchedules():
         '''
