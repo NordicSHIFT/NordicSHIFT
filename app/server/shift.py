@@ -1,3 +1,8 @@
+'''
+Simple class that holds shift information.
+Primarily used for scheduler.py
+'''
+
 class Shift:
     def __init__(dept, student, start, end):
         self.dept = dept

@@ -1,3 +1,8 @@
+'''
+Simple class that holds student information.
+Primarily used for scheduler.py
+'''
+
 class Student:
     def __init__(self, username, hours, unavailability, shiftAssigned):
         self.username = username
