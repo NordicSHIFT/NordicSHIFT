@@ -3,7 +3,7 @@
 A time management software written as part of our senior project.
 
  
-[![Heroku](https://heroku-badge.herokuapp.com/?app=nordicshift)](https://nordicshift.herokuapp.com/) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+[![Heroku](https://heroku-badge.herokuapp.com/?app=nordicshift)](https://nordicshift.herokuapp.com/) <br> [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 
 
 ## Getting Started
