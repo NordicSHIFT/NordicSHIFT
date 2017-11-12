@@ -197,6 +197,7 @@ def addEvent():
   myEvent['hexColor'] = '#f89406'
   #print('myEvent: ', myEvent)
   data = myEvent
+  print(data)
   #TODO write change to database, add new shift
   old_format = "%Y-%m-%dT%H:%M:%S.%fZ"
   new_format = '%Y-%m-%d %H:%M:%S'
@@ -215,17 +216,23 @@ def moveEvent():
   #title = request.args.get("title")
   #print("title: ", title)
   data = request.get_json(silent=True)
-  myEvent = data.get('myEvent')
-  data = myEvent
   print(data)
+  myEvent = data.get('myEvent')
+  olddata = myEvent
   old_format = "%Y-%m-%dT%H:%M:%S.%fZ"
   new_format = '%Y-%m-%d %H:%M:%S'
-  startTime = data.get('start')
-  start=datetime.datetime.strptime(startTime, old_format).strftime(new_format)
-  endTime = data.get('end')
-  end = datetime.datetime.strptime(endTime, old_format).strftime(new_format)
+  startTime = data.get('newStart')
+  newStart=datetime.datetime.strptime(startTime, old_format).strftime(new_format)
+  endTime = data.get('newEnd')
+  newEnd = datetime.datetime.strptime(endTime, old_format).strftime(new_format)
+  oldStart = datetime.datetime.strptime(olddata.get('start'), old_format).strftime(new_format)
+  oldEnd = datetime.datetime.strptime(olddata.get('end'), old_format).strftime(new_format)
   #TODO write change to database , need to remove/modify old shift
-  # db.execute("""UPDATE shift SET startTime ='%s' and endTime='%s' where """)
+  res = db.execute("""SELECT id from shift where startTime= '%s' and endTime = '%s'"""%(oldStart,oldEnd))
+  res = res.fetchall()
+  print(res)
+  db.execute("""UPDATE shift SET startTime ='%s', endTime='%s' where id = (SELECT id from shift where startTime= '%s' and endTime = '%s');"""%(newStart, newEnd, oldStart, oldEnd))
+  db.commit()
   return jsonify(data)
 
 @app.route("/api/deleteEvent", methods = ['POST'])
