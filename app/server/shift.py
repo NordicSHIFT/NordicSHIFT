@@ -16,8 +16,14 @@ class Shift:
     def getStudent():
         return self.student
 
+    def setStudent(student):
+        self.student = student 
+
     def getStart():
         return self.start
 
     def getEnd():
         return self.end
+
+    def getLength(): 
+      return self.end - self.start 
