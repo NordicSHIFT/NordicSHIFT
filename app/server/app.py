@@ -249,7 +249,11 @@ def catch_all(path):
     if session.get("logged_in") == True or path == '/':
         return render_template("index.html")
     else:
-        session['attempted_url'] = path
+        print('path', path)
+        if path != 'favicon.ico': 
+          session['attempted_url'] = path
+          #this kind of works, except if you attempted to get to managerdashboard, then
+          #log in as a student, it redirects you to the managerdashboard later. and vice versa
         return redirect("/login")
 
 # This is a function that will redirect you to a credential protected page.
