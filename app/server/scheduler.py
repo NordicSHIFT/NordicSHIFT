@@ -25,8 +25,8 @@ class Scheduler:
         return self.good_schedules
 
     def scheduler(shifts, students): #where it all goes down 
-        self.available_shifts = shifts 
         while (self.good_schedules.length() < 3): 
+          self.available_shifts = shifts 
           while self.available_shifts.length() != 0: 
             shift = self.available_shifts.pop()
             i = 0
