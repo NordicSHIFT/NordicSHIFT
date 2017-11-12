@@ -2,6 +2,7 @@
 
 A time management software written as part of our senior project.
 
+[![Licence](./LICENSE)]
 
 ## Getting Started
 
