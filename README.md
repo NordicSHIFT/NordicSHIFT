@@ -4,6 +4,8 @@ A time management software written as part of our senior project.
 
  [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 
+[![Heroku](https://heroku-badge.herokuapp.com/?app=nordicshift)](https://nordicshift.herokuapp.com/)
+
 ## Getting Started
 
 ### Prerequisites
