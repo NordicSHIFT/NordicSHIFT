@@ -101,9 +101,13 @@ class ManagerCal extends Component {
       'Access-Control-Allow-Origin': '*'}
     }
     this.props.removeToDelete(); 
-    
+    console.log("myEvent", event); 
+    console.log("start", start); 
+    console.log("end", end); 
     axios.post('/api/moveEvent', {
       myEvent: event,
+      oldStart: event.start, 
+      oldEnd: event.end,
       newStart: start,
       newEnd: end
     }, config) 

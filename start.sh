@@ -13,7 +13,6 @@ run() {
 usage() {
   cat << EOF >&2
 Usage: $PROGNAME [OPTIONS]
-
 -b: builds the react code before start
 -h:  displays help message
 EOF
