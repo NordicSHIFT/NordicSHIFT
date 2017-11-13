@@ -1,7 +1,7 @@
 // Calendar.js
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import { Container, Row, Col } from 'reactstrap';
+import { Container, Row, Col, Button } from 'reactstrap';
 import axios from 'axios';
 import ManagerMenubar from './children/ManagerMenubar'; 
 import ManagerCal from './children/ManagerCal'; 
@@ -198,6 +198,9 @@ class ManagerPlanner extends Component {
           {this.state.deleteFormInvisible ? 
             null
             : <Col xs="3"><EditShiftForm id="editForm" ref="editForm" submitForm={this.formInfoToCal} deleteShift={this.deleteShift} stopDelete={this.stopDelete}/></Col>}
+          <a href="generateSchedule">
+            <Button>Generate Schedule</Button>
+          </a>
         </Row>
       </div>
     );
