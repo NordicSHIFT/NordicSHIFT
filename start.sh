@@ -1,12 +1,9 @@
 #! /bin/bash
 PROGNAME=$0
-
-build() {
-    (cd app/static; npm run build)
 }
 
 run() {
-    source './.env'
+    source '.env'
     python3 ./app/server/app.py
 }
 
