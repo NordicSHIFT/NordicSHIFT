@@ -11,8 +11,6 @@ import os
 import hashlib, uuid
 
 app = Flask(__name__, static_folder="../static/dist", template_folder="../static")
-
-app = Flask(__name__, static_folder="../static/dist", template_folder="../static")
 app.secret_key=os.environ['SECRET_KEY']
 salt =  os.environ['SALT']
 
