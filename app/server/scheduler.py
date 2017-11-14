@@ -61,4 +61,8 @@ class Scheduler:
           to the list of good schedules'''
           self.good_schedules.add(self.assigned_shifts) 
 
-        pass
+def main():
+    pass
+
+if __name__ == "__main__":
+    main()
