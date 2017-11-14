@@ -35,7 +35,7 @@ class Scheduler:
         '''
         return self.good_schedules
 
-    def scheduler(self, shifts, students): #where it all goes down
+    def scheduler(self, gishifts, students): #where it all goes down
         while (self.good_schedules.length() < 3):
           self.available_shifts = shifts
           while self.available_shifts.length() != 0:
