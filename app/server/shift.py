@@ -4,26 +4,26 @@ Primarily used for scheduler.py
 '''
 
 class Shift:
-    def __init__(dept, student, start, end):
+    def __init__(self, dept, start, end, student = None):
         self.dept = dept
         self.student = student
         self.start = start
         self.end = end
 
-    def getDept():
+    def getDept(self):
         return self.dept
 
-    def getStudent():
+    def getStudent(self):
         return self.student
 
-    def setStudent(student):
-        self.student = student 
+    def setStudent(self, student):
+        self.student = student
 
-    def getStart():
+    def getStart(self):
         return self.start
 
-    def getEnd():
+    def getEnd(self):
         return self.end
 
-    def getLength(): 
-      return self.end - self.start 
+    def getLength(self):
+      return self.end - self.start

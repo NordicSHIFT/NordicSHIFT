@@ -23,42 +23,44 @@ SESSION = sessionmaker(bind=ENGINE)
 DB = SESSION()
 
 SALT = os.environ['SALT']
+# DB.execute("""INSERT into department(name) VALUES ('LIS');""")
+# DB.commit()
+# EX_STRING = """INSERT INTO student\
+#             (username, password, name, hours, seniority)\
+#             VALUES ('%s', '%s', '%s', %d, %d);
+#             """
+#
+# DB.execute(EX_STRING%('thomas', hash_pw('baseball'), 'thomas', 10, 1))
+# DB.execute(EX_STRING%('billy', hash_pw('icecream'), 'billy', 10, 1))
+# DB.execute(EX_STRING%('ben', hash_pw('puppies'), 'ben', 10, 1))
+# DB.execute(EX_STRING%('rob', hash_pw('robots'), 'rob', 10, 1))
+# DB.execute(EX_STRING%('zach', hash_pw('unicorns'), 'zach', 10, 1))
+# DB.execute(EX_STRING%('anne', hash_pw('robots'), 'anne', 10, 1))
+# DB.execute(EX_STRING%('sam', hash_pw('password'), 'sam', 10, 1))
+# DB.execute(EX_STRING%('kylie', hash_pw('pw'), 'kylie', 10, 1))
+# DB.execute(EX_STRING%('lisa', hash_pw('notpass'), 'lisa', 10, 1))
+# DB.execute(EX_STRING%('katie', hash_pw('secret'), 'katie', 10, 1))
 
-EX_STRING = """INSERT INTO student\
-            (username, password, name, hours, seniority)\
-            VALUES ('%s', '%s', '%s', %d, %d);
-            """
-
-DB.execute(EX_STRING%('thomas', hash_pw('baseball'), 'thomas', 10, 1))
-DB.execute(EX_STRING%('billy', hash_pw('icecream'), 'billy', 10, 1))
-DB.execute(EX_STRING%('ben', hash_pw('puppies'), 'ben', 10, 1))
-DB.execute(EX_STRING%('rob', hash_pw('robots'), 'rob', 10, 1))
-DB.execute(EX_STRING%('zach', hash_pw('unicorns'), 'zach', 10, 1))
-DB.execute(EX_STRING%('anne', hash_pw('robots'), 'anne', 10, 1))
-DB.execute(EX_STRING%('sam', hash_pw('password'), 'sam', 10, 1))
-DB.execute(EX_STRING%('kylie', hash_pw('pw'), 'kylie', 10, 1))
-DB.execute(EX_STRING%('lisa', hash_pw('notpass'), 'lisa', 10, 1))
-DB.execute(EX_STRING%('katie', hash_pw('secret'), 'katie', 10, 1))
-
-EX_STRING = """INSERT INTO unavailability\
-            (starttime, endtime, student)\
-            VALUES ('%s', '%s', %d)
-            """
-
-DB.execute(EX_STRING%('2017-11-07 15:45:00', '2017-11-07 16:45:00', 1))
-DB.execute(EX_STRING%('2017-11-07 15:45:00', '2017-11-07 16:45:00', 2))
-DB.execute(EX_STRING%('2017-11-07 16:45:00', '2017-11-07 17:45:00', 1))
-DB.execute(EX_STRING%('2017-11-07 16:45:00', '2017-11-07 17:45:00', 3))
-DB.execute(EX_STRING%('2017-11-07 11:45:00', '2017-11-07 12:45:00', 2))
-DB.execute(EX_STRING%('2017-11-08 15:45:00', '2017-11-08 16:45:00', 1))
-DB.execute(EX_STRING%('2017-11-08 15:45:00', '2017-11-08 16:45:00', 2))
-DB.execute(EX_STRING%('2017-11-08 16:45:00', '2017-11-08 17:45:00', 1))
-DB.execute(EX_STRING%('2017-11-08 16:45:00', '2017-11-08 17:45:00', 3))
-DB.execute(EX_STRING%('2017-11-08 11:45:00', '2017-11-08 12:45:00', 2))
-
+# DB.commit()
+# EX_STRING = """INSERT INTO unavailability\
+#             (starttime, endtime, student)\
+#             VALUES ('%s', '%s', (SELECT id from student where username = '%s'))
+#             """
+#
+# DB.execute(EX_STRING%('2017-11-07 15:45:00', '2017-11-07 16:45:00', 'thomas'))
+# DB.execute(EX_STRING%('2017-11-07 15:45:00', '2017-11-07 16:45:00', 'billy'))
+# DB.execute(EX_STRING%('2017-11-07 16:45:00', '2017-11-07 17:45:00', 'thomas'))
+# DB.execute(EX_STRING%('2017-11-07 16:45:00', '2017-11-07 17:45:00', 'ben'))
+# DB.execute(EX_STRING%('2017-11-07 11:45:00', '2017-11-07 12:45:00', 'billy'))
+# DB.execute(EX_STRING%('2017-11-08 15:45:00', '2017-11-08 16:45:00', 'thomas'))
+# DB.execute(EX_STRING%('2017-11-08 15:45:00', '2017-11-08 16:45:00', 'anne'))
+# DB.execute(EX_STRING%('2017-11-08 16:45:00', '2017-11-08 17:45:00', 'lisa'))
+# DB.execute(EX_STRING%('2017-11-08 16:45:00', '2017-11-08 17:45:00', 'ben'))
+# DB.execute(EX_STRING%('2017-11-08 11:45:00', '2017-11-08 12:45:00', 'kyle'))
+# DB.commit()
 EX_STRING = """INSERT INTO shift\
-            (starttime, endtime)\
-            VALUES ('%s', '%s')
+            (starttime, endtime, dept)\
+            VALUES ('%s', '%s', (SELECT id from department where name = 'LIS'));
             """
 DB.execute(EX_STRING%('2017-11-07 10:00:00', '2017-11-07 11:00:00'))
 DB.execute(EX_STRING%('2017-11-07 11:00:00', '2017-11-07 12:00:00'))

@@ -4,45 +4,56 @@ It will use a list of available shifts and students
 in order to find a way to schedule everyone in accross
 multiple shifts.
 '''
+import os
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from student import Student
+from shift import Shift
+
+postgresql_uri=os.environ['DATABASE_URL']
+engine=create_engine(postgresql_uri)
+
+Session = sessionmaker(bind=engine)
+db = Session()
 
 class Scheduler:
-    def __init__():
+    def __init__(self):
         self.bad_schedules = set()
         self.good_schedules = set()
         self.available_shifts = [] #stack, top of stack == end of list
         self.assigned_shifts = [] #stack
-    
-    def getBadSchedules():
+
+    def getBadSchedules(self):
         '''
         Returns the list of failed schedules
         '''
         return self.bad_schedules
 
-    def getGoodSchedules():
+    def getGoodSchedules(self):
         '''
         Returns the list of successfull schedules
         '''
         return self.good_schedules
 
-    def scheduler(shifts, students): #where it all goes down 
-        while (self.good_schedules.length() < 3): 
-          self.available_shifts = shifts 
-          while self.available_shifts.length() != 0: 
+    def scheduler(self, shifts, students): #where it all goes down
+        while (self.good_schedules.length() < 3):
+          self.available_shifts = shifts
+          while self.available_shifts.length() != 0:
             shift = self.available_shifts.pop()
             i = 0
-            while shift.getStudent() == None and i < students.length(): 
+            while shift.getStudent() == None and i < students.length():
               student = students[i]
-              if student.isAvailable(shift): 
+              if student.isAvailable(shift):
                 #add student to shift
                 shift.setStudent(student)
                 student.assignShift(shift)
                 self.assigned_shifts.append(shift)
                 if (self.assigned_shifts in self.bad_schedules or self.assigned_shifts in self.good_schedules):
-                  '''This schedule has already been tried, so we want to remove the shift we 
+                  '''This schedule has already been tried, so we want to remove the shift we
                     just assigned, and then look for another student
                   '''
                   self.assigned_shifts.remove(-1)
-                  student.removeFromShift(shift) 
+                  student.removeFromShift(shift)
                   shift.setStudent(None)
                   i += 1
               else:
@@ -59,6 +70,23 @@ class Scheduler:
               self.available_shifts.append(lastAssigned)
           '''if we make it here, every shift has been assigned a student, we add the schedule
           to the list of good schedules'''
-          self.good_schedules.add(self.assigned_shifts) 
+          self.good_schedules.add(self.assigned_shifts)
 
-        pass
+def main():
+    res = db.execute("""SELECT * from shift;""")
+    shiftRe = res.fetchall()
+    shifts = []
+    for shift in shiftRe:
+        newShift = Shift(shift[2],shift[4],shift[5])
+        shifts.append(newShift)
+
+    res = db.execute("""SELECT * from student;""")
+    studentRe = res.fetchall()
+    students = []
+    for student in studentRe:
+        newStudent = Student(student[1],student[4])
+        res = db.execute("""SELECT starttime, endtime from unavailability where student = %d; """%(int(student[0])))
+        newStudent.assignedUnavailability(res)
+
+if __name__ == "__main__":
+    main()
