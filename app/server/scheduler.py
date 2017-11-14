@@ -60,3 +60,9 @@ class Scheduler:
           '''if we make it here, every shift has been assigned a student, we add the schedule
           to the list of good schedules'''
           self.good_schedules.add(self.assigned_shifts) 
+
+def main():
+    pass
+
+if __name__ == "__main__":
+    main()
