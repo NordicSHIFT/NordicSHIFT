@@ -9,7 +9,7 @@ class Scheduler:
     def __init__():
         self.bad_schedules = set()
         self.good_schedules = set()
-        self.available_shifts = [] #stack, top of stack, end of list
+        self.available_shifts = [] #stack, top of stack == end of list
         self.assigned_shifts = [] #stack
     
     def getBadSchedules():
@@ -34,7 +34,7 @@ class Scheduler:
               student = students[i]
               if student.isAvailable(shift): 
                 #add student to shift
-                shift.student = student 
+                shift.setStudent(student)
                 student.assignShift(shift)
                 self.assigned_shifts.append(shift)
                 if (self.assigned_shifts in self.bad_schedules or self.assigned_shifts in self.good_schedules):

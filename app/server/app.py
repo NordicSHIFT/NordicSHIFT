@@ -242,7 +242,7 @@ def deleteEvent():
   new_format = '%Y-%m-%d %H:%M:%S'
   start=datetime.datetime.strptime(myEvent.get('start'), old_format).strftime(new_format)
   end = datetime.datetime.strptime(myEvent.get('end'), old_format).strftime(new_format)
-  db.execute("""DELETE from shift WHERE startTime ='%s' and endTime='%s'"""%(start,end))
+  db.execute("""DELETE from shift WHERE startTime ='%s' and endTime='%s' and dept = (SELECT dept from manager where username = '%s')"""%(start,end, session.get('username')))
   return "done"
 
 @app.route("/api/generateSchedule", methods=['POST'])
