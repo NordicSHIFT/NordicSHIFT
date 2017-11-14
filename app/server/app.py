@@ -216,6 +216,7 @@ def moveEvent():
   #print("title: ", title)
   data = request.get_json(silent=True)
   myEvent = data.get('myEvent')
+  print(data)
   #print(myEvent)
   old_format = "%Y-%m-%dT%H:%M:%S.%fZ"
   new_format = '%Y-%m-%d %H:%M:%S'
@@ -223,7 +224,7 @@ def moveEvent():
   print("startTime", startTime)
   start=datetime.datetime.strptime(startTime, old_format).strftime(new_format)
   endTime = data.get('oldEnd')
-  print("endTime". endTime)
+  print("endTime", endTime)
   end = datetime.datetime.strptime(endTime, old_format).strftime(new_format)
   #TODO write change to database , need to remove/modify old shift
   #db.execute("""UPDATE shift SET startTime ='%s' and endTime='%s' where startTime='%s' and endTime='%s'"""%(start,end,start,end))
