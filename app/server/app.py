@@ -11,8 +11,6 @@ import os
 import hashlib, uuid
 
 app = Flask(__name__, static_folder="../static/dist", template_folder="../static")
-
-app = Flask(__name__, static_folder="../static/dist", template_folder="../static")
 app.secret_key=os.environ['SECRET_KEY']
 salt =  os.environ['SALT']
 
@@ -197,6 +195,7 @@ def addEvent():
   myEvent['hexColor'] = '#f89406'
   #print('myEvent: ', myEvent)
   data = myEvent
+  print(data)
   #TODO write change to database, add new shift
   old_format = "%Y-%m-%dT%H:%M:%S.%fZ"
   new_format = '%Y-%m-%d %H:%M:%S'
@@ -215,41 +214,41 @@ def moveEvent():
   #title = request.args.get("title")
   #print("title: ", title)
   data = request.get_json(silent=True)
-  myEvent = data.get('myEvent')
   print(data)
-  #print(myEvent)
+  myEvent = data.get('myEvent')
   old_format = "%Y-%m-%dT%H:%M:%S.%fZ"
   new_format = '%Y-%m-%d %H:%M:%S'
-  startTime = data.get('oldStart')
-  print("startTime", startTime)
-  start=datetime.datetime.strptime(startTime, old_format).strftime(new_format)
-  endTime = data.get('oldEnd')
-  print("endTime", endTime)
-  end = datetime.datetime.strptime(endTime, old_format).strftime(new_format)
+  newStart=datetime.datetime.strptime(data.get('newStart'), old_format).strftime(new_format)
+  newEnd = datetime.datetime.strptime(data.get('newEnd'), old_format).strftime(new_format)
+  oldStart = datetime.datetime.strptime(data.get('oldStart'), old_format).strftime(new_format)
+  oldEnd = datetime.datetime.strptime(data.get('oldEnd'), old_format).strftime(new_format)
   #TODO write change to database , need to remove/modify old shift
-  #db.execute("""UPDATE shift SET startTime ='%s' and endTime='%s' where startTime='%s' and endTime='%s'"""%(start,end,start,end))
-  return jsonify(myEvent)
+  res = db.execute("""SELECT id from shift where startTime= '%s' and endTime = '%s'"""%(oldStart,oldEnd))
+  res = res.fetchall()
+  print(res)
+  db.execute("""UPDATE shift SET startTime ='%s', endTime='%s' where id = (SELECT id from shift where startTime= '%s' and endTime = '%s');"""%(newStart, newEnd, oldStart, oldEnd))
+  db.commit()
+  return jsonify(data)
 
 @app.route("/api/deleteEvent", methods = ['POST'])
 def deleteEvent():
   print ("IN DELETE EVENT")
   data = request.get_json(silent=True)
   myEvent = data.get('myEvent')
+  # print(data, myEvent.get('start'), myEvent.get('end'))
   #TODO delete shift from database
   #maybe return new list of events, or leave it to the front end
   old_format = "%Y-%m-%dT%H:%M:%S.%fZ"
   new_format = '%Y-%m-%d %H:%M:%S'
-  startTime = data.get('start')
-  start=datetime.datetime.strptime(startTime, old_format).strftime(new_format)
-  endTime = data.get('end')
-  end = datetime.datetime.strptime(endTime, old_format).strftime(new_format)
+  start=datetime.datetime.strptime(myEvent.get('start'), old_format).strftime(new_format)
+  end = datetime.datetime.strptime(myEvent.get('end'), old_format).strftime(new_format)
   db.execute("""DELETE from shift WHERE startTime ='%s' and endTime='%s'"""%(start,end))
   return "done"
 
 @app.route("/api/generateSchedule", methods=['POST'])
 def generateSchedule():
   #calendarCall to fill in all the students' schedules to the db
-  #run the algorithm 
+  #run the algorithm
   #return the results
   return calendarCall()
 
@@ -260,7 +259,7 @@ def catch_all(path):
         return render_template("index.html")
     else:
         print('path', path)
-        if path != 'favicon.ico': 
+        if path != 'favicon.ico':
           session['attempted_url'] = path
           #this kind of works, except if you attempted to get to managerdashboard, then
           #log in as a student, it redirects you to the managerdashboard later. and vice versa
