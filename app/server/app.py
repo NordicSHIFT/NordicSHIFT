@@ -1,6 +1,7 @@
 # server.py
 from flask import Flask, flash, redirect, render_template, request, session, abort, jsonify
-from calRetrieve import *
+#from calRetrieve import *
+from oAuthCalls import *
 import datetime
 import os
 from sqlalchemy.ext.declarative import declarative_base
@@ -25,6 +26,10 @@ db = Session()
 def index():
     calendarCall()
     return render_template("index.html")
+
+@app.route("/authorize")
+def authorize(): 
+    return mainAuthorize()
 
 @app.route('/oauth2callback')
 def oauth2callback():
@@ -73,7 +78,7 @@ def loginC():
             session['logged_in'] = True
             print('manager logged in')
             go_to = check_and_redirect_back('/managerdashboard')
-            return  go_to
+            return go_to
         else:
             print('wrong combination for username and password for manager')
             return '/login'

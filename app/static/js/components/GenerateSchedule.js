@@ -39,7 +39,7 @@ class GenerateSchedule extends Component {
   generateSchedule() {
     var config = { headers: {
       'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': '*'}
+      'Access-Control-Allow-Origin': 'http://localhost:5000'}
     }
 
     axios.post('/api/generateSchedule', {

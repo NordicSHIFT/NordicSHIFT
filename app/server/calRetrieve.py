@@ -49,7 +49,7 @@ def calendarCall():
           i = 1
           #TODO add event to database 
     #print("EVENTS", events)
-    return json.dumps(eventsResult)
+    return flask.jsonify(eventsResult)
 
 
 # @app.route('/oauth2callback')
@@ -57,19 +57,23 @@ def mainOauth2callback():
   print("in callback")
   curr_dir = os.path.dirname(os.path.realpath(__file__))
   security_path = os.path.join(curr_dir, 'security')
-  cred_path =  os.path.join(security_path,
+  client_secrets_file =  os.path.join(security_path,
                                    'client_secrets.json')
   #print("cred_path", cred_path)
   #print('BEFORE FLOW')
   #print("redirect_uri=flask.url_for('oauth2callback', _external=True)",flask.url_for('oauth2callback', _external=True))
   flow = client.flow_from_clientsecrets(
-    cred_path,
+    client_secrets_file,
     scope='https://www.googleapis.com/auth/calendar.readonly',
     redirect_uri=flask.url_for('oauth2callback', _external=True))
   #print('AFTER FLOW')
   if 'code' not in flask.request.args:
     print("no code")
-    auth_uri = flow.step1_get_authorize_url()
+    auth_uri, state  = flow.authorization_url(
+      access_type='offline',include_granted_scopes='true'
+    )
+    print("auth_uri", auth_uri)
+    flask.session['state'] = state
     return flask.redirect(auth_uri)
   else:
     print("there was a code!")
