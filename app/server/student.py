@@ -4,9 +4,9 @@ Primarily used for scheduler.py
 '''
 
 class Student:
-    def __init__(self, username, hours, shiftAssigned = None, unavailability = []):
+    def __init__(self, username, hours, shiftAssigned = None, unavailability = set()):
         self.username = username
-        self.hours = hours
+        self.hours = float(hours)
         self.unavailability = unavailability
         self.shiftAssigned = shiftAssigned
 
@@ -15,7 +15,7 @@ class Student:
 
     def assignedUnavailability(self, content):
         for time in content:
-            self.unavailability.append(content)
+            self.unavailability.add(content)
 
     def getHours(self):
         return self.hours
@@ -28,7 +28,7 @@ class Student:
         return self.shiftAssigned
 
     def isAvailable(self, time): #time passed in should be in a format of a tuple with start and end timeslots
-        return not time in self.unavailable
+        return not (time in self.unavailability)
 
     def assignShift(self, shift):
         self.hours -= shift.getLength()
@@ -39,4 +39,9 @@ class Student:
         self.shiftAssigned.remove(shift)
 
     def __eq__(self, other):
+        if other == None:
+            return False
         return self.username == other.username
+
+    def __str__(self):
+        return self.username
