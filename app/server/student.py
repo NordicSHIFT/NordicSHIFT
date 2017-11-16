@@ -37,3 +37,6 @@ class Student:
     def removeFromShift(self, shift):
         self.hours += shift.getLength()
         self.shiftAssigned.remove(shift)
+
+    def __eq__(self, other):
+        return self.username == other.username

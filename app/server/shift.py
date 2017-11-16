@@ -27,3 +27,6 @@ class Shift:
 
     def getLength(self):
       return self.end - self.start
+
+    def __eq__(self, other):
+        return (other.getStudent() == self.student and other.getDept() == self.dept and other.getStart() == self.start and other.getEnd() == self.end)
