@@ -18,11 +18,11 @@ db = Session()
 
 class Scheduler:
     def __init__(self):
-        self.bad_schedules = set()
-        self.good_schedules = set()
+        self.bad_schedules = []
+        self.good_schedules = []
         self.available_shifts = [] #stack, top of stack == end of list
         self.assigned_shifts = [] #stack
-
+        # TODO make bad_schedules and good_schedules sets
     def getBadSchedules(self):
         '''
         Returns the list of failed schedules
@@ -35,13 +35,13 @@ class Scheduler:
         '''
         return self.good_schedules
 
-    def scheduler(self, gishifts, students): #where it all goes down
-        while (self.good_schedules.length() < 3):
+    def scheduler(self, shifts, students): #where it all goes down
+        while (len(self.good_schedules) < 3):
           self.available_shifts = shifts
-          while self.available_shifts.length() != 0:
+          while len(self.available_shifts) != 0:
             shift = self.available_shifts.pop()
             i = 0
-            while shift.getStudent() == None and i < students.length():
+            while shift.getStudent() == None and i < len(students):
               student = students[i]
               if student.isAvailable(shift):
                 #add student to shift
@@ -63,7 +63,7 @@ class Scheduler:
             if shift.getStudent() == None:
               '''we could not find an available student, the schedule we attempted won't work,
               we add it to the bad schedules, and remove the last assigned shift '''
-              self.bad_schedules.add(self.assigned_shifts)
+              self.bad_schedules.append(self.assigned_shifts)
               lastAssigned = self.assigned_shifts.pop()
               student.removeFromShift(lastAssigned)
               lastAssigned.setStudent(None)
@@ -88,5 +88,7 @@ def main():
         res = db.execute("""SELECT starttime, endtime from unavailability where student = %d; """%(int(student[0])))
         newStudent.assignedUnavailability(res)
 
+    schedule = Scheduler()
+    schedule.scheduler(shifts, students)
 if __name__ == "__main__":
     main()
