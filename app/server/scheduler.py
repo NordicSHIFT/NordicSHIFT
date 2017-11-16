@@ -72,7 +72,6 @@ class Scheduler:
           to the list of good schedules'''
           self.good_schedules.append(self.assigned_shifts)
 
-
 def main():
     res = db.execute("""SELECT * from shift;""")
     shiftRe = res.fetchall()
