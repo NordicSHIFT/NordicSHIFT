@@ -70,7 +70,7 @@ class Scheduler:
               self.available_shifts.append(lastAssigned)
           '''if we make it here, every shift has been assigned a student, we add the schedule
           to the list of good schedules'''
-          self.good_schedules.add(self.assigned_shifts)
+          self.good_schedules.append(self.assigned_shifts)
 
 def main():
     res = db.execute("""SELECT * from shift;""")
