@@ -87,7 +87,7 @@ class Schedule:
         return self.unassignedShift.pop()
 
     def __str__(self):
-        return "Assigned Shift: " + str(self.assignShift) + " \n Unassigned Shift" + str(self.unassignedShift)
+        return "Assigned Shift: " + str(self.assignedShift) + " \n Unassigned Shift" + str(self.unassignedShift)
 
 
 def main():
@@ -141,13 +141,11 @@ def scheduler2(schedule, students):
 
                     if hoursLeft >= topShift.getLength():
                         topShift.setStudent(student)
-                        print(topShift.getStudent())
-                        print(currSched.getAssignedShift().add(topShift))
-                        newAssigned = currSched.getAssignedShift().add(topShift)
-                        newUnassigned = currSched.getUnassignedShift()
-                        print("new assigned: "+ newAssigned)
-                        print("new unassigned: "+ newUnassigned)
-                        newSched = Schedule(newAssigned.update(newUnassigned))
+                        currSched.getAssignedShift().add(topShift)
+                        currSched.getUnassignedShift()
+                        newShifts = currSched.getAssignedShift().union(currSched.getUnassignedShift())
+
+                        newSched = Schedule(newShifts)
                         print("new schedule: ", newSched)
                         if newSched not in visited:
                             scheduleStack.push(newSched)
