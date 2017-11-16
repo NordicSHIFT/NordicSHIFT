@@ -70,7 +70,8 @@ class Scheduler:
               self.available_shifts.append(lastAssigned)
           '''if we make it here, every shift has been assigned a student, we add the schedule
           to the list of good schedules'''
-          self.good_schedules.add(self.assigned_shifts)
+          self.good_schedules.append(self.assigned_shifts)
+
 
 def main():
     res = db.execute("""SELECT * from shift;""")
@@ -90,5 +91,29 @@ def main():
 
     schedule = Scheduler()
     schedule.scheduler(shifts, students)
+
+def scheduler2(shifts, students): 
+    #shifts is a schedule objec
+    scheduleStack = [shifts]
+    visited = {}
+
+    while (not scheduleStack.isEmpty()): 
+        currSched = scheduleStack.pop() 
+        topShift = currSched.getFirstUnassigned() #should remove it from unassigned as well  
+        for (student in students): 
+            if student.isAvailable(currSched, topShift): 
+              
+                topShift.setStudent(student)
+                newAssigned = currSched.getAssigned().add(topShift)
+                newUnassigned = currShed.getUnassigned() 
+
+                newSched = Schedule(newAssigned, newUnassigned)
+                if newSched not in visited: 
+                    scheduleStack.push(newSched)
+                    visited.push(newSched)
+
+
+
 if __name__ == "__main__":
     main()
+
