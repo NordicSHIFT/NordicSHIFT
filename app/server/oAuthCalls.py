@@ -5,13 +5,18 @@ import google.oauth2.credentials
 import google_auth_oauthlib.flow
 import googleapiclient.discovery
 
-def calendarCall():
-  if 'credentials' not in flask.session: 
-    return flask.redirect('authorize')
+import webbrowser
 
+def calendarCall():
+  print("in calendar call")
+  if 'credentials' not in flask.session:
+      print ("not credentials in flask.session")
+      return flask.redirect('authorize')
+  print("before credentials = ")
   credentials = google.oauth2.credentials.Credentials(
       **flask.session['credentials'])
 
+  print("before calendar = ... ")
   calendar = googleapiclient.discovery.build('calendar', 'v3', credentials=credentials)
 
   #TODO change this to the dates entered from the generateSchedule screen
@@ -23,6 +28,7 @@ def calendarCall():
   print("Getting the next week's events")
   studentWorkers = ['chriia01@luther.edu', 'nguyli03@luther.edu', 'hermaa02@luther.edu', 'davial02@luther.edu', 'millro04@luther.edu','hangde01@luther.edu', 'css@luther.edu']
   for studentId in studentWorkers:
+    print("studentId", studentId)
     eventsResult = calendar.events().list(
       calendarId=studentId, timeMin=now, timeMax=end, singleEvents=True,
       orderBy='startTime').execute()
@@ -61,6 +67,7 @@ def mainAuthorize():
   response = flask.redirect(authorization_url)
   response.headers.add('Access-Control-Allow-Origin', '*')
   print("response: ", response)
+  webbrowser.open(authorization_url, new=0)
   return response
 
 def mainOauth2callback():

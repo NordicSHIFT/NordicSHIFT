@@ -1,7 +1,7 @@
 # server.py
 from flask import Flask, flash, redirect, render_template, request, session, abort, jsonify
-from calRetrieve import *
-#from oAuthCalls import *
+#from calRetrieve import *
+from oAuthCalls import *
 import datetime
 import os
 from sqlalchemy.ext.declarative import declarative_base
@@ -24,7 +24,7 @@ db = Session()
 
 @app.route("/")
 def index():
-    calendarCall()
+    #calendarCall()
     return render_template("index.html")
 
 @app.route("/authorize")
@@ -255,7 +255,9 @@ def generateSchedule():
   #calendarCall to fill in all the students' schedules to the db
   #run the algorithm
   #return the results
-  return calendarCall()
+  print("about to make calendar call")
+  calendarCall()
+  return "calendarCall()"
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
