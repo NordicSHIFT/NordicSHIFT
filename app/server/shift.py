@@ -32,7 +32,10 @@ class Shift:
         return (other.getStudent() == self.student and other.getDept() == self.dept and other.getStart() == self.start and other.getEnd() == self.end)
 
     def __str__(self):
-        pass
+        res = str(self.start)+" " +str(self.end)+" "+str(self.dept)
+        if self.student!=None:
+            res+=" "+str(self.student)
+        return res
 
     def __hash__(self):
         res = str(self.start)+str(self.end)+str(self.dept)
