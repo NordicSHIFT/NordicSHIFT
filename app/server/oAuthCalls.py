@@ -11,7 +11,7 @@ def calendarCall():
   print("in calendar call")
   if 'credentials' not in flask.session:
       print ("not credentials in flask.session")
-      return flask.redirect('authorize')
+      return flask.redirect('/authorize')
   print("before credentials = ")
   credentials = google.oauth2.credentials.Credentials(
       **flask.session['credentials'])
@@ -67,7 +67,7 @@ def mainAuthorize():
   response = flask.redirect(authorization_url)
   response.headers.add('Access-Control-Allow-Origin', '*')
   print("response: ", response)
-  webbrowser.open(authorization_url, new=0)
+  #webbrowser.open(authorization_url, new=0)
   return response
 
 def mainOauth2callback():

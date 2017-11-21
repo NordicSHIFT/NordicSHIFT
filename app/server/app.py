@@ -29,6 +29,7 @@ def index():
 
 @app.route("/authorize")
 def authorize(): 
+    print("in app.py.authorize")
     return mainAuthorize()
 
 @app.route('/oauth2callback')

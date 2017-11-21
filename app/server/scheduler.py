@@ -78,7 +78,8 @@ class Scheduler:
         return self.assignedShift
 
     def __eq__(self, other):
-        if self.assignedShift == other.getAssignedShift()
+        if self.assignedShift == other.getAssignedShift(): 
+            return True
 
 
 def main():
