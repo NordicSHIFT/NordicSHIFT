@@ -36,27 +36,29 @@ class ManagerProfile extends Component {
     console.log(this.state.isHidden);
   }
 
-  // getData(){
-  //   axios.get('/managerprofile')
-  //   .then(({ data })=> {
-  //     	this.setState({
-  //         department: data.department,
-  //         student: data.student
-  //       });
-  //     })
-  //     .catch((err)=> {})
-  // }
+  getData(){
+    axios.get('/api/managerprofile/getData')
+    .then(({ data })=> {
+      	// this.setState({
+        //   department: data.department,
+        //   student: data.student
+        // });
+        console.log("come here");
+      })
+      .catch((err)=> {})
+  }
 
   render() {
     return (
       <div id ='managerprofile'>
         <ManagerMenubar />
         <div>
+          <div>{this.getData.bind(this)}</div>
           <label><b>Department</b></label>
           <p> Current department:{this.state.department} </p>
           <div>
             <button onClick={this.editDepartment} >Edit Department</button>
-            {this.state.isHidden ? null : 
+            {this.state.isHidden ? null :
               <div id="editDepartment">
                 <input type="text" id ='department' placeholder="Enter Department" className="department" value = {this.state.department} onChange={this.updateInputValueDepartment} required />
                 <button type="submit" id='departmentButton' onClick ={this.sendInfo}>Submit</button>

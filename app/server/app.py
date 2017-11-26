@@ -28,7 +28,7 @@ def index():
     return render_template("index.html")
 
 @app.route("/authorize")
-def authorize(): 
+def authorize():
     return mainAuthorize()
 
 @app.route('/oauth2callback')
@@ -149,6 +149,14 @@ def myprofile():
         return redirect('/studentprofile')
     else:
         return redirect('/login')
+@app.route('/api/managerprofile/getData')
+def getManagerData():
+    res = db.execute("""SELECT * from department where id = (SELECT dept from manager where username = '%s');"""%session.get('username'))
+    department = res.fetchall()
+    print(department)
+    res = db.execute("""SELECT * from student join ds on student.id = ds.student where ds.dept = %d"""%int(department[0]))
+    students = res
+    print(students)
 
 @app.route('/api/managerprofile', methods = ['POST'])
 def managerprofile():
