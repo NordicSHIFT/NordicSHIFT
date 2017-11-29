@@ -6,6 +6,14 @@ import google_auth_oauthlib.flow
 import googleapiclient.discovery
 
 import webbrowser
+import datetime
+
+def authCall(): 
+    print("in calendar call")
+    if 'credentials' not in flask.session:
+        print ("not credentials in flask.session")
+        return flask.redirect('/authorize')
+    return flask.render_template("index.html")
 
 def calendarCall():
   print("in calendar call")
@@ -26,7 +34,7 @@ def calendarCall():
   endDate = datetime.datetime.now()
 
   print("Getting the next week's events")
-  studentWorkers = ['chriia01@luther.edu', 'nguyli03@luther.edu', 'hermaa02@luther.edu', 'davial02@luther.edu', 'millro04@luther.edu','hangde01@luther.edu', 'css@luther.edu']
+  studentWorkers = ['chriia01@luther.edu', 'davial02@luther.edu', 'millro04@luther.edu','hangde01@luther.edu', 'css@luther.edu', 'nguyli03@luther.edu', 'hermaa02@luther.edu']
   for studentId in studentWorkers:
     print("studentId", studentId)
     eventsResult = calendar.events().list(
@@ -35,40 +43,47 @@ def calendarCall():
     events = eventsResult.get('items', [])
     i = 0
     for event in events: 
+        #TODO write the events to the database here, as unavailability
       if i==0:
         print(studentId, "'s first event")
-        print("start: ",event['start']['dateTime'])
-        print('end: ', event['end']['dateTime'])
+        print("the event: ", event)
+        if 'dateTime' not in event['start']: 
+            #if it is an all day event, the object is a little different millro04 has one on 12/1
+            print("start: ", event['start']['date'])
+            print("end: ", event['end']['date'])
+        else: 
+            print("start: ",event['start']['dateTime'])
+            print('end: ', event['end']['dateTime'])
         i = 1
         #TODO add event to database 
   #print("EVENTS", events)
   return flask.jsonify(eventsResult)
 
 def mainAuthorize(): 
-  print("in mainAuthorize")
-  curr_dir = os.path.dirname(os.path.realpath(__file__))
-  security_path = os.path.join(curr_dir, 'security')
-  client_secrets_file =  os.path.join(security_path,'client_secrets.json')
-  flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
-      client_secrets_file, scopes=['https://www.googleapis.com/auth/calendar.readonly'])
+    print("in mainAuthorize")
+    curr_dir = os.path.dirname(os.path.realpath(__file__))
+    security_path = os.path.join(curr_dir, 'security')
+    client_secrets_file =  os.path.join(security_path,'client_secrets.json')
+    flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
+        client_secrets_file, scopes=['https://www.googleapis.com/auth/calendar.readonly'])
 
-  flow.redirect_uri = flask.url_for('oauth2callback', _external=True)
+    flow.redirect_uri = flask.url_for('oauth2callback', _external=True)
 
-  authorization_url, state = flow.authorization_url(
-      # Enable offline access so that you can refresh an access token without
-      # re-prompting the user for permission. Recommended for web server apps.
-      access_type='offline',
-      # Enable incremental authorization. Recommended as a best practice.
-      include_granted_scopes='true')
+    authorizationUrl, state = flow.authorization_url(
+        # Enable offline access so that you can refresh an access token without
+        # re-prompting the user for permission. Recommended for web server apps.
+        access_type='offline',
+        # Enable incremental authorization. Recommended as a best practice.
+        include_granted_scopes='true')
 
-  flask.session['state'] = state
-  print("line before return flask.redirect(authorization_url)")
-  print(flask.redirect(authorization_url))
-  response = flask.redirect(authorization_url)
-  response.headers.add('Access-Control-Allow-Origin', '*')
-  print("response: ", response)
-  #webbrowser.open(authorization_url, new=0)
-  return response
+    flask.session['state'] = state
+    response = flask.redirect(authorizationUrl)
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    # print("response: ", str(response))
+    # webbrowser.open(authorizationUrl, new=0)
+    # response = flask.Response(headers={'Access-Control-Allow-Origin': '*'},is_redirect=True,url=authorizationUrl)
+    return flask.redirect(authorizationUrl)
+    # return response
 
 def mainOauth2callback():
   state = flask.session['state']

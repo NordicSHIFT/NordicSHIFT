@@ -1,7 +1,6 @@
 # server.py
 from flask import Flask, flash, redirect, render_template, request, session, abort, jsonify
-#from calRetrieve import *
-from oAuthCalls import *
+from oAuth import *
 import datetime
 import os
 from sqlalchemy.ext.declarative import declarative_base
@@ -10,9 +9,11 @@ from sqlalchemy.orm import sessionmaker, relationship
 import createTables
 import os
 import hashlib, uuid
+from flask_cors import CORS
 
 app = Flask(__name__, static_folder="../static/dist", template_folder="../static")
 app.secret_key=os.environ['SECRET_KEY']
+CORS(app)
 salt =  os.environ['SALT']
 
 Base=declarative_base()
@@ -24,8 +25,8 @@ db = Session()
 
 @app.route("/")
 def index():
-    #calendarCall()
-    return render_template("index.html")
+    return authCall()
+    #return render_template("index.html")
 
 @app.route("/authorize")
 def authorize(): 
@@ -251,14 +252,14 @@ def deleteEvent():
   db.execute("""DELETE from shift WHERE startTime ='%s' and endTime='%s' and dept = (SELECT dept from manager where username = '%s')"""%(start,end, session.get('username')))
   return "done"
 
-@app.route("/api/generateSchedule", methods=['POST'])
+@app.route("/api/generateSchedule", methods=['GET','OPTIONS'])
 def generateSchedule():
   #calendarCall to fill in all the students' schedules to the db
   #run the algorithm
   #return the results
   print("about to make calendar call")
-  calendarCall()
-  return "calendarCall()"
+  return calendarCall()
+  #return "calendarCall()"
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
@@ -286,4 +287,5 @@ def check_and_redirect_back(alt_url):
 
 if __name__ == "__main__":
     createTables.createTables()
+    os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
     app.run(debug=True)
