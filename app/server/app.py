@@ -9,11 +9,11 @@ from sqlalchemy.orm import sessionmaker, relationship
 import createTables
 import os
 import hashlib, uuid
-from flask_cors import CORS
+# from flask_cors import CORS
 
 app = Flask(__name__, static_folder="../static/dist", template_folder="../static")
 app.secret_key=os.environ['SECRET_KEY']
-CORS(app)
+# CORS(app)
 salt =  os.environ['SALT']
 
 Base=declarative_base()

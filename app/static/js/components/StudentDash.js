@@ -19,9 +19,9 @@ class StudentDashboard extends Component {
         </div>
         
         <CardColumns>
-          <CardDash source={require("./../../img/goat1.png")} title={"MyProfile"} descr={"Edit your profile"} linkto={"/studentprofile"}/>
+          <CardDash source={require("./../../img/profile.jpg")} title={"MyProfile"} descr={"Edit your profile"} linkto={"/studentprofile"}/>
           <CardDash source={require("./../../img/goat2.png")} title={"Availablilty"} descr={"Review Availability"} linkto={"/availability"}/>
-          <CardDash source={require("./../../img/goat3.png")} title={"Schedule"} descr={"See Current Schedule"} linkto={"/studentschedule"}/>
+          <CardDash source={require("./../../img/schedule.jpg")} title={"Schedule"} descr={"See Current Schedule"} linkto={"/studentschedule"}/>
         </CardColumns>
       </div>
     );
