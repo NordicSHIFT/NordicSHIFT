@@ -9,6 +9,7 @@ import ManagerMenubar from './children/ManagerMenubar';
 
 import 'react-datepicker/dist/react-datepicker.css';
 
+var origin = window.location.origin;
 
 class GenerateSchedule extends Component {
   constructor() {
@@ -42,12 +43,10 @@ class GenerateSchedule extends Component {
       'Access-Control-Allow-Origin': '*'}
     }
 
-    axios.post('/api/generateSchedule', {
-      dataFromFront: "make the schedule"
-    }, config) 
+    axios.get(origin + '/api/generateSchedule', config) 
     .then( (response) => {
       alert('response made it back'); 
-      console.log(response.data); 
+      console.log("response.data.items: ",response.data.items); 
       this.setState({schedule: String(response.data.items)});
     })
     .catch(function (error) {
