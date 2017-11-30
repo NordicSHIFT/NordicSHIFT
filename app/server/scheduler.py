@@ -84,10 +84,10 @@ class Schedule:
         return self.assignedShift == other.getAssignedShift()
 
     def __hash__(self):
-        res = "" 
-        for shift in self.unassignedShift: 
+        res = ""
+        for shift in self.unassignedShift:
             res += str(shift)
-        for shift in self.assignedShift: 
+        for shift in self.assignedShift:
             res += str(shift)
         return hash(res)
 
@@ -95,12 +95,12 @@ class Schedule:
         return self.unassignedShift.pop()
 
     def __str__(self):
-        returnStr = "Assigned Shifts: \n" 
-        for shift in self.assignedShift: 
-            returnStr += str(shift) 
+        returnStr = "Assigned Shifts: \n"
+        for shift in self.assignedShift:
+            returnStr += str(shift)
             returnStr += "\n"
-        for shift in self.unassignedShift: 
-            returnStr += str(shift) 
+        for shift in self.unassignedShift:
+            returnStr += str(shift)
             returnStr += "\n"
         return returnStr
         #return "Assigned Shift: " + str(self.assignedShift) + " \n Unassigned Shift" + str(self.unassignedShift)
@@ -114,7 +114,7 @@ def main():
         newShift = Shift(shift[2],shift[4],shift[5])
         shifts.append(newShift)
 
-    res = db.execute("""SELECT * from student;""")
+    res = db.execute("""SELECT * from student where hours>0;""")
     studentRe = res.fetchall()
     students = []
     for student in studentRe:
@@ -134,10 +134,13 @@ def scheduler2(schedule, students):
     visited = set()
     complete = set()
     print("in scheduler")
+    f = open('schedulerResult.txt','w')
     while len(scheduleStack)>0:
         currSched = scheduleStack.pop()
         if len(currSched.getUnassignedShift()) == 0:
-            print('current full Shed: ',currSched)
+            print('current full Sched: ',currSched)
+            f.write('current full Sched\n')
+            f.write(str(currSched))
             complete.add(currSched)
         else:
             print("come in else")
