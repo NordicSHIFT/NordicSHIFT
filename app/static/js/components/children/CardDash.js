@@ -3,10 +3,10 @@ import { Card, CardTitle, CardText, CardImg, CardImgOverlay } from 'reactstrap';
 
 class CardDash extends Component {
   render() { return (
-    <div width="30%">
+    <div width={this.props.width}>
       <a href={this.props.linkto}>
       <Card inverse>
-        <CardImg width="30%" src={this.props.source} alt="Card image cap" />
+        <CardImg src={this.props.source} alt="Card image cap" />
         <CardImgOverlay>
           <CardTitle className="text-outline">{this.props.title}</CardTitle>
           <CardText>

@@ -8,7 +8,7 @@ class StudentSchedule extends Component {
     return ( 
       <div className="Schedule">
         <StudentMenubar /> 
-        <h3> Schedule! </h3> 
+        <h3> Your Schedule and Availability </h3> 
         <StudentCal /> 
       </div>
     );
