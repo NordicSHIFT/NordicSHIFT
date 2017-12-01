@@ -30,11 +30,11 @@ export class StudentMenubar extends Component {
                 <NavLink href="/studentdashboard">Dashboard</NavLink>
             </NavItem>
             <NavItem>
-                <NavLink href="/studentschedule">Schedule</NavLink>
+                <NavLink href="/studentschedule">Schedule & Availability</NavLink>
             </NavItem>
-            <NavItem>
+            {/* <NavItem>
                 <NavLink href="/availability">Availability</NavLink>
-            </NavItem>
+            </NavItem> */}
             <NavItem>
                 <NavLink href="/studentprofile">My Profile</NavLink>
             </NavItem>
