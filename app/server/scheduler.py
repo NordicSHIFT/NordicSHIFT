@@ -134,7 +134,6 @@ def main():
     scheduler2(schedule, students)
 
 def scheduler2(schedule, students):
-    #shifts is a schedule objec
     scheduleStack = [schedule]
     visited = set()
     complete = set()
