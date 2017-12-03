@@ -41,13 +41,13 @@ def calendarCall():
         orderBy='startTime').execute()
       events = eventsResult.get('items', [])
       i = 0
-      for event in events: 
+      for event in events:
         if i==0:
           print(studentId, "'s first event")
           print("start: ",event['start']['dateTime'])
           print('end: ', event['end']['dateTime'])
           i = 1
-          #TODO add event to database 
+          #TODO add event to database
     #print("EVENTS", events)
     return flask.jsonify(eventsResult)
 

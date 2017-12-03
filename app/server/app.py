@@ -1,7 +1,6 @@
 # server.py
 from flask import Flask, flash, redirect, render_template, request, session, abort, jsonify
-from calRetrieve import *
-#from oAuthCalls import *
+from oAuth import *
 import datetime
 import os
 from sqlalchemy.ext.declarative import declarative_base
@@ -27,11 +26,12 @@ db = Session()
 
 @app.route("/")
 def index():
-    calendarCall()
-    return render_template("index.html")
+    return authCall()
+    #return render_template("index.html")
 
 @app.route("/authorize")
 def authorize():
+    print("in app.py.authorize")
     return mainAuthorize()
 
 @app.route('/oauth2callback')
@@ -253,22 +253,22 @@ def deleteEvent():
   db.execute("""DELETE from shift WHERE startTime ='%s' and endTime='%s' and dept = (SELECT dept from manager where username = '%s')"""%(start,end, session.get('username')))
   return "done"
 
-@app.route("/api/generateSchedule", methods=['POST'])
+@app.route("/api/generateSchedule", methods=['GET','OPTIONS'])
 def generateSchedule():
-  #calendarCall to fill in all the students' schedules to the db
-  #run the algorithm
-  #return the results
-  res = db.execute("""SELECT * from shift where dept =(SELECT dept from manager where username = '%s');"""%session.get("username"))
-  shiftRe = res.fetchall()
-  shifts = []
-  for shift in shiftRe:
+    #calendarCall to fill in all the students' schedules to the db
+    #run the algorithm
+    #return the results
+    res = db.execute("""SELECT * from shift where dept =(SELECT dept from manager where username = '%s');"""%session.get("username"))
+    shiftRe = res.fetchall()
+    shifts = []
+    for shift in shiftRe:
       newShift = Shift(shift[2],shift[4],shift[5])
       shifts.append(newShift)
 
-  res = db.execute("""SELECT * from student inner join ds on student.id = ds.student where ds.department = (SELECT dept from manager where username ='%s');"""%session.get("username"))
-  studentRe = res.fetchall()
-  students = []
-  for student in studentRe:
+    res = db.execute("""SELECT * from student inner join ds on student.id = ds.student where ds.department = (SELECT dept from manager where username ='%s');"""%session.get("username"))
+    studentRe = res.fetchall()
+    students = []
+    for student in studentRe:
       newStudent = Student(student[1],student[4])
       res = db.execute("""SELECT starttime, endtime from unavailability where student = %d; """%(int(student[0])))
       res = res.fetchall()
@@ -276,9 +276,11 @@ def generateSchedule():
           newStudent.assignedUnavailability((item[0],item[1]))
       students.append(newStudent)
 
-  schedule = Schedule(shifts)
-  scheduler2(schedule, students)
-  return calendarCall()
+    print("about to make calendar call")
+    schedule = Schedule(shifts)
+    schedules = scheduler2(schedule, students)
+    res = [schedule.serialize() for schedule in schedules]
+    return jsonify(res)
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
@@ -306,4 +308,5 @@ def check_and_redirect_back(alt_url):
 
 if __name__ == "__main__":
     createTables.createTables()
+    os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
     app.run(debug=True)

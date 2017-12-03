@@ -79,7 +79,6 @@ class Schedule:
 
     def getUnassignedShift(self):
         return self.unassignedShift
-
     def __eq__(self, other):
         return self.assignedShift == other.getAssignedShift()
 
@@ -104,7 +103,12 @@ class Schedule:
             returnStr += "\n"
         return returnStr
         #return "Assigned Shift: " + str(self.assignedShift) + " \n Unassigned Shift" + str(self.unassignedShift)
-
+    # This function will help with jsonify the object Schedule
+    def serialize(self):
+        return {
+            "assigned shifts": [shift.serialize() for shift in self.assignedShift],
+            "unassigned shifts": [shift.serialize() for shift in self.unassignedShift]
+        }
 
 def main():
     res = db.execute("""SELECT * from shift where dept = 4 ;""")
@@ -135,22 +139,22 @@ def scheduler2(schedule, students):
     visited = set()
     complete = set()
     print("in scheduler")
-    f = open('schedulerResult.txt','w')
+    # f = open('schedulerResult.txt','w')
     while len(scheduleStack)>0:
         currSched = scheduleStack.pop()
         if len(currSched.getUnassignedShift()) == 0:
             # print('current full Sched: ',currSched)
-            f.write('current full Sched\n')
-            f.write(str(currSched))
+            # f.write('current full Sched\n')
+            # f.write(str(currSched))
             complete.add(currSched)
         else:
             # print("come in else")
             topShift = currSched.getFirstUnassigned() #should remove it from unassigned as well
             for student in students:
-                print(student)
+                # print(student)
                 if student.isAvailable(topShift):
-                    if (student.username == "ben"):
-                        print("ben is available")
+                    # if (student.username == "ben"):
+                        # print("ben is available")
                     #print('student is available at this time')
                     # hoursLeft will look at the hours that a student have and calculate how many
                     # hours a student have left for a specific schedule
@@ -164,8 +168,8 @@ def scheduler2(schedule, students):
                             hoursLeft -= float(shift.getLength())
 
                     if hoursLeft >= topShift.getLength():
-                        if (student.username == "ben"):
-                            print("ben had hours")
+                        # if (student.username == "ben"):
+                            # print("ben had hours")
                         topShift.setStudent(student)
                         currSched.getAssignedShift().add(topShift)
                         currSched.getUnassignedShift()
@@ -176,7 +180,8 @@ def scheduler2(schedule, students):
                         if newSched not in visited:
                             scheduleStack.append(newSched)
                             visited.add(newSched)
-
+    print("schedule complete")
+    return complete
 
 if __name__ == "__main__":
     main()

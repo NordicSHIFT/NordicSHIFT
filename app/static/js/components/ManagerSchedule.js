@@ -8,7 +8,7 @@ class ManagerSchedule extends Component {
     return ( 
       <div className="Schedule">
         <ManagerMenubar /> 
-        <h3> This is where the currently planned schedule will go </h3> 
+        <h3> This is the currently planned schedule. </h3> 
         <StudentCal /> 
       </div>
     );

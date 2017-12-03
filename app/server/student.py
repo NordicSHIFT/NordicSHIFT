@@ -45,3 +45,6 @@ class Student:
 
     def __str__(self):
         return self.username
+
+    def serialize(self):
+        return self.username
