@@ -10,6 +10,9 @@ from sqlalchemy.orm import sessionmaker, relationship
 import createTables
 import os
 import hashlib, uuid
+from scheduler import scheduler2, Schedule
+from shift import Shift
+from student import Student
 
 app = Flask(__name__, static_folder="../static/dist", template_folder="../static")
 app.secret_key=os.environ['SECRET_KEY']
@@ -28,7 +31,7 @@ def index():
     return render_template("index.html")
 
 @app.route("/authorize")
-def authorize(): 
+def authorize():
     return mainAuthorize()
 
 @app.route('/oauth2callback')
@@ -255,6 +258,26 @@ def generateSchedule():
   #calendarCall to fill in all the students' schedules to the db
   #run the algorithm
   #return the results
+  res = db.execute("""SELECT * from shift where dept =(SELECT dept from manager where username = '%s');"""%session.get("username"))
+  shiftRe = res.fetchall()
+  shifts = []
+  for shift in shiftRe:
+      newShift = Shift(shift[2],shift[4],shift[5])
+      shifts.append(newShift)
+
+  res = db.execute("""SELECT * from student inner join ds on student.id = ds.student where ds.department = (SELECT dept from manager where username ='%s');"""%session.get("username"))
+  studentRe = res.fetchall()
+  students = []
+  for student in studentRe:
+      newStudent = Student(student[1],student[4])
+      res = db.execute("""SELECT starttime, endtime from unavailability where student = %d; """%(int(student[0])))
+      res = res.fetchall()
+      for item in res:
+          newStudent.assignedUnavailability((item[0],item[1]))
+      students.append(newStudent)
+
+  schedule = Schedule(shifts)
+  scheduler2(schedule, students)
   return calendarCall()
 
 @app.route('/', defaults={'path': ''})
