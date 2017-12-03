@@ -48,7 +48,7 @@ class GenerateSchedule extends Component {
       alert('response made it back');
       // console.log("response.data.items: ",response.data.items);
       // this.setState({schedule: String(response.data.items)});
-      console.log("schedules:", response.data);
+      console.log("schedules:", response.data[0]);
     })
     .catch(function (error) {
       console.log(error);
