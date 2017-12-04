@@ -45,9 +45,13 @@ class Shift:
 
 # this function help with jsonify
     def serialize(self):
+        if (None != self.student):
+            student = self.student.serialize()
+        else:
+            student = ""
         return {
         "start" : self.start,
         "end" : self.end,
         "dept": self.dept,
-        "student" : self.student.serialize()
+        "student" : student
     }

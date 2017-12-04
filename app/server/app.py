@@ -182,16 +182,18 @@ def managerprofile():
 #naming standard, if it is being used for an axios call, use /api/name_of_call
 @app.route("/api/calendar")
 def calendar():
-  myevents = [{
-  "title": 'Your Shift',
-  "start":  datetime.datetime(2017, 10, 31, 13),
-  "end": datetime.datetime(2017, 10, 31, 15),
-  "hexColor" : "#ee5f5b"
-  }]
-  #color scheme colors: #62c462, #5bc0de, #f89406,  #ee5f5b
-  print("In calendar!!")
-  data = {"calData": "Calendar Data", "events": myevents}
-  return jsonify(data)
+    myevents = []
+    res = db.execute("""SELECT * from shift where dept =(SELECT dept from manager where username = '%s');"""%session.get("username"))
+    shiftRe = res.fetchall()
+    shifts = []
+    for shift in shiftRe:
+        newShift = Shift(shift[2],shift[4],shift[5])
+        myevents.append(newShift)
+    #color scheme colors: #62c462, #5bc0de, #f89406,  #ee5f5b
+    print("In calendar!!")
+    serialEvents = [event.serialize() for event in myevents]
+    data = {"calData": "Calendar Data", "events": serialEvents}
+    return jsonify(data)
 
 @app.route("/api/addEvent", methods = ['POST'])
 def addEvent():
