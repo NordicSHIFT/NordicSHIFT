@@ -26,7 +26,32 @@ class Shift:
         return self.end
 
     def getLength(self):
-      return self.end - self.start
+      return round(float((self.end - self.start).seconds / 3600),2)
 
     def __eq__(self, other):
         return (other.getStudent() == self.student and other.getDept() == self.dept and other.getStart() == self.start and other.getEnd() == self.end)
+
+    def __str__(self):
+        res = str(self.start)+" " +str(self.end)+" "+str(self.dept)
+        if self.student!=None:
+            res+=" "+str(self.student)
+        return res
+
+    def __hash__(self):
+        res = str(self.start)+str(self.end)+str(self.dept)
+        if self.student!=None:
+            res+=str(self.student)
+        return hash(res)
+
+# this function help with jsonify
+    def serialize(self):
+        if (None != self.student):
+            student = self.student.serialize()
+        else:
+            student = ""
+        return {
+        "start" : self.start,
+        "end" : self.end,
+        "dept": self.dept,
+        "student" : student
+    }

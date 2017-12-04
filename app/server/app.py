@@ -9,6 +9,9 @@ from sqlalchemy.orm import sessionmaker, relationship
 import createTables
 import os
 import hashlib, uuid
+from scheduler import scheduler2, Schedule
+from shift import Shift
+from student import Student
 
 app = Flask(__name__, static_folder="../static/dist", template_folder="../static")
 app.secret_key=os.environ['SECRET_KEY']
@@ -27,7 +30,7 @@ def index():
     #return render_template("index.html")
 
 @app.route("/authorize")
-def authorize(): 
+def authorize():
     print("in app.py.authorize")
     return mainAuthorize()
 
@@ -179,16 +182,18 @@ def managerprofile():
 #naming standard, if it is being used for an axios call, use /api/name_of_call
 @app.route("/api/calendar")
 def calendar():
-  myevents = [{
-  "title": 'Your Shift',
-  "start":  datetime.datetime(2017, 10, 31, 13),
-  "end": datetime.datetime(2017, 10, 31, 15),
-  "hexColor" : "#ee5f5b"
-  }]
-  #color scheme colors: #62c462, #5bc0de, #f89406,  #ee5f5b
-  print("In calendar!!")
-  data = {"calData": "Calendar Data", "events": myevents}
-  return jsonify(data)
+    myevents = []
+    res = db.execute("""SELECT * from shift where dept =(SELECT dept from manager where username = '%s');"""%session.get("username"))
+    shiftRe = res.fetchall()
+    shifts = []
+    for shift in shiftRe:
+        newShift = Shift(shift[2],shift[4],shift[5])
+        myevents.append(newShift)
+    #color scheme colors: #62c462, #5bc0de, #f89406,  #ee5f5b
+    print("In calendar!!")
+    serialEvents = [event.serialize() for event in myevents]
+    data = {"calData": "Calendar Data", "events": serialEvents}
+    return jsonify(data)
 
 @app.route("/api/addEvent", methods = ['POST'])
 def addEvent():
@@ -252,12 +257,32 @@ def deleteEvent():
 
 @app.route("/api/generateSchedule", methods=['GET','OPTIONS'])
 def generateSchedule():
-  #calendarCall to fill in all the students' schedules to the db
-  #run the algorithm
-  #return the results
-  print("about to make calendar call")
-  return calendarCall()
-  #return "calendarCall()"
+    #calendarCall to fill in all the students' schedules to the db
+    #run the algorithm
+    #return the results
+    res = db.execute("""SELECT * from shift where dept =(SELECT dept from manager where username = '%s');"""%session.get("username"))
+    shiftRe = res.fetchall()
+    shifts = []
+    for shift in shiftRe:
+      newShift = Shift(shift[2],shift[4],shift[5])
+      shifts.append(newShift)
+
+    res = db.execute("""SELECT * from student inner join ds on student.id = ds.student where ds.department = (SELECT dept from manager where username ='%s');"""%session.get("username"))
+    studentRe = res.fetchall()
+    students = []
+    for student in studentRe:
+      newStudent = Student(student[1],student[4])
+      res = db.execute("""SELECT starttime, endtime from unavailability where student = %d; """%(int(student[0])))
+      res = res.fetchall()
+      for item in res:
+          newStudent.assignedUnavailability((item[0],item[1]))
+      students.append(newStudent)
+
+    print("about to make calendar call")
+    schedule = Schedule(shifts)
+    schedules = scheduler2(schedule, students)
+    res = [schedule.serialize() for schedule in schedules]
+    return jsonify(res)
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')

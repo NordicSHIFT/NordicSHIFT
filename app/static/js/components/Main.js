@@ -11,6 +11,7 @@ import ManagerSchedule from './ManagerSchedule'
 import Login from './Login'
 import Signup from './Signup'
 import GenerateSchedule from './GenerateSchedule'
+import SuggestedSchedules from './SuggestedSchedules'
 
 // The Main component renders one of the three provided
 // Routes (provided that one matches). Both the /roster
@@ -31,6 +32,7 @@ const Main = () => (
       <Route path='/studentprofile' component={StudentProfile}/>
       <Route path='/managerprofile' component={ManagerProfile}/>
       <Route path='/generateSchedule' component={GenerateSchedule}/>
+      <Route path='/suggestedSchedules' component={SuggestedSchedules}/>
     </Switch>
   </main>
 )

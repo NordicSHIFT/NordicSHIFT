@@ -16,10 +16,10 @@ engine=create_engine(postgresql_uri)
 Session = sessionmaker(bind=engine)
 db = Session()
 
-class Scheduler:
+class Schedule:
     def __init__(self, shifts):
-        self.assignedShift = ()
-        self.unassignedShift = ()
+        self.assignedShift = set()
+        self.unassignedShift = set()
         for shift in shifts:
             if shift.getStudent() == None:
                 self.unassignedShift.add(shift)
@@ -77,52 +77,110 @@ class Scheduler:
     def getAssignedShift(self):
         return self.assignedShift
 
+    def getUnassignedShift(self):
+        return self.unassignedShift
     def __eq__(self, other):
-        if self.assignedShift == other.getAssignedShift(): 
-            return True
+        return self.assignedShift == other.getAssignedShift()
 
+    def __hash__(self):
+        res = ""
+        for shift in self.unassignedShift:
+            res += str(shift)
+        for shift in self.assignedShift:
+            res += str(shift)
+        return hash(res)
+
+    def getFirstUnassigned(self):
+        return self.unassignedShift.pop()
+
+    def __str__(self):
+        returnStr = "Assigned Shifts: \n"
+        for shift in self.assignedShift:
+            returnStr += str(shift)
+            returnStr += "\n"
+        for shift in self.unassignedShift:
+            returnStr += str(shift)
+            returnStr += "\n"
+        return returnStr
+        #return "Assigned Shift: " + str(self.assignedShift) + " \n Unassigned Shift" + str(self.unassignedShift)
+    # This function will help with jsonify the object Schedule
+    def serialize(self):
+        return {
+            "assigned shifts": [shift.serialize() for shift in self.assignedShift],
+            "unassigned shifts": [shift.serialize() for shift in self.unassignedShift]
+        }
 
 def main():
-    res = db.execute("""SELECT * from shift;""")
+    res = db.execute("""SELECT * from shift where dept = 4 ;""")
     shiftRe = res.fetchall()
     shifts = []
     for shift in shiftRe:
         newShift = Shift(shift[2],shift[4],shift[5])
         shifts.append(newShift)
 
-    res = db.execute("""SELECT * from student;""")
+    res = db.execute("""SELECT * from student where hours > 0;""")
     studentRe = res.fetchall()
     students = []
     for student in studentRe:
         newStudent = Student(student[1],student[4])
+        # print(newStudent)
         res = db.execute("""SELECT starttime, endtime from unavailability where student = %d; """%(int(student[0])))
-        newStudent.assignedUnavailability(res)
+        res = res.fetchall()
+        for item in res:
+            newStudent.assignedUnavailability((item[0],item[1]))
+        students.append(newStudent)
 
-    schedule = Scheduler()
-    schedule.scheduler(shifts, students)
+    schedule = Schedule(shifts)
+    scheduler2(schedule, students)
 
-def scheduler2(shifts, students): 
-    #shifts is a schedule objec
-    scheduleStack = [shifts]
-    visited = {}
+def scheduler2(schedule, students):
+    scheduleStack = [schedule]
+    visited = set()
+    complete = set()
+    print("in scheduler")
+    # f = open('schedulerResult.txt','w')
+    while len(scheduleStack)>0:
+        currSched = scheduleStack.pop()
+        if len(currSched.getUnassignedShift()) == 0:
+            # print('current full Sched: ',currSched)
+            # f.write('current full Sched\n')
+            # f.write(str(currSched))
+            complete.add(currSched)
+        else:
+            # print("come in else")
+            topShift = currSched.getFirstUnassigned() #should remove it from unassigned as well
+            for student in students:
+                # print(student)
+                if student.isAvailable(topShift):
+                    # if (student.username == "ben"):
+                        # print("ben is available")
+                    #print('student is available at this time')
+                    # hoursLeft will look at the hours that a student have and calculate how many
+                    # hours a student have left for a specific schedule
+                    hoursLeft = float(student.getHours())
 
-    while (not scheduleStack.isEmpty()): 
-        currSched = scheduleStack.pop() 
-        topShift = currSched.getFirstUnassigned() #should remove it from unassigned as well  
-        for (student in students): 
-            if student.isAvailable(currSched, topShift): 
-              
-                topShift.setStudent(student)
-                newAssigned = currSched.getAssigned().add(topShift)
-                newUnassigned = currShed.getUnassigned() 
+                    # loop through the currShed's assigned shift to see how many hours that
+                    # particular student has been assigned and whether the time they have left is enough to assigned new shift
+                    for shift in currSched.getAssignedShift():
+                        #print(shift)
+                        if shift.getStudent() == student:
+                            hoursLeft -= float(shift.getLength())
 
-                newSched = Schedule(newAssigned, newUnassigned)
-                if newSched not in visited: 
-                    scheduleStack.push(newSched)
-                    visited.push(newSched)
+                    if hoursLeft >= topShift.getLength():
+                        # if (student.username == "ben"):
+                            # print("ben had hours")
+                        topShift.setStudent(student)
+                        currSched.getAssignedShift().add(topShift)
+                        currSched.getUnassignedShift()
+                        newShifts = currSched.getAssignedShift().union(currSched.getUnassignedShift())
 
-
+                        newSched = Schedule(newShifts)
+                        #print("new schedule: ", newSched)
+                        if newSched not in visited:
+                            scheduleStack.append(newSched)
+                            visited.add(newSched)
+    print("schedule complete")
+    return complete
 
 if __name__ == "__main__":
     main()
-

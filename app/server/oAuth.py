@@ -8,7 +8,7 @@ import googleapiclient.discovery
 import webbrowser
 import datetime
 
-def authCall(): 
+def authCall():
     print("in calendar call")
     if 'credentials' not in flask.session:
         print ("not credentials in flask.session")
@@ -42,24 +42,24 @@ def calendarCall():
       orderBy='startTime').execute()
     events = eventsResult.get('items', [])
     i = 0
-    for event in events: 
+    for event in events:
         #TODO write the events to the database here, as unavailability
       if i==0:
         print(studentId, "'s first event")
         print("the event: ", event)
-        if 'dateTime' not in event['start']: 
+        if 'dateTime' not in event['start']:
             #if it is an all day event, the object is a little different millro04 has one on 12/1
             print("start: ", event['start']['date'])
             print("end: ", event['end']['date'])
-        else: 
+        else:
             print("start: ",event['start']['dateTime'])
             print('end: ', event['end']['dateTime'])
         i = 1
-        #TODO add event to database 
+        #TODO add event to database
   #print("EVENTS", events)
   return flask.jsonify(eventsResult)
 
-def mainAuthorize(): 
+def mainAuthorize():
     print("in mainAuthorize")
     curr_dir = os.path.dirname(os.path.realpath(__file__))
     security_path = os.path.join(curr_dir, 'security')
@@ -92,7 +92,7 @@ def mainOauth2callback():
   client_secrets_file =  os.path.join(security_path,'client_secrets.json')
 
   flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
-      client_secrets_file, scopes=['https://www.googleapis.com/auth/calendar.readonly'], state=state) 
+      client_secrets_file, scopes=['https://www.googleapis.com/auth/calendar.readonly'], state=state)
   flow.redirect_uri = flask.url_for('oauth2callback', _external=True)
 
   authorization_response = flask.request.url
