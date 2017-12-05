@@ -267,7 +267,7 @@ def generateSchedule():
       newShift = Shift(shift[2],shift[4],shift[5])
       shifts.append(newShift)
 
-    res = db.execute("""SELECT * from student inner join ds on student.id = ds.student where ds.department = (SELECT dept from manager where username ='%s');"""%session.get("username"))
+    res = db.execute("""SELECT * from student inner join ds on student.id = ds.student where student.hours > 0 and ds.department = (SELECT dept from manager where username ='%s');"""%session.get("username"))
     studentRe = res.fetchall()
     students = []
     for student in studentRe:
