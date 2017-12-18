@@ -18,7 +18,9 @@ function extractEventDetails(slotInfo) {
   const startMinute = startDate.getMinutes(); 
   const endHour = endDate.getHours() > 12 ? endDate.getHours() - 12 : endDate.getHours(); 
   const endMinute = endDate.getMinutes(); 
-  const endPeriod = endDate.getHours() > 11 ? "PM" : "AM"; 
+  const endPeriod = endDate.getHours() > 11 ? "PM" : "AM";  
+  var days = {1:false,2:false,3:false,4:false,5:false,6:false,0:false}; 
+  days[endDate.getDay()] = true; 
   const stateReturn =  {
     startDate: startDate, 
     endDate: endDate, 
@@ -27,15 +29,16 @@ function extractEventDetails(slotInfo) {
     startPeriod: startPeriod, 
     endHour: endHour.toString(), 
     endMinute: endMinute.toString(), 
-    endPeriod: endPeriod
+    endPeriod: endPeriod, 
+    days: days
   }
   return stateReturn; 
 }
 
 function changeEventFromForm(form) {
     //convert start time
-    console.log("form", form); 
     var start = form.state.startDate; 
+    start.setDate(start.getDate() - start.getDay()); 
     start.setMinutes(form.state.startMinute); 
     if (form.state.startPeriod == "AM") {
       start.setHours(form.state.startHour); 
@@ -47,6 +50,7 @@ function changeEventFromForm(form) {
     } 
     //convert end time
     var end = form.state.endDate; 
+    end.setDate(end.getDate() - end.getDay()); 
     end.setMinutes(form.state.endMinute); 
     if (form.state.endPeriod == "AM") {
       end.setHours(form.state.endHour); 
@@ -56,14 +60,25 @@ function changeEventFromForm(form) {
       const endHour = (origEndHour == 12) ? origEndHour : origEndHour + 12;  
       end.setHours(endHour) ; 
     } 
-    console.log("shiftTitle", form.state.shiftTitle); 
-    const theEvent = {
-      title: form.state.shiftTitle, 
-      start: start,
-      end: end, 
-    }; 
-    return theEvent
-
+    //create events list
+    var events = []; 
+    var i; 
+    for (i = 0; i < 7; i++) { 
+        if (form.state.days[i]) {
+            start.setDate(start.getDate() - start.getDay());
+            start.setDate(start.getDate() + i); 
+            end.setDate(end.getDate() - end.getDay());
+            end.setDate(end.getDate() + i); 
+            var theEvent = {
+                title: form.state.shiftTitle, 
+                start: new Date(start),
+                end: new Date(end), 
+            }
+            events = events.concat([theEvent]); 
+        }
+    }
+    console.log(events); 
+    return events
 }
 
 class ManagerPlanner extends Component {
@@ -76,44 +91,38 @@ class ManagerPlanner extends Component {
     this.slotInfoToForm = this.slotInfoToForm.bind(this);
     this.shiftToEdit = this.shiftToEdit.bind(this); 
     this.formInfoToCal = this.formInfoToCal.bind(this); 
-    this.postEvent = this.postEvent.bind(this); 
+    this.postEvents = this.postEvents.bind(this); 
     this.deleteShift = this.deleteShift.bind(this); 
     this.stopDelete = this.stopDelete.bind(this); 
   }
 
   slotInfoToForm(slotInfo) {
-    console.log("in slotInfoToForm"); 
+    console.log("slotInfoToForm"); 
     this.setState({formInvisible: false}); 
-    console.log("this.refs", this.refs); 
-    console.log("this.state", this.state); 
-    console.log("this.refs.form",this.refs.form); 
     if (this.state.shiftToDelete != null) {
       var event = this.state.shiftToDelete; 
       var theEvents = this.refs.calendar.state.events;
       const idx = theEvents.indexOf(event);  
       event.hexColor = "#f89406"; 
       theEvents.splice(idx,1,event); 
-      console.log("theEvents", theEvents); 
       this.refs.calendar.setState({events: theEvents}); 
     }
     this.refs.form.setState(extractEventDetails(slotInfo)); 
   }
 
-  shiftToEdit(event) {
-    console.log("in shift to edit"); 
+  shiftToEdit(event) { 
     var theEvents = this.refs.calendar.state.events;
     const idx = theEvents.indexOf(event);  
     event.hexColor = "#f44242"; 
     theEvents.splice(idx,1,event); 
-    console.log("theEvents", theEvents); 
     this.refs.calendar.setState({events: theEvents}); 
     this.setState({shiftToDelete: event, formInvisible: true, deleteFormInvisible: false}); 
   }
 
   formInfoToCal() {
-    console.log("this.state.form", this.refs.form); 
-    const theEvent = changeEventFromForm(this.refs.form); 
-    this.postEvent(theEvent); 
+      //this is for adding a shift
+    const theEvents = changeEventFromForm(this.refs.form); 
+    this.postEvents(theEvents); 
     //TODO send to back end to add to DB 
   }
 
@@ -158,26 +167,28 @@ class ManagerPlanner extends Component {
     }); 
   }
 
-  postEvent(theEvent) {
+  postEvents(theEvents) {
     var config = { headers: {
       'Content-Type': 'application/json',
       'Access-Control-Allow-Origin': '*'}
     }
-    var respData = axios.post('/api/addEvent', {
-      myEvent: theEvent
+    var respData = axios.post('/api/addEvents', {
+      myEvents: theEvents
     }, config) 
     .then( (response) => {
       const responseData = response.data 
-      const newEvent = {
-        title: responseData.title, 
-        start: new Date(responseData.start),
-        end: new Date(responseData.end), 
-        hexColor: responseData.hexColor
+      var i, newEvent, theEvents; 
+      theEvents = this.refs.calendar.state.events; 
+      for (i = 0; i < responseData.length; i++) {
+          newEvent = {
+            title: responseData[i].title, 
+            start: new Date(responseData[i].start),
+            end: new Date(responseData[i].end), 
+            hexColor: responseData[i].hexColor
+          }
+          theEvents = theEvents.concat([newEvent]); 
       }
-      console.log("newEvent: ", newEvent); 
-      console.log("this.refs.calendar.state", this.refs.calendar.state); 
-      const theevents = this.refs.calendar.state.events.concat([newEvent]); 
-      this.refs.calendar.setState({events: theevents}); 
+      this.refs.calendar.setState({events: theEvents}); 
       //this.setState({formInvisible: true}); 
     })
     .catch(function (error) {

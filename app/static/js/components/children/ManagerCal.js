@@ -56,7 +56,6 @@ class ManagerCal extends Component {
   }  
 
   retrieveEvents() {
-    console.log("Before Axios call"); 
     var url =  origin + '/api/calendar';  
     axios.get(url)
     .then(res => {
@@ -77,6 +76,7 @@ class ManagerCal extends Component {
   }
 
   addEditEvent(event) { 
+      console.log("in addEditEvent"); 
       const theEvent = this.props.shiftToEdit(event);   
   }
 

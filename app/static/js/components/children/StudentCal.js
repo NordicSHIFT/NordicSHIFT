@@ -46,7 +46,6 @@ class StudentCal extends Component {
   }  
 
   retrieveEvents() {
-    console.log("Before Axios call"); 
     var url =  origin + '/api/calendar';  
     axios.get(url)
     .then(res => {

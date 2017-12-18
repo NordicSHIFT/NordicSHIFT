@@ -218,6 +218,29 @@ def addEvent():
   print(myEvent)
   return jsonify(data)
 
+@app.route("/api/addEvents", methods = ['POST'])
+def addEvents():
+  #print ('IN ADD EVENT!')
+  #title = request.args.get("title")
+  #print("title: ", title)
+  data = request.get_json(silent=True)
+  myEvents = data.get('myEvents')
+  for myEvent in myEvents: 
+    myEvent['hexColor'] = '#f89406'
+    # print(myEvent)
+    #TODO write change to database, add new shift
+    old_format = "%Y-%m-%dT%H:%M:%S.%fZ"
+    new_format = '%Y-%m-%d %H:%M:%S'
+    startTime = myEvent.get('start')
+    print("startTime", startTime)
+    start=datetime.datetime.strptime(startTime, old_format).strftime(new_format)
+    endTime = myEvent.get('end')
+    end = datetime.datetime.strptime(endTime, old_format).strftime(new_format)
+    db.execute("""INSERT into shift(dept, startTime, endTime) VALUES ((SELECT dept from manager where username = '%s'), '%s', '%s');"""%(session.get('username'),start, end))
+    db.commit()
+    # print(myEvent)
+  return jsonify(myEvents)
+
 @app.route("/api/moveEvent", methods = ['POST'])
 def moveEvent():
   print ('IN MOVE EVENT!')
