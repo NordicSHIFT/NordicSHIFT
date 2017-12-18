@@ -195,51 +195,24 @@ def calendar():
     data = {"calData": "Calendar Data", "events": serialEvents}
     return jsonify(data)
 
-@app.route("/api/addEvent", methods = ['POST'])
-def addEvent():
-  #print ('IN ADD EVENT!')
-  #title = request.args.get("title")
-  #print("title: ", title)
-  data = request.get_json(silent=True)
-  myEvent = data.get('myEvent')
-  myEvent['hexColor'] = '#f89406'
-  #print('myEvent: ', myEvent)
-  data = myEvent
-  print(data)
-  #TODO write change to database, add new shift
-  old_format = "%Y-%m-%dT%H:%M:%S.%fZ"
-  new_format = '%Y-%m-%d %H:%M:%S'
-  startTime = data.get('start')
-  start=datetime.datetime.strptime(startTime, old_format).strftime(new_format)
-  endTime = data.get('end')
-  end = datetime.datetime.strptime(endTime, old_format).strftime(new_format)
-  db.execute("""INSERT into shift(dept, startTime, endTime) VALUES ((SELECT dept from manager where username = '%s'), '%s', '%s');"""%(session.get('username'),start, end))
-  db.commit()
-  print(myEvent)
-  return jsonify(data)
-
 @app.route("/api/addEvents", methods = ['POST'])
 def addEvents():
-  #print ('IN ADD EVENT!')
-  #title = request.args.get("title")
-  #print("title: ", title)
   data = request.get_json(silent=True)
   myEvents = data.get('myEvents')
   for myEvent in myEvents: 
-    myEvent['hexColor'] = '#f89406'
-    # print(myEvent)
-    #TODO write change to database, add new shift
     old_format = "%Y-%m-%dT%H:%M:%S.%fZ"
     new_format = '%Y-%m-%d %H:%M:%S'
+
     startTime = myEvent.get('start')
-    print("startTime", startTime)
     start=datetime.datetime.strptime(startTime, old_format).strftime(new_format)
+
     endTime = myEvent.get('end')
     end = datetime.datetime.strptime(endTime, old_format).strftime(new_format)
+
     db.execute("""INSERT into shift(dept, startTime, endTime) VALUES ((SELECT dept from manager where username = '%s'), '%s', '%s');"""%(session.get('username'),start, end))
     db.commit()
-    # print(myEvent)
-  return jsonify(myEvents)
+
+  return "success"
 
 @app.route("/api/moveEvent", methods = ['POST'])
 def moveEvent():
@@ -255,7 +228,6 @@ def moveEvent():
   newEnd = datetime.datetime.strptime(data.get('newEnd'), old_format).strftime(new_format)
   oldStart = datetime.datetime.strptime(data.get('oldStart'), old_format).strftime(new_format)
   oldEnd = datetime.datetime.strptime(data.get('oldEnd'), old_format).strftime(new_format)
-  #TODO write change to database , need to remove/modify old shift
   res = db.execute("""SELECT id from shift where startTime= '%s' and endTime = '%s'"""%(oldStart,oldEnd))
   res = res.fetchall()
   print(res)
@@ -269,8 +241,7 @@ def deleteEvent():
   data = request.get_json(silent=True)
   myEvent = data.get('myEvent')
   # print(data, myEvent.get('start'), myEvent.get('end'))
-  #TODO delete shift from database
-  #maybe return new list of events, or leave it to the front end
+  # TODO this will delete two shifts if they start and end at the same time
   old_format = "%Y-%m-%dT%H:%M:%S.%fZ"
   new_format = '%Y-%m-%d %H:%M:%S'
   start=datetime.datetime.strptime(myEvent.get('start'), old_format).strftime(new_format)

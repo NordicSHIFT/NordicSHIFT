@@ -71,32 +71,26 @@ class ShiftForm extends Component {
   toggleTues(event) {
     this.state.days[2] = !this.state.days[2]; 
     this.setState({days: this.state.days}); 
-    console.log(this.state.days); 
   }
   toggleWed(event) {
     this.state.days[3] = !this.state.days[3]; 
     this.setState({days: this.state.days}); 
-    console.log(this.state.days); 
   }
   toggleThur(event) {
     this.state.days[4] = !this.state.days[4]; 
     this.setState({days: this.state.days}); 
-    console.log(this.state.days); 
   }
   toggleFri(event) {
     this.state.days[5] = !this.state.days[5]; 
     this.setState({days: this.state.days}); 
-    console.log(this.state.days); 
   }
   toggleSat(event) {
     this.state.days[6] = !this.state.days[6]; 
     this.setState({days: this.state.days}); 
-    console.log(this.state.days); 
   }
   toggleSun(event) {
     this.state.days[0] = !this.state.days[0]; 
     this.setState({days: this.state.days}); 
-    console.log(this.state.days); 
   }
 
   render() {
@@ -188,6 +182,11 @@ class ShiftForm extends Component {
             <Row>
             <div check inline>
                 <Label check>
+                    <input type="checkbox" id="sunday" checked={this.state.days[0]} onClick={this.toggleSun}/>S
+                </Label>
+            </div>
+            <div check inline>
+                <Label check>
                     <input type="checkbox" id="monday" checked={this.state.days[1]} onClick={this.toggleMon} />M
                 </Label>
             </div>
@@ -214,11 +213,6 @@ class ShiftForm extends Component {
             <div check inline>
                 <Label check>
                     <input type="checkbox" id="saturday" checked={this.state.days[6]} onClick={this.toggleSat}/>S
-                </Label>
-            </div>
-            <div check inline>
-                <Label check>
-                    <input type="checkbox" id="sunday" checked={this.state.days[0]} onClick={this.toggleSun}/>S
                 </Label>
             </div>
             </Row>

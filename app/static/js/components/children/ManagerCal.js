@@ -75,11 +75,6 @@ class ManagerCal extends Component {
     }
   }
 
-  addEditEvent(event) { 
-      console.log("in addEditEvent"); 
-      const theEvent = this.props.shiftToEdit(event);   
-  }
-
   eventStyleGetter(event) {
     var backgroundColor = event.hexColor;
     var style = {
@@ -101,9 +96,6 @@ class ManagerCal extends Component {
       'Access-Control-Allow-Origin': '*'}
     }
     this.props.removeToDelete(); 
-    console.log("myEvent", event); 
-    console.log("start", start); 
-    console.log("end", end); 
     axios.post('/api/moveEvent', {
       myEvent: event,
       oldStart: event.start, 
@@ -145,7 +137,7 @@ class ManagerCal extends Component {
           events={this.state.events}
           formats={this.state.format}
           scrollToTime={this.state.scrollTime}
-          onSelectEvent={event => this.addEditEvent(event)}
+          onSelectEvent={event => this.props.showDeleteForm(event)}
           onSelectSlot={(slotInfo) => this.addEvent(slotInfo)}
           eventPropGetter={(this.eventStyleGetter)}
           onEventDrop={this.moveEvent}

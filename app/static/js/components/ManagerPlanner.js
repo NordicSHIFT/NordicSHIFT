@@ -6,13 +6,18 @@ import axios from 'axios';
 import ManagerMenubar from './children/ManagerMenubar'; 
 import ManagerCal from './children/ManagerCal'; 
 import ShiftForm from './children/ShiftForm'; 
-import EditShiftForm from './children/EditShiftForm'; 
+import DeleteShiftForm from './children/DeleteShiftForm'; 
 
 var origin = window.location.origin;
 
-function extractEventDetails(slotInfo) {
-  const startDate = new Date(slotInfo.start); 
-  const endDate = new Date(slotInfo.end); 
+function convertSlotToForm(slotInfo) {
+  /*
+    convertSlotToForm takes the information from dragging a slot and puts it into the form. 
+    It also converts from 24 hour time to 12 hour time
+  */
+  //get information
+  const startDate = slotInfo.start; 
+  const endDate = slotInfo.end; 
   const startHour = startDate.getHours() > 12 ? startDate.getHours() - 12 : startDate.getHours(); 
   const startPeriod = startDate.getHours() > 11 ? "PM" : "AM"; 
   const startMinute = startDate.getMinutes(); 
@@ -21,9 +26,10 @@ function extractEventDetails(slotInfo) {
   const endPeriod = endDate.getHours() > 11 ? "PM" : "AM";  
   var days = {1:false,2:false,3:false,4:false,5:false,6:false,0:false}; 
   days[endDate.getDay()] = true; 
-  const stateReturn =  {
-    startDate: startDate, 
-    endDate: endDate, 
+  //return object
+  return {
+    startDate: slotInfo.start, 
+    endDate: slotInfo.end, 
     startHour: startHour.toString(), 
     startMinute: startMinute.toString(), 
     startPeriod: startPeriod, 
@@ -32,10 +38,17 @@ function extractEventDetails(slotInfo) {
     endPeriod: endPeriod, 
     days: days
   }
-  return stateReturn; 
 }
 
-function changeEventFromForm(form) {
+function convertFormToEvents(form) {
+    /*
+    convertFormToEvents takes the form and returns a list of new shifts
+    First, it sets the start and end date and time to the Sunday of the week displayed.
+    Then, it goes through the array which corresponds to the days of the week. If the day
+    is checked, it creates and event for that day and adds it to the list. It does this by 
+    setting the date to that day. (For example, if it is Tuesday, it adds 2 to the date, if
+    it was Wednesday it would add 3.)
+    */
     //convert start time
     var start = form.state.startDate; 
     start.setDate(start.getDate() - start.getDay()); 
@@ -77,9 +90,24 @@ function changeEventFromForm(form) {
             events = events.concat([theEvent]); 
         }
     }
-    console.log(events); 
     return events
 }
+
+function postEvents(theEvents) {
+    var config = { headers: {
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': '*'}
+    }
+    var respData = axios.post('/api/addEvents', {
+      myEvents: theEvents
+    }, config) 
+    .then( (response) => {
+        console.log("addEvents was a ", response.data)
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+  }
 
 class ManagerPlanner extends Component {
   constructor() {
@@ -89,28 +117,33 @@ class ManagerPlanner extends Component {
       deleteFormInvisible: true
     };
     this.slotInfoToForm = this.slotInfoToForm.bind(this);
-    this.shiftToEdit = this.shiftToEdit.bind(this); 
-    this.formInfoToCal = this.formInfoToCal.bind(this); 
-    this.postEvents = this.postEvents.bind(this); 
+    this.processNewShiftForm = this.processNewShiftForm.bind(this); 
+    this.showDeleteForm = this.showDeleteForm.bind(this); 
     this.deleteShift = this.deleteShift.bind(this); 
     this.stopDelete = this.stopDelete.bind(this); 
   }
 
   slotInfoToForm(slotInfo) {
-    console.log("slotInfoToForm"); 
+    //remove to delete if it was visible
+    this.stopDelete(); 
+    //make form visible
     this.setState({formInvisible: false}); 
-    if (this.state.shiftToDelete != null) {
-      var event = this.state.shiftToDelete; 
-      var theEvents = this.refs.calendar.state.events;
-      const idx = theEvents.indexOf(event);  
-      event.hexColor = "#f89406"; 
-      theEvents.splice(idx,1,event); 
-      this.refs.calendar.setState({events: theEvents}); 
-    }
-    this.refs.form.setState(extractEventDetails(slotInfo)); 
+    //put slot info into form
+    this.refs.form.setState(convertSlotToForm(slotInfo)); 
   }
 
-  shiftToEdit(event) { 
+  processNewShiftForm() {  
+    //convert form to events 
+    var theNewEvents = convertFormToEvents(this.refs.form); 
+    //write new events to the database
+    postEvents(theNewEvents); 
+    //add new events to the calendar on the screen
+    var theEvents = this.refs.calendar.state.events.concat(theNewEvents); 
+    this.refs.calendar.setState({events: theEvents}); 
+  }
+
+  showDeleteForm(event) { 
+    this.stopDelete(); 
     var theEvents = this.refs.calendar.state.events;
     const idx = theEvents.indexOf(event);  
     event.hexColor = "#f44242"; 
@@ -119,25 +152,16 @@ class ManagerPlanner extends Component {
     this.setState({shiftToDelete: event, formInvisible: true, deleteFormInvisible: false}); 
   }
 
-  formInfoToCal() {
-      //this is for adding a shift
-    const theEvents = changeEventFromForm(this.refs.form); 
-    this.postEvents(theEvents); 
-    //TODO send to back end to add to DB 
-  }
-
   stopDelete() {
     if (this.state.shiftToDelete != null) {
       const event = this.state.shiftToDelete; 
       var theEvents = this.refs.calendar.state.events;
       const idx = theEvents.indexOf(event);  
-      event.hexColor = "#f89406"; //TODO or whatever color...
+      event.hexColor = null; //TODO or whatever color...
       theEvents.splice(idx,1,event); 
-      console.log("theEvents", theEvents); 
       this.refs.calendar.setState({events: theEvents}); 
       this.setState({shiftToDelete: null, deleteFormInvisible: true});
     }
-
   }
 
   deleteShift() {
@@ -167,48 +191,18 @@ class ManagerPlanner extends Component {
     }); 
   }
 
-  postEvents(theEvents) {
-    var config = { headers: {
-      'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': '*'}
-    }
-    var respData = axios.post('/api/addEvents', {
-      myEvents: theEvents
-    }, config) 
-    .then( (response) => {
-      const responseData = response.data 
-      var i, newEvent, theEvents; 
-      theEvents = this.refs.calendar.state.events; 
-      for (i = 0; i < responseData.length; i++) {
-          newEvent = {
-            title: responseData[i].title, 
-            start: new Date(responseData[i].start),
-            end: new Date(responseData[i].end), 
-            hexColor: responseData[i].hexColor
-          }
-          theEvents = theEvents.concat([newEvent]); 
-      }
-      this.refs.calendar.setState({events: theEvents}); 
-      //this.setState({formInvisible: true}); 
-    })
-    .catch(function (error) {
-      console.log(error);
-    });
-  }
-  
-
   render() {
     return (
       <div className="Calendar">
         <ManagerMenubar /> 
         <Row>
-          <Col xs="9"><ManagerCal id="calendar" ref="calendar" formCalInt = {this.slotInfoToForm} shiftToEdit = {this.shiftToEdit} removeToDelete={this.stopDelete}/></Col>
+          <Col xs="9"><ManagerCal id="calendar" ref="calendar" formCalInt = {this.slotInfoToForm} showDeleteForm = {this.showDeleteForm} removeToDelete={this.stopDelete}/></Col>
           {this.state.formInvisible ? 
             null
-            : <Col xs="3"><ShiftForm id="form" ref="form" submitForm = {this.formInfoToCal} style={{hidden: true}} /></Col>} 
+            : <Col xs="3"><ShiftForm id="form" ref="form" submitForm = {this.processNewShiftForm} style={{hidden: true}} /></Col>} 
           {this.state.deleteFormInvisible ? 
             null
-            : <Col xs="3"><EditShiftForm id="editForm" ref="editForm" submitForm={this.formInfoToCal} deleteShift={this.deleteShift} stopDelete={this.stopDelete}/></Col>}
+            : <Col xs="3"><DeleteShiftForm id="deleteForm" ref="deleteForm" deleteShift={this.deleteShift} stopDelete={this.stopDelete}/></Col>}
           <a href="generateSchedule">
             <Button>Generate Schedule</Button>
           </a>

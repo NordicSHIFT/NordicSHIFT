@@ -44,7 +44,6 @@ class SuggestCal extends Component {
   }  
 
   eventStyleGetter(event) {
-    console.log(event);
     var backgroundColor = event.hexColor;
     var style = {
         backgroundColor: backgroundColor,
