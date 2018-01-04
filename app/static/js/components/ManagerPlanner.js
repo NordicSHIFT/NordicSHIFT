@@ -197,12 +197,10 @@ class ManagerPlanner extends Component {
         <ManagerMenubar /> 
         <Row>
           <Col xs="9"><ManagerCal id="calendar" ref="calendar" formCalInt = {this.slotInfoToForm} showDeleteForm = {this.showDeleteForm} removeToDelete={this.stopDelete}/></Col>
-          {this.state.formInvisible ? 
-            null
-            : <Col xs="3"><ShiftForm id="form" ref="form" submitForm = {this.processNewShiftForm} style={{hidden: true}} /></Col>} 
-          {this.state.deleteFormInvisible ? 
-            null
-            : <Col xs="3"><DeleteShiftForm id="deleteForm" ref="deleteForm" deleteShift={this.deleteShift} stopDelete={this.stopDelete}/></Col>}
+          {!this.state.formInvisible &&
+             <Col xs="3"><ShiftForm id="form" ref="form" submitForm = {this.processNewShiftForm} style={{hidden: true}} /></Col>} 
+          {!this.state.deleteFormInvisible &&
+             <Col xs="3"><DeleteShiftForm id="deleteForm" ref="deleteForm" deleteShift={this.deleteShift} stopDelete={this.stopDelete}/></Col>}
           <a href="generateSchedule">
             <Button>Generate Schedule</Button>
           </a>
