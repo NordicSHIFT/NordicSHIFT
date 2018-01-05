@@ -179,7 +179,6 @@ def managerprofile():
         db.commit()
     return '/myprofile'
 
-#naming standard, if it is being used for an axios call, use /api/name_of_call
 @app.route("/api/calendar")
 def calendar():
     myevents = []

@@ -110,11 +110,13 @@ function postEvents(theEvents) {
   }
 
 class ManagerPlanner extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
+    let suggestedPath = "/suggestedSchedules/" + this.props.match.params.startDate; 
     this.state = {
       formInvisible: true, 
-      deleteFormInvisible: true
+      deleteFormInvisible: true, 
+      suggestedPath: suggestedPath
     };
     this.slotInfoToForm = this.slotInfoToForm.bind(this);
     this.processNewShiftForm = this.processNewShiftForm.bind(this); 
@@ -196,12 +198,15 @@ class ManagerPlanner extends Component {
       <div className="Calendar">
         <ManagerMenubar /> 
         <Row>
-          <Col xs="9"><ManagerCal id="calendar" ref="calendar" formCalInt = {this.slotInfoToForm} showDeleteForm = {this.showDeleteForm} removeToDelete={this.stopDelete}/></Col>
+          <Col xs="9">
+            <ManagerCal id="calendar" ref="calendar" formCalInt = {this.slotInfoToForm} showDeleteForm = {this.showDeleteForm} 
+            removeToDelete={this.stopDelete} startDate={this.props.match.params.startDate} />
+          </Col>
           {!this.state.formInvisible &&
              <Col xs="3"><ShiftForm id="form" ref="form" submitForm = {this.processNewShiftForm} style={{hidden: true}} /></Col>} 
           {!this.state.deleteFormInvisible &&
              <Col xs="3"><DeleteShiftForm id="deleteForm" ref="deleteForm" deleteShift={this.deleteShift} stopDelete={this.stopDelete}/></Col>}
-          <a href="generateSchedule">
+          <a href={this.state.suggestedPath}>
             <Button>Generate Schedule</Button>
           </a>
         </Row>

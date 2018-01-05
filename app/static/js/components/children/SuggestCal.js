@@ -20,8 +20,8 @@ function convertEvent(event) {
 }
 
 class SuggestCal extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     
     let timeRangeFormat = ({ start, end }, culture, local)=>
     local.format(start, 'h:mm', culture) +
@@ -34,10 +34,13 @@ class SuggestCal extends Component {
 
     let scrollToTime = new Date().setHours(7); 
 
+    let newStart = new Date(parseInt(this.props.startDate)); 
+
     this.state = {
       format: formats,
       scrollTime : scrollToTime,
-      events: [{}]
+      events: [{}],
+      startDate: newStart
     };
 
     this.eventStyleGetter = this.eventStyleGetter.bind(this); 
@@ -69,6 +72,7 @@ class SuggestCal extends Component {
           style={{height: 500}}
           formats={this.state.format}
           scrollToTime={this.state.scrollTime}
+          defaultDate={this.state.startDate}
           onSelectEvent={event => alert(event.title + event.hexColor)}
           eventPropGetter={(this.eventStyleGetter)}
         />

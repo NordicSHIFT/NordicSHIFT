@@ -16,6 +16,7 @@ class GenerateSchedule extends Component {
     this.state = {
       startDate: moment(),
       endDate: moment(),
+      startPath: "/managerplanner/" + moment() 
 
     }
     this.handleChangeStart = this.handleChangeStart.bind(this);
@@ -24,8 +25,10 @@ class GenerateSchedule extends Component {
 
   handleChangeStart(date) {
     this.setState({
-      startDate: date
+      startDate: date,
+      startPath: "/managerplanner/" + date
     });
+    console.log("this.state.startPath", this.state.startPath); 
   }
   handleChangeEnd(date) {
     this.setState({
@@ -55,11 +58,10 @@ class GenerateSchedule extends Component {
             endDate={this.state.endDate}
             onChange={this.handleChangeEnd}
         />
-        <h3>Would you like to generate the schedule?</h3>
-        <a href="suggestedSchedules">
-            <Button>See suggested schedules.</Button>
+
+        <a href={this.state.startPath}>
+            <Button>Enter needed shifts.</Button>
         </a>
-        <p>{this.state.schedule}</p>
       </div>)
   }
 

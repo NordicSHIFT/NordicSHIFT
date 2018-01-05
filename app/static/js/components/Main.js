@@ -13,16 +13,12 @@ import Signup from './Signup'
 import GenerateSchedule from './GenerateSchedule'
 import SuggestedSchedules from './SuggestedSchedules'
 
-// The Main component renders one of the three provided
-// Routes (provided that one matches). Both the /roster
-// and /schedule routes will match any pathname that starts
-// with /roster or /schedule. The / route will only match
-// when the pathname is exactly the string "/"
+
 const Main = () => (
   <main>
     <Switch>
       <Route exact path='/' component={Home}/>
-      <Route path='/managerplanner' component={ManagerPlanner}/>
+      <Route path='/managerplanner/:startDate' component={ManagerPlanner} />
       <Route path='/login' component={Login}/>
       <Route path='/signup' component={Signup}/>
       <Route path='/studentdashboard' component={StudentDashboard}/>
@@ -32,7 +28,7 @@ const Main = () => (
       <Route path='/studentprofile' component={StudentProfile}/>
       <Route path='/managerprofile' component={ManagerProfile}/>
       <Route path='/generateSchedule' component={GenerateSchedule}/>
-      <Route path='/suggestedSchedules' component={SuggestedSchedules}/>
+      <Route path='/suggestedSchedules/:startDate' component={SuggestedSchedules}/>
     </Switch>
   </main>
 )

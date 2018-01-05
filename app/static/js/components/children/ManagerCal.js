@@ -27,8 +27,8 @@ function convertEvent(event) {
 }
 
 class ManagerCal extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     
     let timeRangeFormat = ({ start, end }, culture, local)=>
     local.format(start, 'h:mm', culture) +
@@ -40,12 +40,14 @@ class ManagerCal extends Component {
     }; 
 
     let scrollToTime = new Date().setHours(7); 
+ 
+    let newStart = new Date(parseInt(this.props.startDate)); 
 
-     
     this.state = {
       format: formats,
       scrollTime : scrollToTime,
-      events: [{}]
+      events: [{}],
+      startDate: newStart
     };
 
     this.retrieveEvents = this.retrieveEvents.bind(this);
@@ -54,6 +56,7 @@ class ManagerCal extends Component {
     this.moveEvent = this.moveEvent.bind(this); 
     this.retrieveEvents(); 
   }  
+
 
   retrieveEvents() {
     var url =  origin + '/api/calendar';  
@@ -70,6 +73,7 @@ class ManagerCal extends Component {
   }
 
   addEvent(slotInfo) { 
+      //TODO: add check if it is in correct date range
     if (slotInfo.action == 'select') { 
       const theEvent = this.props.formCalInt(slotInfo);   
     }
@@ -91,6 +95,7 @@ class ManagerCal extends Component {
   }
 
   moveEvent({ event, start, end }) {
+    //TODO: add check if it is dropped on a valid day
     var config = { headers: {
       'Content-Type': 'application/json',
       'Access-Control-Allow-Origin': '*'}
@@ -139,6 +144,7 @@ class ManagerCal extends Component {
           scrollToTime={this.state.scrollTime}
           onSelectEvent={event => this.props.showDeleteForm(event)}
           onSelectSlot={(slotInfo) => this.addEvent(slotInfo)}
+          defaultDate={this.state.startDate}
           eventPropGetter={(this.eventStyleGetter)}
           onEventDrop={this.moveEvent}
         />

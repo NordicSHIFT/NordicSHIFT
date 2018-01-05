@@ -102,7 +102,9 @@ class SuggestedSchedules extends Component {
         <ManagerMenubar />
         <h3> Suggested Schedules </h3>
         <Row>
-          <Col xs="9"><SuggestCal id="calendar" ref="calendar" /></Col>
+          <Col xs="9">
+            <SuggestCal id="calendar" ref="calendar" startDate={this.props.match.params.startDate} />
+          </Col>
         </Row>
       </div>
     );
