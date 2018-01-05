@@ -1,7 +1,7 @@
 import React from 'react'
 import { Switch, Route } from 'react-router-dom'
 import Home from './Home'
-import ManagerPlanner from './ManagerPlanner'
+import SelectShifts from './managerPlanner/SelectShifts'
 import StudentDashboard from './StudentDash'
 import ManagerDashboard from './ManagerDash'
 import ManagerProfile from './ManagerProfile'
@@ -10,15 +10,14 @@ import StudentSchedule from './StudentSchedule'
 import ManagerSchedule from './ManagerSchedule'
 import Login from './Login'
 import Signup from './Signup'
-import GenerateSchedule from './GenerateSchedule'
-import SuggestedSchedules from './SuggestedSchedules'
+import SelectWeek from './managerPlanner/SelectWeek'
+import SelectSchedule from './managerPlanner/SelectSchedules'
 
 
 const Main = () => (
   <main>
     <Switch>
       <Route exact path='/' component={Home}/>
-      <Route path='/managerplanner/:startDate' component={ManagerPlanner} />
       <Route path='/login' component={Login}/>
       <Route path='/signup' component={Signup}/>
       <Route path='/studentdashboard' component={StudentDashboard}/>
@@ -27,8 +26,9 @@ const Main = () => (
       <Route path='/managerschedule' component={ManagerSchedule}/>
       <Route path='/studentprofile' component={StudentProfile}/>
       <Route path='/managerprofile' component={ManagerProfile}/>
-      <Route path='/generateSchedule' component={GenerateSchedule}/>
-      <Route path='/suggestedSchedules/:startDate' component={SuggestedSchedules}/>
+      <Route path='/selectweek' component={SelectWeek}/>
+      <Route path='/selectshifts/:startDate' component={SelectShifts} />
+      <Route path='/selectschedule/:startDate' component={SelectSchedule}/>
     </Switch>
   </main>
 )

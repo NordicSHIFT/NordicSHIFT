@@ -1,12 +1,12 @@
-// Calendar.js
+// SelectShifts.js
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import { Container, Row, Col, Button } from 'reactstrap';
 import axios from 'axios';
-import ManagerMenubar from './children/ManagerMenubar'; 
-import ManagerCal from './children/ManagerCal'; 
-import ShiftForm from './children/ShiftForm'; 
-import DeleteShiftForm from './children/DeleteShiftForm'; 
+import ManagerMenubar from './../children/ManagerMenubar'; 
+import ManagerCal from './../children/ManagerCal'; 
+import ShiftForm from './../children/ShiftForm'; 
+import DeleteShiftForm from './../children/DeleteShiftForm'; 
 
 var origin = window.location.origin;
 
@@ -109,10 +109,10 @@ function postEvents(theEvents) {
     });
   }
 
-class ManagerPlanner extends Component {
+class SelectShifts extends Component {
   constructor(props) {
     super(props);
-    let suggestedPath = "/suggestedSchedules/" + this.props.match.params.startDate; 
+    let suggestedPath = "/selectschedule/" + this.props.match.params.startDate; 
     this.state = {
       formInvisible: true, 
       deleteFormInvisible: true, 
@@ -215,4 +215,4 @@ class ManagerPlanner extends Component {
   }
 }
 
-export default ManagerPlanner;
+export default SelectShifts;

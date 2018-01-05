@@ -1,22 +1,22 @@
-//GenerateSchedule.js
+//SelectWeek.js
 import { Col, Row, Button, Form, FormGroup, Label, Input } from 'reactstrap';
 import React, { Component } from 'react';
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
 
-import ManagerMenubar from './children/ManagerMenubar';
+import ManagerMenubar from './../children/ManagerMenubar';
 
 import 'react-datepicker/dist/react-datepicker.css';
 
 var origin = window.location.origin;
 
-class GenerateSchedule extends Component {
+class SelectWeek extends Component {
   constructor() {
     super();
     this.state = {
       startDate: moment(),
       endDate: moment(),
-      startPath: "/managerplanner/" + moment() 
+      startPath: "/selectshifts/" + moment() 
 
     }
     this.handleChangeStart = this.handleChangeStart.bind(this);
@@ -26,7 +26,7 @@ class GenerateSchedule extends Component {
   handleChangeStart(date) {
     this.setState({
       startDate: date,
-      startPath: "/managerplanner/" + date
+      startPath: "/selectshifts/" + date
     });
     console.log("this.state.startPath", this.state.startPath); 
   }
@@ -67,4 +67,4 @@ class GenerateSchedule extends Component {
 
 }
 
-export default GenerateSchedule;
+export default SelectWeek;

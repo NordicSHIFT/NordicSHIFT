@@ -30,7 +30,7 @@ export class ManagerMenubar extends Component {
                 <NavLink href="/managerdashboard">Dashboard</NavLink>
             </NavItem>
             <NavItem>
-                <NavLink href="/managerplanner">Planner</NavLink>
+                <NavLink href="/selectweek">Planner</NavLink>
             </NavItem>
             <NavItem>
                 <NavLink href="/managerschedule">Schedule</NavLink>

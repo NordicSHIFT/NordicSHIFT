@@ -1,8 +1,8 @@
-// SuggestedSchedules.js
+// SelectSchedules.js
 import axios from 'axios';
 import React, { Component } from 'react';
-import ManagerMenubar from './children/ManagerMenubar';
-import SuggestCal from './children/SuggestCal'; 
+import ManagerMenubar from './../children/ManagerMenubar';
+import SuggestCal from './../children/SuggestCal'; 
 import { Row, Col } from 'reactstrap'; 
 
 var origin = window.location.origin;
@@ -42,7 +42,7 @@ function intToRGB(i){
     return "00000".substring(0, 6 - c.length) + c;
 }
 
-class SuggestedSchedules extends Component {
+class SelectSchedule extends Component {
 
   constructor() {
     super();
@@ -98,7 +98,7 @@ class SuggestedSchedules extends Component {
 
   render() {
     return (
-      <div className="suggestedSchedules">
+      <div className="selectSchedule">
         <ManagerMenubar />
         <h3> Suggested Schedules </h3>
         <Row>
@@ -111,4 +111,4 @@ class SuggestedSchedules extends Component {
   }
 }
 
-export default SuggestedSchedules;
+export default SelectSchedule;
