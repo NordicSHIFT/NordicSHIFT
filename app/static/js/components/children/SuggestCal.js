@@ -68,6 +68,7 @@ class SuggestCal extends Component {
         <BigCalendar
           defaultView='week'
           popup='true'
+          toolbar={false}
           events={this.state.events}
           style={{height: 500}}
           formats={this.state.format}

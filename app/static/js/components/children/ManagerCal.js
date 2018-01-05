@@ -138,6 +138,7 @@ class ManagerCal extends Component {
           popup='true'
           step = {15}
           timeslots = {4}
+          toolbar={false}
           style={{height: 550}}
           events={this.state.events}
           formats={this.state.format}

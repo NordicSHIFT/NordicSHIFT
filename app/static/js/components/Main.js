@@ -11,7 +11,7 @@ import ManagerSchedule from './ManagerSchedule'
 import Login from './Login'
 import Signup from './Signup'
 import SelectWeek from './managerPlanner/SelectWeek'
-import SelectSchedule from './managerPlanner/SelectSchedules'
+import SelectSchedule from './managerPlanner/SelectSchedule'
 
 
 const Main = () => (
