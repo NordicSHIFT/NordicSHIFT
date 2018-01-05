@@ -3,6 +3,7 @@ import axios from 'axios';
 import React, { Component } from 'react';
 import ManagerMenubar from './../children/ManagerMenubar';
 import SuggestCal from './../children/SuggestCal'; 
+import SuggestList from './../children/SuggestList'; 
 import { Row, Col } from 'reactstrap'; 
 
 var origin = window.location.origin;
@@ -12,7 +13,6 @@ function convertShiftstoEvents (shifts) {
     var shift, index; 
     for (index in shifts) {
         shift = shifts[index]; 
-        console.log("shift: ", shift); 
         event = {
             title: shift.student,
             start: new Date(shift.start),
@@ -54,6 +54,8 @@ class SelectSchedule extends Component {
     this.generateSchedule = this.generateSchedule.bind(this);
     this.setStateAssignedShift = this.setStateAssignedShift.bind(this);
     this.setStateUnassignedShift = this.setStateUnassignedShift.bind(this);
+    this.setAllSchedules = this.setAllSchedules.bind(this); 
+    this.changeSchedule = this.changeSchedule.bind(this); 
 
     this.generateSchedule(); 
   }
@@ -74,6 +76,19 @@ class SelectSchedule extends Component {
     this.refs.calendar.setState({events: theevents});  
   }
 
+  setAllSchedules(schedules) {
+      this.setState({"schedules":schedules}); 
+  }
+
+  changeSchedule(scheduleNum) {
+      console.log("CHANGING SCHEDULE"); 
+      let scheduleIndex = parseInt(scheduleNum) - 1; 
+      let newSched = this.state.schedules[scheduleIndex]; 
+      this.setStateAssignedShift(newSched['assigned shifts']); 
+      this.setStateUnassignedShift(newSched['unassigned shifts']); 
+      console.log("new schedule index: ", scheduleIndex); 
+  }
+
   generateSchedule() {
     var config = { headers: {
       'Content-Type': 'application/json',
@@ -88,7 +103,8 @@ class SelectSchedule extends Component {
       console.log("schedules:", response.data[0]);
       console.log("schedules: ",response.data[1]); 
       this.setStateAssignedShift(response.data[0]['assigned shifts']);
-      this.setStateUnassignedShift(response.data[0]['unassigned shifts'])
+      this.setStateUnassignedShift(response.data[0]['unassigned shifts']); 
+      this.setAllSchedules(response.data); 
 
     })
     .catch(function (error) {
@@ -104,6 +120,9 @@ class SelectSchedule extends Component {
         <Row>
           <Col xs="9">
             <SuggestCal id="calendar" ref="calendar" startDate={this.props.match.params.startDate} />
+          </Col>
+          <Col xs="3">
+            <SuggestList changeSchedule={this.changeSchedule}/> 
           </Col>
         </Row>
       </div>
