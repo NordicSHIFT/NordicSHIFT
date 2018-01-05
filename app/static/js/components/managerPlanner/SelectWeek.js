@@ -40,8 +40,8 @@ class SelectWeek extends Component {
     return (
       <div>
         <ManagerMenubar />
-        <h3>Select a period for which you would like to create the schedule.</h3>
-        <p>It should align with the days you entered your desired shifts and the dates your workers filled their calendars</p>
+        <h5>Select the Sunday when you would like to start your schedule.</h5>
+        <p>It should align with the dates your workers filled in their calendars</p>
           Start
           <DatePicker
               selected={this.state.startDate}
@@ -50,17 +50,17 @@ class SelectWeek extends Component {
               endDate={this.state.endDate}
               onChange={this.handleChangeStart}
           />
-        <Label>End</Label>
+        {/* <Label>End</Label>
         <DatePicker
             selected={this.state.endDate}
             selectsEnd
             startDate={this.state.startDate}
             endDate={this.state.endDate}
             onChange={this.handleChangeEnd}
-        />
+        /> */}
 
         <a href={this.state.startPath}>
-            <Button>Enter needed shifts.</Button>
+            <Button>Next</Button>
         </a>
       </div>)
   }
