@@ -63,6 +63,7 @@ class SelectSchedule extends Component {
   setStateAssignedShift(shifts){
     this.setState({"assignedShift":shifts});
     var events = convertShiftstoEvents(shifts);  
+    console.log("assigned events", events);
     const theevents = this.refs.calendar.state.events.concat(events); 
     this.refs.calendar.setState({events: theevents}); 
 
@@ -82,7 +83,7 @@ class SelectSchedule extends Component {
 
   changeSchedule(scheduleNum) {
       console.log("CHANGING SCHEDULE"); 
-      let scheduleIndex = parseInt(scheduleNum) - 1; 
+      let scheduleIndex = parseInt(scheduleNum) * 10;  //TODO change to -1
       let newSched = this.state.schedules[scheduleIndex]; 
       this.setStateAssignedShift(newSched['assigned shifts']); 
       this.setStateUnassignedShift(newSched['unassigned shifts']); 
