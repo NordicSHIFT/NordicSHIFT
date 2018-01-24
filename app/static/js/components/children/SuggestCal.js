@@ -19,7 +19,7 @@ function convertEvent(event) {
   }
 }
 
-class SuggestCal extends Component {
+export default class SuggestCal extends Component {
   constructor(props) {
     super(props);
     
@@ -80,5 +80,3 @@ class SuggestCal extends Component {
     )
   }
 }
-
-export default SuggestCal; 

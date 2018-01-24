@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import {Label, Input, Col, Row} from 'reactstrap'; 
 
-class SuggestList extends Component {
+export default class SuggestList extends Component {
     constructor(props) {
         super(props); 
 
@@ -100,5 +100,3 @@ class SuggestList extends Component {
         )
     }
 }
-
-export default SuggestList;

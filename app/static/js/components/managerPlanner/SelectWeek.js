@@ -10,17 +10,15 @@ import 'react-datepicker/dist/react-datepicker.css';
 
 var origin = window.location.origin;
 
-class SelectWeek extends Component {
+export default class SelectWeek extends Component {
   constructor() {
     super();
     this.state = {
       startDate: moment(),
-      endDate: moment(),
       startPath: "/selectshifts/" + moment() 
 
     }
     this.handleChangeStart = this.handleChangeStart.bind(this);
-    this.handleChangeEnd = this.handleChangeEnd.bind(this);
   }
 
   handleChangeStart(date) {
@@ -29,11 +27,6 @@ class SelectWeek extends Component {
       startPath: "/selectshifts/" + date
     });
     console.log("this.state.startPath", this.state.startPath); 
-  }
-  handleChangeEnd(date) {
-    this.setState({
-      endDate: date
-    });
   }
 
   render() {
@@ -45,9 +38,7 @@ class SelectWeek extends Component {
           Start
           <DatePicker
               selected={this.state.startDate}
-              selectsStart
               startDate={this.state.startDate}
-              endDate={this.state.endDate}
               onChange={this.handleChangeStart}
           />
         {/* <Label>End</Label>
@@ -67,4 +58,3 @@ class SelectWeek extends Component {
 
 }
 
-export default SelectWeek;
