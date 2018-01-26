@@ -98,7 +98,7 @@ function postEvents(theEvents) {
       'Content-Type': 'application/json',
       'Access-Control-Allow-Origin': '*'}
     }
-    var respData = axios.post('/api/addEvents', {
+    axios.post('/api/addEvents', {
       myEvents: theEvents
     }, config) 
     .then( (response) => {

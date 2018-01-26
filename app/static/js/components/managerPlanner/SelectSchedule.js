@@ -25,7 +25,6 @@ export default class SelectSchedule extends Component {
     this.setStateUnassignedShift = this.setStateUnassignedShift.bind(this);
     this.setAllSchedules = this.setAllSchedules.bind(this); 
     this.changeSchedule = this.changeSchedule.bind(this); 
-    this.chooseSchedule = this.chooseSchedule.bind(this); 
 
     this.generateSchedule(); 
   }
@@ -87,21 +86,6 @@ export default class SelectSchedule extends Component {
     });
   }
 
-  chooseSchedule() {
-    var config = { headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'}
-      }
-      //TODO pass needed info with this. 
-      axios.get(origin + '/api/chooseSchedule', config)
-      .then( (response) => {
-        console.log(response)
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-  }
-
   render() {
     return (
       <div className="selectSchedule">
@@ -114,7 +98,7 @@ export default class SelectSchedule extends Component {
           <Col xs="3">
             <SuggestList changeSchedule={this.changeSchedule}/> 
             <a href={this.state.publishPath}>
-                <Button onclick={this.chooseSchedule()}>Publish this Schedule</Button>
+                <Button>Publish this Schedule</Button>
             </a>
           </Col>
         </Row>

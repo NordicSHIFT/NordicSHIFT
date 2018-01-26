@@ -23,7 +23,8 @@ const Main = () => (
       <Route path='/studentdashboard' component={StudentDashboard}/>
       <Route path='/managerdashboard' component={ManagerDashboard}/>
       <Route path='/studentschedule' component={StudentSchedule}/>
-      <Route path='/managerschedule/:startDate' component={ManagerSchedule}/>
+      <Route exact path='/managerschedule/:startDate/:scheduleIndex' component={ManagerSchedule}/>
+      <Route exact path='/managerschedule/:startDate' component={ManagerSchedule}/>
       <Route exact path='/managerschedule' component={ManagerSchedule}/>
       <Route path='/studentprofile' component={StudentProfile}/>
       <Route path='/managerprofile' component={ManagerProfile}/>

@@ -24,6 +24,8 @@ engine=create_engine(postgresql_uri)
 Session = sessionmaker(bind=engine)
 db = Session()
 
+suggestedSchedules = None 
+
 @app.route("/")
 def index():
     return authCall()
@@ -274,8 +276,20 @@ def generateSchedule():
     print("about to make calendar call")
     schedule = Schedule(shifts)
     schedules = scheduler2(schedule, students)
+    suggestedSchedules = schedules #TODO this doesn't work to have it available in chooseSchedule 
+    print("in generate schedules,", suggestedSchedules)
     res = [schedule.serialize() for schedule in schedules]
     return jsonify(res)
+
+@app.route('/api/chooseSchedule', methods=['POST'])
+def chooseSchedule():
+    print ("IN CHOOSE SCHEDULE")
+    data = request.get_json(silent=True)
+    scheduleIndex = data.get('scheduleIndex')
+    print("suggested schedule", suggestedSchedules)
+    #choosenSchedule = suggestedSchedules[scheduleIndex]
+    #TODO save this schedule to the database 
+    return retrieveSchedule() 
 
 @app.route('/api/retrieveSchedule', methods=['GET','OPTIONS'])
 def retrieveSchedule(): 
