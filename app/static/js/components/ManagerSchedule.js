@@ -6,42 +6,7 @@ import StudentCal from './children/StudentCal';
 import ManagerMenubar from './children/ManagerMenubar';
 import SuggestCal from "./children/SuggestCal"; 
 
-
-//TODO figure out how to have these imported
 import * as util from './../util.js'; 
-function convertShiftstoEvents (shifts) {
-    var events = []; 
-    var shift, index; 
-    for (index in shifts) {
-        shift = shifts[index]; 
-        event = {
-            title: shift.student,
-            start: new Date(shift.start),
-            end: new Date(shift.end),
-            hexColor: "#" + intToRGB(hashCode(shift.student))
-        }
-        events.push(event); 
-    }
-    return events; 
-}
-
-//Taken from stack overflow -> should be revised... 
-//https://stackoverflow.com/questions/3426404/create-a-hexadecimal-colour-based-on-a-string-with-javascript
-function hashCode(str) { // java String#hashCode
-    var hash = 0;
-    for (var i = 0; i < str.length; i++) {
-       hash = str.charCodeAt(i) + ((hash << 5) - hash);
-    }
-    return hash;
-} 
-
-function intToRGB(i){
-    var c = (i & 0x00FFFFFF)
-        .toString(16)
-        .toUpperCase();
-
-    return "00000".substring(0, 6 - c.length) + c;
-}
 
 //create a different calendar for this page
 export default class ManagerSchedule extends Component {

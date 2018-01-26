@@ -9,6 +9,7 @@ import { DragDropContext } from 'react-dnd'
 import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop';
 
 import 'react-big-calendar/lib/css/react-big-calendar.css'; 
+import { convertEvent } from './../../util.js'; 
 
 BigCalendar.setLocalizer(
   BigCalendar.momentLocalizer(moment)
@@ -17,14 +18,6 @@ var origin = window.location.origin;
 
 const DragAndDropCalendar = withDragAndDrop(BigCalendar);
 
-function convertEvent(event) {
-  return {
-    title: event.title,
-    start: new Date(event.start),
-    end: new Date(event.end),
-    hexColor: event.hexColor
-  }
-}
 
 class ManagerCal extends Component {
   constructor(props) {

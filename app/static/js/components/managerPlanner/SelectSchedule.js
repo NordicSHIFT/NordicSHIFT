@@ -6,41 +6,8 @@ import SuggestCal from './../children/SuggestCal';
 import SuggestList from './../children/SuggestList'; 
 import { Row, Col, Button } from 'reactstrap'; 
 
+import * as util from './../../util.js'; 
 var origin = window.location.origin;
-
-function convertShiftstoEvents (shifts) {
-    var events = []; 
-    var shift, index; 
-    for (index in shifts) {
-        shift = shifts[index]; 
-        event = {
-            title: shift.student,
-            start: new Date(shift.start),
-            end: new Date(shift.end),
-            hexColor: "#" + intToRGB(hashCode(shift.student))
-        }
-        events.push(event); 
-    }
-    return events; 
-}
-
-//Taken from stack overflow -> should be revised... 
-//https://stackoverflow.com/questions/3426404/create-a-hexadecimal-colour-based-on-a-string-with-javascript
-function hashCode(str) { // java String#hashCode
-    var hash = 0;
-    for (var i = 0; i < str.length; i++) {
-       hash = str.charCodeAt(i) + ((hash << 5) - hash);
-    }
-    return hash;
-} 
-
-function intToRGB(i){
-    var c = (i & 0x00FFFFFF)
-        .toString(16)
-        .toUpperCase();
-
-    return "00000".substring(0, 6 - c.length) + c;
-}
 
 export default class SelectSchedule extends Component {
 
@@ -58,13 +25,14 @@ export default class SelectSchedule extends Component {
     this.setStateUnassignedShift = this.setStateUnassignedShift.bind(this);
     this.setAllSchedules = this.setAllSchedules.bind(this); 
     this.changeSchedule = this.changeSchedule.bind(this); 
+    this.chooseSchedule = this.chooseSchedule.bind(this); 
 
     this.generateSchedule(); 
   }
 
   setStateAssignedShift(shifts){
     this.setState({"assignedShift":shifts});
-    var events = convertShiftstoEvents(shifts);  
+    var events = util.convertShiftstoEvents(shifts);  
     //console.log("assigned events", events);
     const theevents = this.refs.calendar.state.events.concat(events); 
     this.refs.calendar.setState({events: theevents}); 
@@ -73,7 +41,7 @@ export default class SelectSchedule extends Component {
 
   setStateUnassignedShift(shifts){
     this.setState({"unassignedShift":shifts}); 
-    var events = convertShiftstoEvents(shifts);  
+    var events = util.convertShiftstoEvents(shifts);  
     //console.log("unassigned events", events); 
     const theevents = this.refs.calendar.state.events.concat(events); 
     this.refs.calendar.setState({events: theevents});  
@@ -119,6 +87,21 @@ export default class SelectSchedule extends Component {
     });
   }
 
+  chooseSchedule() {
+    var config = { headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'}
+      }
+      //TODO pass needed info with this. 
+      axios.get(origin + '/api/chooseSchedule', config)
+      .then( (response) => {
+        console.log(response)
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }
+
   render() {
     return (
       <div className="selectSchedule">
@@ -130,8 +113,8 @@ export default class SelectSchedule extends Component {
           </Col>
           <Col xs="3">
             <SuggestList changeSchedule={this.changeSchedule}/> 
-            <a href={this.state.basePublishPath}>
-                <Button>Publish this Schedule</Button>
+            <a href={this.state.publishPath}>
+                <Button onclick={this.chooseSchedule()}>Publish this Schedule</Button>
             </a>
           </Col>
         </Row>

@@ -1,3 +1,13 @@
+
+export function convertEvent(event) {
+    return {
+      title: event.title,
+      start: new Date(event.start),
+      end: new Date(event.end),
+      hexColor: event.hexColor
+    }
+  }
+
 export function convertShiftstoEvents (shifts) {
     var events = []; 
     var shift, index; 
@@ -7,7 +17,7 @@ export function convertShiftstoEvents (shifts) {
             title: shift.student,
             start: new Date(shift.start),
             end: new Date(shift.end),
-            hexColor: "#" + intToRGB(hashCode(shift.student))
+            hexColor: "#" + intToRGB(hashCode(shift.student)) //TODO change if no student assigned 
         }
         events.push(event); 
     }

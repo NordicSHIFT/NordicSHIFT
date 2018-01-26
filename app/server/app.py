@@ -279,6 +279,7 @@ def generateSchedule():
 
 @app.route('/api/retrieveSchedule', methods=['GET','OPTIONS'])
 def retrieveSchedule(): 
+    #TODO make sure this query looks right
     res = db.execute("""SELECT * from shift where dept =(SELECT dept from manager where username = '%s');"""%session.get("username"))
     shiftRe = res.fetchall()
     shifts = []
@@ -286,7 +287,7 @@ def retrieveSchedule():
       newShift = Shift(shift[2],shift[4],shift[5])
       shifts.append(newShift)
     schedule = Schedule(shifts)
-    
+
     res = schedule.serialize() 
     return jsonify(res)
 

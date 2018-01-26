@@ -5,19 +5,12 @@ import axios from 'axios';
 import moment from 'moment';  
 import 'react-big-calendar/lib/css/react-big-calendar.css'; 
 
+import { convertEvent } from './../../util.js'; 
+
 BigCalendar.setLocalizer(
   BigCalendar.momentLocalizer(moment)
 );
 var origin = window.location.origin;
-
-function convertEvent(event) {
-  return {
-    title: event.title,
-    start: new Date(event.start),
-    end: new Date(event.end),
-    hexColor: event.hexColor
-  }
-}
 
 class StudentCal extends Component {
   constructor() {
