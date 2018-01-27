@@ -7,7 +7,6 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Table, Column, Integer, String, create_engine, Sequence, ForeignKey
 from sqlalchemy.orm import sessionmaker, relationship
 import createTables
-import os
 import hashlib, uuid
 from scheduler import scheduler2, Schedule
 from shift import Shift

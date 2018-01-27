@@ -202,13 +202,17 @@ class SelectShifts extends Component {
             <ManagerCal id="calendar" ref="calendar" formCalInt = {this.slotInfoToForm} showDeleteForm = {this.showDeleteForm} 
             removeToDelete={this.stopDelete} startDate={this.props.match.params.startDate} />
           </Col>
+          <Col xs="3">
           {!this.state.formInvisible &&
-             <Col xs="3"><ShiftForm id="form" ref="form" submitForm = {this.processNewShiftForm} style={{hidden: true}} /></Col>} 
+             <ShiftForm id="form" ref="form" submitForm = {this.processNewShiftForm} style={{hidden: true}} />} 
           {!this.state.deleteFormInvisible &&
-             <Col xs="3"><DeleteShiftForm id="deleteForm" ref="deleteForm" deleteShift={this.deleteShift} stopDelete={this.stopDelete}/></Col>}
+             <DeleteShiftForm id="deleteForm" ref="deleteForm" deleteShift={this.deleteShift} stopDelete={this.stopDelete}/>}
+          <br></br>
           <a href={this.state.suggestedPath}>
-            <Button>Generate Schedule</Button>
+            <Button color="success">Generate Schedule</Button>
           </a>
+          
+          </Col>
         </Row>
       </div>
     );
