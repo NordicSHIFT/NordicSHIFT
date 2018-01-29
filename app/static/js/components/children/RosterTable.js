@@ -1,5 +1,6 @@
 //RosterTable.js
 import React, { Component } from 'react'; 
+import { Button } from 'reactstrap';
 import axios from 'axios';
 import ReactDataGrid from 'react-data-grid';
 import update from 'immutability-helper';
@@ -10,8 +11,6 @@ function seeAvailabilityUrl (username) {
     //return <a href= {url} >See Availability</a>
     return <a href="/managerdashboard">See Availability</a> 
 }
-
-//import ReactDataGridPlugins from 'react-data-grid/addons';
 
 export default class RosterTable extends Component {
     constructor(props, context) {
@@ -39,6 +38,11 @@ export default class RosterTable extends Component {
           key: 'seeAvailability',
           name: '',
           editable: false
+        },
+        {
+          key: 'removeStudent', 
+          name: '',
+          editable: false
         }
       ];
   
@@ -46,7 +50,6 @@ export default class RosterTable extends Component {
       this.createRows = this.createRows.bind(this);  
       this.handleGridRowsUpdated = this.handleGridRowsUpdated.bind(this); 
       this.handleGridSort = this.handleGridSort.bind(this); 
-    //   let rows = this.createRows(7); 
       this.state = { rows: [], originalRows: [] }; 
       //TODO figure out how to update rows length 
       console.log(this); 
@@ -56,17 +59,14 @@ export default class RosterTable extends Component {
   
     addRow(student){
         var rows = this.state.rows; 
-        console.log("before row added", rows); 
-        console.log("student being added", student); 
         rows.push({name: student.name, userName: student.username, hours: student.hours}); 
-        this.setState({rows: rows, originalRows: rows}); 
-        console.log("added the row (rows)", rows); 
+        this.setState({rows: rows, originalRows: rows});  
+        console.log(rows); 
     }
   
     createRows(){
         axios.get('/api/getStudents')
         .then(res => {
-          //console.log(res); 
           let newRows = [];
           //for (let i = 0; i < res.length; i++) {
           for (let i = 1; i < 7; i++) {
@@ -77,27 +77,18 @@ export default class RosterTable extends Component {
               name: ['Taylor', 'Ian', 'Linh', 'Alfred'][Math.floor((Math.random() * 3) + 1)],
               userName: ['user1', 'user2', 'user3', 'user4'][Math.floor((Math.random() * 3) + 1)],
               hours: i,
-              seeAvailability: seeAvailabilityUrl("username") 
-            //   seeAvailability: "See Availability",
+              seeAvailability: seeAvailabilityUrl("username"),
+              removeStudent: <Button color="success" size="sm">Remove Student</Button> 
             });
           }
           console.log("newRows",newRows);
-          //newRows = this.state.rows.concat(newRows);  
           this.setState({ rows: newRows, originalRows: newRows }); 
         })
         .catch(function (error) {
           console.log(error);
         });  
-      //this.setState({rowsLen: rows.length}); 
-      //this.refs.table.setState({rowsCount: rows.length}); 
-      return [];
     };
-  
-    // rowGetter(i){
-    //   const row = Object.assign({}, "person[i]");
-    //   row.name = "person[i]";
-    //   return row;
-    // };
+
     rowGetter(i){
       return this.state.rows[i];
     };

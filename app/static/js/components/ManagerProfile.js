@@ -20,8 +20,9 @@ export default class ManagerProfile extends Component {
        isHidden: true, 
        isHiddenStud: true,
        existingDepartments: [] };
-   this.sendDepartment = this.sendDepartment.bind(this);
-   this.sendDepartmentExisting = this.sendDepartmentExisting.bind(this); 
+   this.sendDepartmentNew = this.sendDepartmentNew.bind(this);
+   this.sendDepartmentExisting = this.sendDepartmentExisting.bind(this);
+   this.sendDepartmentChange = this.sendDepartmentChange.bind(this);  
    this.sendNewStudent = this.sendNewStudent.bind(this);
    this.updateInputValueDepartment = this.updateInputValueDepartment.bind(this);
    this.updateInputValueStudent = this.updateInputValueStudent.bind(this);
@@ -88,7 +89,7 @@ export default class ManagerProfile extends Component {
               </InputGroup>
               <InputGroup>
                 <Input type="text" id ='department' placeholder="Enter New Department" className="department" value = {this.state.newDepartment} onChange={this.updateInputValueDepartment} required />
-                <InputGroupButton color="success" type="submit" id='departmentButton' onClick ={this.sendDepartment}>Submit</InputGroupButton>
+                <InputGroupButton color="success" type="submit" id='departmentButton' onClick ={this.sendDepartmentNew}>Submit</InputGroupButton>
               </InputGroup> 
               </div>}
           </div>
@@ -155,35 +156,19 @@ export default class ManagerProfile extends Component {
   }
 
   sendDepartmentExisting(){
-    console.log("this.state.selectDept", this.state.selectDept); 
-    var config = { headers: {
-                      'Content-Type': 'application/json'}};
-    axios.post('/api/managerprofile',{
-      student: this.state.student,
-      department: this.state.selectDept
-    }, config)
-    .then(response => {
-      if (response.data == 'error'){
-        alert('Invalid student username. Please enter a different username');
-      }
-      else //alert('Your changes have been saved');
-      console.log("response.data", response.data); 
-      this.setState({department: response.data}); 
-      this.refs.studentTable.createRows();
-      //TODO update students when dept changes
-    })
-    .catch(function (error) {
-      console.log(error);
-    });
+    this.sendDepartmentChange("",this.state.selectDept); 
   }
 
+  sendDepartmentNew() {
+    this.sendDepartmentChange("",this.state.newDepartment)
+  }
 
-  sendDepartment(){
+  sendDepartmentChange(newStudent, newDepartment){
     var config = { headers: {
                       'Content-Type': 'application/json'}};
     axios.post('/api/managerprofile',{
-      student: this.state.student,
-      department: this.state.newDepartment
+      student: newStudent,
+      department: newDepartment
     }, config)
     .then(response => {
       if (response.data == 'error'){
@@ -235,8 +220,4 @@ export default class ManagerProfile extends Component {
       }); 
   }
 
-//   addRow() {
-//       //TODO just for testing
-//       this.refs.studentTable.addRow(); 
-//   }
 }

@@ -212,9 +212,9 @@ def getAllDepartments():
 def getManagerDept():
     res = db.execute("""SELECT name from department where id =(SELECT dept from manager where username = '%s');"""%session.get("username"))
     res = res.fetchall() 
-    print(res)
-    #TODO return managerdept  
-    return "ITS"
+    if (len(res) > 0): 
+        return res[0][0]
+    return ""
 
 @app.route("/api/calendar")
 def calendar():
