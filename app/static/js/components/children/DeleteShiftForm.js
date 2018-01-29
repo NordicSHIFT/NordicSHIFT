@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { Col, Row, Button, Form, FormGroup, Label, Input } from 'reactstrap';
 import axios from 'axios';
 
-class EditShiftForm extends Component {
+class DeleteShiftForm extends Component {
   constructor(props){
     super(props);
     this.state={
@@ -65,4 +65,4 @@ class EditShiftForm extends Component {
   }
 }
 
-export default EditShiftForm; 
+export default DeleteShiftForm; 

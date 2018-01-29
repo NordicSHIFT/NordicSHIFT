@@ -9,6 +9,7 @@ import { DragDropContext } from 'react-dnd'
 import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop';
 
 import 'react-big-calendar/lib/css/react-big-calendar.css'; 
+import { convertEvent } from './../../util.js'; 
 
 BigCalendar.setLocalizer(
   BigCalendar.momentLocalizer(moment)
@@ -17,18 +18,10 @@ var origin = window.location.origin;
 
 const DragAndDropCalendar = withDragAndDrop(BigCalendar);
 
-function convertEvent(event) {
-  return {
-    title: event.title,
-    start: new Date(event.start),
-    end: new Date(event.end),
-    hexColor: event.hexColor
-  }
-}
 
 class ManagerCal extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     
     let timeRangeFormat = ({ start, end }, culture, local)=>
     local.format(start, 'h:mm', culture) +
@@ -40,12 +33,14 @@ class ManagerCal extends Component {
     }; 
 
     let scrollToTime = new Date().setHours(7); 
+ 
+    let newStart = new Date(parseInt(this.props.startDate)); 
 
-     
     this.state = {
       format: formats,
       scrollTime : scrollToTime,
-      events: [{}]
+      events: [{}],
+      startDate: newStart
     };
 
     this.retrieveEvents = this.retrieveEvents.bind(this);
@@ -55,10 +50,9 @@ class ManagerCal extends Component {
     this.retrieveEvents(); 
   }  
 
-  retrieveEvents() {
-    console.log("Before Axios call"); 
-    var url =  origin + '/api/calendar';  
-    axios.get(url)
+
+  retrieveEvents() { 
+    axios.get('/api/calendar')
     .then(res => {
       var jsevents = res.data.events.map(
                         event => convertEvent(event)); 
@@ -71,13 +65,10 @@ class ManagerCal extends Component {
   }
 
   addEvent(slotInfo) { 
+      //TODO: add check if it is in correct date range
     if (slotInfo.action == 'select') { 
       const theEvent = this.props.formCalInt(slotInfo);   
     }
-  }
-
-  addEditEvent(event) { 
-      const theEvent = this.props.shiftToEdit(event);   
   }
 
   eventStyleGetter(event) {
@@ -96,14 +87,12 @@ class ManagerCal extends Component {
   }
 
   moveEvent({ event, start, end }) {
+    //TODO: add check if it is dropped on a valid day
     var config = { headers: {
       'Content-Type': 'application/json',
       'Access-Control-Allow-Origin': '*'}
     }
     this.props.removeToDelete(); 
-    console.log("myEvent", event); 
-    console.log("start", start); 
-    console.log("end", end); 
     axios.post('/api/moveEvent', {
       myEvent: event,
       oldStart: event.start, 
@@ -141,12 +130,14 @@ class ManagerCal extends Component {
           popup='true'
           step = {15}
           timeslots = {4}
+          toolbar={false}
           style={{height: 550}}
           events={this.state.events}
           formats={this.state.format}
           scrollToTime={this.state.scrollTime}
-          onSelectEvent={event => this.addEditEvent(event)}
+          onSelectEvent={event => this.props.showDeleteForm(event)}
           onSelectSlot={(slotInfo) => this.addEvent(slotInfo)}
+          defaultDate={this.state.startDate}
           eventPropGetter={(this.eventStyleGetter)}
           onEventDrop={this.moveEvent}
         />

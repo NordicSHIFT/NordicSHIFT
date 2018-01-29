@@ -6,6 +6,7 @@ import axios from 'axios';
 class ShiftForm extends Component {
   constructor(props){
     super(props);
+    var daysState  = {1:false,2:false,3:false,4:false,5:false,6:false,0:false}; 
     this.state={
       shiftTitle: "Shift", 
       startHour: "", 
@@ -14,7 +15,9 @@ class ShiftForm extends Component {
       endHour: "", 
       endMinute: "", 
       endPeriod:"",
-      comments:""};
+      comments:"", 
+      days: daysState
+    };
 
     this.updateShiftTitle = this.updateShiftTitle.bind(this); 
     this.changeStartHour = this.changeStartHour.bind(this); 
@@ -24,6 +27,19 @@ class ShiftForm extends Component {
     this.changeEndHour = this.changeEndHour.bind(this); 
     this.changeEndMinute = this.changeEndMinute.bind(this); 
     this.changeEndPeriod = this.changeEndPeriod.bind(this);
+
+    this.toggleMon = this.toggleMon.bind(this); 
+    this.toggleTues = this.toggleTues.bind(this); 
+    this.toggleWed = this.toggleWed.bind(this); 
+    this.toggleThur = this.toggleThur.bind(this); 
+    this.toggleFri = this.toggleFri.bind(this); 
+    this.toggleSat = this.toggleSat.bind(this); 
+    this.toggleSun = this.toggleSun.bind(this); 
+
+  }
+
+  onSubmit(event) {
+    event.preventDefault();
   }
 
   updateShiftTitle(evt){
@@ -48,16 +64,45 @@ class ShiftForm extends Component {
     this.setState({endPeriod : event.target.value});
   }
 
+  toggleMon(event) { 
+      this.state.days[1] = !this.state.days[1]; 
+      this.setState({days: this.state.days}); 
+  }
+  toggleTues(event) {
+    this.state.days[2] = !this.state.days[2]; 
+    this.setState({days: this.state.days}); 
+  }
+  toggleWed(event) {
+    this.state.days[3] = !this.state.days[3]; 
+    this.setState({days: this.state.days}); 
+  }
+  toggleThur(event) {
+    this.state.days[4] = !this.state.days[4]; 
+    this.setState({days: this.state.days}); 
+  }
+  toggleFri(event) {
+    this.state.days[5] = !this.state.days[5]; 
+    this.setState({days: this.state.days}); 
+  }
+  toggleSat(event) {
+    this.state.days[6] = !this.state.days[6]; 
+    this.setState({days: this.state.days}); 
+  }
+  toggleSun(event) {
+    this.state.days[0] = !this.state.days[0]; 
+    this.setState({days: this.state.days}); 
+  }
+
   render() {
     return (
       <div>
         <h1>Add shift</h1> 
         <Form>
-        <FormGroup>
+        <div>
           <Label for="shiftTitle">Title</Label>
           <Input name="shiftTitle" id="shiftTitle" placeholder="Shift" value={this.state.shiftTitle} onChange={this.updateShiftTitle}/>
-        </FormGroup>
-        <FormGroup>
+        </div>
+        <div>
         <Label for="startTime">Start</Label>
           <Row>
           <Col>
@@ -94,8 +139,8 @@ class ShiftForm extends Component {
             </select>
           </Col>
         </Row>
-      </FormGroup>
-        <FormGroup>
+      </div>
+        <div>
           <Label for="endTime">End</Label>
             <Row>
             <Col>
@@ -132,16 +177,54 @@ class ShiftForm extends Component {
               </select>
             </Col>
           </Row>
-        </FormGroup>
-        <FormGroup>
+        </div>
+            <Label>Repeat On:</Label>
+            <Row>
+            <div check inline>
+                <Label check>
+                    <input type="checkbox" id="sunday" checked={this.state.days[0]} onClick={this.toggleSun}/>S
+                </Label>
+            </div>
+            <div check inline>
+                <Label check>
+                    <input type="checkbox" id="monday" checked={this.state.days[1]} onClick={this.toggleMon} />M
+                </Label>
+            </div>
+            <div check inline>
+                <Label check>
+                    <input type="checkbox" id="tuesday" checked={this.state.days[2]} onClick={this.toggleTues}/>T
+                </Label>
+            </div>
+            <div check inline>
+                <Label check>
+                    <input type="checkbox" id="wednesday" checked={this.state.days[3]} onClick={this.toggleWed}/>W
+                </Label>
+            </div>
+            <div check inline>
+                <Label check>
+                    <input type="checkbox" id="thursday" checked={this.state.days[4]} onClick={this.toggleThur}/>Th
+                </Label>
+            </div>
+            <div check inline>
+                <Label check>
+                    <input type="checkbox" id="friday" checked={this.state.days[5]} onClick={this.toggleFri}/>F
+                </Label>
+            </div>
+            <div check inline>
+                <Label check>
+                    <input type="checkbox" id="saturday" checked={this.state.days[6]} onClick={this.toggleSat}/>S
+                </Label>
+            </div>
+            </Row>
+        <div>
           <Label for="comment">Comments</Label>
           <Input name="email" id="comment" placeholder="busy shift"/>
-        </FormGroup>
-        <FormGroup>
+        </div>
+        <div>
           <Col>
             <Button onClick={this.props.submitForm}>Submit</Button>
           </Col>
-        </FormGroup>
+        </div>
         </Form> 
       </div>) 
   }

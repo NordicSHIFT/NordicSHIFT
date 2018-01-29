@@ -27,7 +27,7 @@ export class Menubar extends Component {
         <Collapse isOpen={this.state.isOpen} navbar>
           <Nav className="ml-auto" navbar>
             <NavItem>
-                <NavLink href="/managerplanner">Planner</NavLink>
+                <NavLink href="/selectweek">Planner</NavLink>
             </NavItem>
             <NavItem>
                 <NavLink href="/dashboard">Dashboard</NavLink>

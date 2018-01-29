@@ -145,7 +145,8 @@ def scheduler2(schedule, students):
             # print('current full Sched: ',currSched)
             # f.write('current full Sched\n')
             # f.write(str(currSched))
-            complete.add(currSched)
+            if currSched not in complete:
+                complete.add(currSched)
         else:
             # print("come in else")
             topShift = currSched.getFirstUnassigned() #should remove it from unassigned as well
@@ -180,7 +181,8 @@ def scheduler2(schedule, students):
                             scheduleStack.append(newSched)
                             visited.add(newSched)
     print("schedule complete")
-    return complete
+    print("number of schedules", len(complete))
+    return complete 
 
 if __name__ == "__main__":
     main()

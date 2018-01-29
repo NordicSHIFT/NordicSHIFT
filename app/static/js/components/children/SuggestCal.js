@@ -5,23 +5,16 @@ import axios from 'axios';
 import moment from 'moment';  
 import 'react-big-calendar/lib/css/react-big-calendar.css'; 
 
+import { convertEvent } from './../../util.js'; 
+
 BigCalendar.setLocalizer(
   BigCalendar.momentLocalizer(moment)
 );
 var origin = window.location.origin;
 
-function convertEvent(event) {
-  return {
-    title: event.title,
-    start: new Date(event.start),
-    end: new Date(event.end),
-    hexColor: event.hexColor
-  }
-}
-
-class SuggestCal extends Component {
-  constructor() {
-    super();
+export default class SuggestCal extends Component {
+  constructor(props) {
+    super(props);
     
     let timeRangeFormat = ({ start, end }, culture, local)=>
     local.format(start, 'h:mm', culture) +
@@ -34,17 +27,19 @@ class SuggestCal extends Component {
 
     let scrollToTime = new Date().setHours(7); 
 
+    let newStart = new Date(parseInt(this.props.startDate)); 
+
     this.state = {
       format: formats,
       scrollTime : scrollToTime,
-      events: [{}]
+      events: [{}],
+      startDate: newStart
     };
 
     this.eventStyleGetter = this.eventStyleGetter.bind(this); 
   }  
 
   eventStyleGetter(event) {
-    console.log(event);
     var backgroundColor = event.hexColor;
     var style = {
         backgroundColor: backgroundColor,
@@ -70,6 +65,7 @@ class SuggestCal extends Component {
           style={{height: 500}}
           formats={this.state.format}
           scrollToTime={this.state.scrollTime}
+          defaultDate={this.state.startDate}
           onSelectEvent={event => alert(event.title + event.hexColor)}
           eventPropGetter={(this.eventStyleGetter)}
         />
@@ -77,5 +73,3 @@ class SuggestCal extends Component {
     )
   }
 }
-
-export default SuggestCal; 

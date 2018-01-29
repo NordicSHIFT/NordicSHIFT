@@ -1,7 +1,7 @@
 import React from 'react'
 import { Switch, Route } from 'react-router-dom'
 import Home from './Home'
-import ManagerPlanner from './ManagerPlanner'
+import SelectShifts from './managerPlanner/SelectShifts'
 import StudentDashboard from './StudentDash'
 import ManagerDashboard from './ManagerDash'
 import ManagerProfile from './ManagerProfile'
@@ -10,29 +10,27 @@ import StudentSchedule from './StudentSchedule'
 import ManagerSchedule from './ManagerSchedule'
 import Login from './Login'
 import Signup from './Signup'
-import GenerateSchedule from './GenerateSchedule'
-import SuggestedSchedules from './SuggestedSchedules'
+import SelectWeek from './managerPlanner/SelectWeek'
+import SelectSchedule from './managerPlanner/SelectSchedule'
 
-// The Main component renders one of the three provided
-// Routes (provided that one matches). Both the /roster
-// and /schedule routes will match any pathname that starts
-// with /roster or /schedule. The / route will only match
-// when the pathname is exactly the string "/"
+
 const Main = () => (
   <main>
     <Switch>
       <Route exact path='/' component={Home}/>
-      <Route path='/managerplanner' component={ManagerPlanner}/>
       <Route path='/login' component={Login}/>
       <Route path='/signup' component={Signup}/>
       <Route path='/studentdashboard' component={StudentDashboard}/>
       <Route path='/managerdashboard' component={ManagerDashboard}/>
       <Route path='/studentschedule' component={StudentSchedule}/>
-      <Route path='/managerschedule' component={ManagerSchedule}/>
+      <Route exact path='/managerschedule/:startDate/:scheduleIndex' component={ManagerSchedule}/>
+      <Route exact path='/managerschedule/:startDate' component={ManagerSchedule}/>
+      <Route exact path='/managerschedule' component={ManagerSchedule}/>
       <Route path='/studentprofile' component={StudentProfile}/>
       <Route path='/managerprofile' component={ManagerProfile}/>
-      <Route path='/generateSchedule' component={GenerateSchedule}/>
-      <Route path='/suggestedSchedules' component={SuggestedSchedules}/>
+      <Route path='/selectweek' component={SelectWeek}/>
+      <Route path='/selectshifts/:startDate' component={SelectShifts} />
+      <Route path='/selectschedule/:startDate' component={SelectSchedule}/>
     </Switch>
   </main>
 )
