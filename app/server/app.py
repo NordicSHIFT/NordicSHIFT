@@ -156,19 +156,20 @@ def myprofile():
 
 @app.route('/api/managerprofile', methods = ['POST'])
 def managerprofile():
-    print(session)
+    #print(session)
     data = request.get_json(silent=True)
     department = data.get("department")
     student = data.get("student")
     print("department: ", data.get("department"))
     print("student: ", data.get("student"))
-    if department!='':
+    if department!='' and department!=None:
         res = db.execute("""SELECT * from department where name ='%s';"""%department)
         res = res.fetchall()
         if len(res) == 0:
             db.execute("""INSERT into department(name) VALUES ('%s');"""%department)
         db.execute("""UPDATE manager SET dept = (SELECT id from department where name ='%s') WHERE username = '%s';"""%(department, session.get('username')))
         db.commit()
+        return department 
     if student!='':
         if '@luther.edu' not in student:
             return 'error'
@@ -178,7 +179,42 @@ def managerprofile():
             db.execute("""INSERT into student(username, password) VALUES ('%s','student');"""%student)
         db.execute("""INSERT into ds(department,student) VALUES ((SELECT dept from manager where username = '%s'),(SELECT id from student where username ='%s'));"""%(session.get("username"), student))
         db.commit()
-    return '/myprofile'
+        res = db.execute("""SELECT * from student where username ='%s'"""%student)
+        res = res.fetchall()
+        returnStudent = {"username": res[0].username, "name": res[0].name, "hours": res[0].hours}
+        return jsonify(returnStudent)
+    return jsonify([department, student]) 
+
+@app.route("/api/getStudents")
+def getStudents():
+    #TODO return all the students for current department 
+    return "students"
+
+@app.route("/api/studentUpdates", methods = ['POST'])
+def studentUpdate(): 
+    data = request.get_json(silent=True)
+    modifiedStudents = data.get("students")
+    print(data.get("students")) 
+    #TODO write changes to database 
+    return "done"
+
+@app.route("/api/getAllDepartments")
+def getAllDepartments():
+    res = db.execute("""SELECT * from department;""")
+    res = res.fetchall() 
+    print('res: ', res)
+    departments = []
+    for dept in res:
+        departments.append([dept.id,dept.name]); 
+    return jsonify(departments)
+
+@app.route("/api/getManagerDept")
+def getManagerDept():
+    res = db.execute("""SELECT name from department where id =(SELECT dept from manager where username = '%s');"""%session.get("username"))
+    res = res.fetchall() 
+    print(res)
+    #TODO return managerdept  
+    return "ITS"
 
 @app.route("/api/calendar")
 def calendar():

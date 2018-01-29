@@ -51,9 +51,8 @@ class ManagerCal extends Component {
   }  
 
 
-  retrieveEvents() {
-    var url =  origin + '/api/calendar';  
-    axios.get(url)
+  retrieveEvents() { 
+    axios.get('/api/calendar')
     .then(res => {
       var jsevents = res.data.events.map(
                         event => convertEvent(event)); 
