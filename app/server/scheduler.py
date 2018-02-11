@@ -79,7 +79,7 @@ class Schedule:
 
     def getUnassignedShift(self):
         return self.unassignedShift
-        
+
     def __eq__(self, other):
         return self.assignedShift == other.getAssignedShift()
 
@@ -167,12 +167,20 @@ def scheduler2(schedule, students):
 
                     # loop through the currShed's assigned shift to see how many hours that
                     # particular student has been assigned and whether the time they have left is enough to assigned new shift
+                    # also check if assigned shifts overlap 
+                    available = True 
                     for shift in currSched.getAssignedShift():
                         #print(shift)
                         if shift.getStudent() == student:
                             hoursLeft -= float(shift.getLength())
+                            #TODO check if new shift overlaps with old shift 
+                            if topShift.getStart() > shift.getStart() and topShift.getStart() < shift.getEnd():
+                                available = False 
 
-                    if hoursLeft >= topShift.getLength():
+                            if topShift.getEnd() > shift.getStart() and topShift.getEnd() < shift.getEnd():
+                                available = False 
+
+                    if hoursLeft >= topShift.getLength() and available:
                         # if (student.username == "ben"):
                             # print("ben had hours")
                         topShift.setStudent(student)

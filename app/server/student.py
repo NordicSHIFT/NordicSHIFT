@@ -48,7 +48,7 @@ class Student:
 
     def __gt__(self, other): 
         return self.username > other.username
-        
+
     def __str__(self):
         return self.username
 
