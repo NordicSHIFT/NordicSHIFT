@@ -42,7 +42,13 @@ class Student:
         if other == None:
             return False
         return self.username == other.username
+    
+    def __lt__(self, other): 
+        return self.username < other.username
 
+    def __gt__(self, other): 
+        return self.username > other.username
+        
     def __str__(self):
         return self.username
 

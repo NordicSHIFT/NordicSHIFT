@@ -79,15 +79,20 @@ class Schedule:
 
     def getUnassignedShift(self):
         return self.unassignedShift
+        
     def __eq__(self, other):
         return self.assignedShift == other.getAssignedShift()
 
     def __hash__(self):
         res = ""
-        for shift in self.unassignedShift:
-            res += str(shift)
-        for shift in self.assignedShift:
-            res += str(shift)
+        unassigned = list(self.unassignedShift).sort() 
+        if unassigned:
+            for shift in unassigned:
+                res += str(shift)
+        assigned = list(self.assignedShift).sort() 
+        if assigned: 
+            for shift in assigned:
+                res += str(shift)
         return hash(res)
 
     def getFirstUnassigned(self):
