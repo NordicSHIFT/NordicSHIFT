@@ -180,6 +180,9 @@ def scheduler2(schedule, students):
                             if topShift.getEnd() > shift.getStart() and topShift.getEnd() < shift.getEnd():
                                 available = False 
 
+                            if topShift.getStart() < shift.getStart() and topShift.getEnd() > shift.getEnd():
+                                available = False 
+
                     if hoursLeft >= topShift.getLength() and available:
                         # if (student.username == "ben"):
                             # print("ben had hours")

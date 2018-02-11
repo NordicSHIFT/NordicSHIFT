@@ -43,7 +43,7 @@ export default class SelectSchedule extends Component {
 
   changeSchedule(scheduleNum) {
       console.log("CHANGING SCHEDULE"); 
-      let scheduleIndex = parseInt(scheduleNum)*10 - 1;  //TODO change to -1
+      let scheduleIndex = parseInt(scheduleNum)- 1;  //TODO change to -1
       let publishPath = this.state.basePublishPath + "/" + scheduleIndex; 
       this.setState({"scheduleIndex": scheduleIndex, "publishPath": publishPath}); 
       if (scheduleNum == "3") {
