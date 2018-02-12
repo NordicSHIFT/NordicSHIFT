@@ -1,5 +1,6 @@
 import os
 import flask
+from flask import session
 
 import google.oauth2.credentials
 import google_auth_oauthlib.flow
@@ -13,11 +14,7 @@ def authCall():
     if 'credentials' not in flask.session:
         print ("not credentials in flask.session")
         return flask.redirect('/authorize')
-    if session.get('l_or_s') == 'l':
-        return flask.render_template("login.html")
-    if session.get('l_or_s') == 's':
-        return flask.render_template("signup.html")
-
+    return flask.render_template("login.html")
 
 def calendarCall():
   print("in calendar call")
