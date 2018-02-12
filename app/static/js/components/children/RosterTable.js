@@ -29,7 +29,7 @@ export default class RosterTable extends Component {
           sortable: true
         },
         {
-          key: 'userName',
+          key: 'username',
           name: 'Username',
           editable: true,
           sortable: true
@@ -80,7 +80,7 @@ export default class RosterTable extends Component {
             newRows.push({
               id: students[i].id,
               name: students[i].name,
-              userName: students[i].username,
+              username: students[i].username,
               hours: students[i].hours,
               // name: ['Taylor', 'Ian', 'Linh', 'Alfred'][Math.floor((Math.random() * 3) + 1)],
               // userName: ['user1', 'user2', 'user3', 'user4'][Math.floor((Math.random() * 3) + 1)],

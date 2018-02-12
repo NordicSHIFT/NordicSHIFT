@@ -202,8 +202,16 @@ def getStudents():
 def studentUpdate():
     data = request.get_json(silent=True)
     modifiedStudents = data.get("students")
-    print(data.get("students"))
     #TODO write changes to database
+    for student in modifiedStudents:
+        if student['hours'] is None:
+            student['hours'] = 0
+        if student['name'] == 'None':
+            student['name'] = 'Empty'
+        # if student['name'] is not None and student['hours'] is not None and student['username'] is not None:
+        # print(str(student['hours'])+ student['name']+ student['username']+ str(student['id']))
+        db.execute("""UPDATE student SET hours = '%d', name = '%s', username = '%s' where id = '%d'; """%(student['hours'], student['name'], student['username'], student['id']))
+        db.commit()
     return "done"
 
 @app.route("/api/getAllDepartments")
