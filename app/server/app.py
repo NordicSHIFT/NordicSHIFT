@@ -47,6 +47,7 @@ def login():
             return redirect('/managerdashboard')
         elif session['role'] == 'Student':
             return redirect('/studentdashboard')
+    session['l_or_s'] = 'l'
     return authCall()
 
 @app.route('/loginC', methods = ['POST'])
@@ -97,7 +98,8 @@ def signup():
             return redirect('/managerdashboard')
         elif session['role'] == 'Student':
             return redirect('/studentdashboard')
-    return render_template('index.html')
+    session['l_or_s'] = 's'
+    return authCall()
 
 @app.route('/signupC', methods = ['POST'])
 def signupC():

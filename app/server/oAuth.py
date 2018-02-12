@@ -1,5 +1,6 @@
 import os
 import flask
+from flask import session
 
 import google.oauth2.credentials
 import google_auth_oauthlib.flow
@@ -101,8 +102,10 @@ def mainOauth2callback():
   credentials = flow.credentials
   flask.session['credentials'] = credentials_to_dict(credentials)
 
-  return flask.redirect(flask.url_for('login'))
-
+  if session.get('l_or_s') == 'l':
+    return flask.redirect(flask.url_for('login'))
+  if session.get('l_or_s') == 's':
+    return flask.redirect(flask.url_for('signup'))
 
 def credentials_to_dict(credentials):
   return {'token': credentials.token,
