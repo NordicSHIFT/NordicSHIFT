@@ -13,7 +13,7 @@ def authCall():
     if 'credentials' not in flask.session:
         print ("not credentials in flask.session")
         return flask.redirect('/authorize')
-    return flask.render_template("index.html")
+    return flask.render_template("login.html")
 
 def calendarCall():
   print("in calendar call")
@@ -101,7 +101,7 @@ def mainOauth2callback():
   credentials = flow.credentials
   flask.session['credentials'] = credentials_to_dict(credentials)
 
-  return flask.redirect(flask.url_for('index'))
+  return flask.redirect(flask.url_for('login'))
 
 
 def credentials_to_dict(credentials):

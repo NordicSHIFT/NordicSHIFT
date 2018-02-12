@@ -27,8 +27,7 @@ suggestedSchedules = None
 
 @app.route("/")
 def index():
-    return authCall()
-    #return render_template("index.html")
+    return render_template("index.html")
 
 @app.route("/authorize")
 def authorize():
@@ -48,7 +47,7 @@ def login():
             return redirect('/managerdashboard')
         elif session['role'] == 'Student':
             return redirect('/studentdashboard')
-    return render_template("login.html")
+    return authCall()
 
 @app.route('/loginC', methods = ['POST'])
 def loginC():
