@@ -48,7 +48,6 @@ def login():
         elif session['role'] == 'Student':
             return redirect('/studentdashboard')
     return authCall()
-    # return render_template("login.html")
 
 @app.route('/loginC', methods = ['POST'])
 def loginC():
