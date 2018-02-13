@@ -23,7 +23,7 @@ engine=create_engine(postgresql_uri)
 Session = sessionmaker(bind=engine)
 db = Session()
 
-suggestedSchedules = None 
+suggestedSchedules = None
 
 @app.route("/")
 def index():
@@ -170,7 +170,7 @@ def managerprofile():
             db.execute("""INSERT into department(name) VALUES ('%s');"""%department)
         db.execute("""UPDATE manager SET dept = (SELECT id from department where name ='%s') WHERE username = '%s';"""%(department, session.get('username')))
         db.commit()
-        return department 
+        return department
     if student!='':
         if '@luther.edu' not in student:
             return 'error'
@@ -184,36 +184,52 @@ def managerprofile():
         res = res.fetchall()
         returnStudent = {"username": res[0].username, "name": res[0].name, "hours": res[0].hours}
         return jsonify(returnStudent)
-    return jsonify([department, student]) 
+    return jsonify([department, student])
 
 @app.route("/api/getStudents")
 def getStudents():
-    #TODO return all the students for current department 
-    return "students"
+    #TODO return all the students for current department
+    res = db.execute("""SELECT * from student inner join ds on student.id = ds.student where department = (SELECT dept from manager where username = '%s' );"""%(session.get("username")))
+    res = res.fetchall()
+    # print(res)
+    # return "students"
+    students = {"student":[]}
+    for student in res:
+        students["student"].append({"id": student.id, "username": student.username, "name": student.name, "hours": student.hours})
+    # print(students)
+    return jsonify(students)
 
 @app.route("/api/studentUpdates", methods = ['POST'])
-def studentUpdate(): 
+def studentUpdate():
     data = request.get_json(silent=True)
     modifiedStudents = data.get("students")
-    print(data.get("students")) 
-    #TODO write changes to database 
+    #TODO write changes to database
+    for student in modifiedStudents:
+        if student['hours'] is None:
+            student['hours'] = 0
+        if student['name'] == 'None':
+            student['name'] = 'Empty'
+        # if student['name'] is not None and student['hours'] is not None and student['username'] is not None:
+        # print(str(student['hours'])+ student['name']+ student['username']+ str(student['id']))
+        db.execute("""UPDATE student SET hours = '%d', name = '%s', username = '%s' where id = '%d'; """%(student['hours'], student['name'], student['username'], student['id']))
+        db.commit()
     return "done"
 
 @app.route("/api/getAllDepartments")
 def getAllDepartments():
     res = db.execute("""SELECT * from department;""")
-    res = res.fetchall() 
+    res = res.fetchall()
     print('res: ', res)
     departments = []
     for dept in res:
-        departments.append([dept.id,dept.name]); 
+        departments.append([dept.id,dept.name]);
     return jsonify(departments)
 
 @app.route("/api/getManagerDept")
 def getManagerDept():
     res = db.execute("""SELECT name from department where id =(SELECT dept from manager where username = '%s');"""%session.get("username"))
-    res = res.fetchall() 
-    if (len(res) > 0): 
+    res = res.fetchall()
+    if (len(res) > 0):
         return res[0][0]
     return ""
 
@@ -236,7 +252,7 @@ def calendar():
 def addEvents():
   data = request.get_json(silent=True)
   myEvents = data.get('myEvents')
-  for myEvent in myEvents: 
+  for myEvent in myEvents:
     old_format = "%Y-%m-%dT%H:%M:%S.%fZ"
     new_format = '%Y-%m-%d %H:%M:%S'
 
@@ -312,7 +328,7 @@ def generateSchedule():
     print("about to make calendar call")
     schedule = Schedule(shifts)
     schedules = scheduler2(schedule, students)
-    suggestedSchedules = schedules #TODO this doesn't work to have it available in chooseSchedule 
+    suggestedSchedules = schedules #TODO this doesn't work to have it available in chooseSchedule
     print("in generate schedules,", suggestedSchedules)
     res = [schedule.serialize() for schedule in schedules]
     return jsonify(res)
@@ -324,11 +340,11 @@ def chooseSchedule():
     scheduleIndex = data.get('scheduleIndex')
     print("suggested schedule", suggestedSchedules)
     #choosenSchedule = suggestedSchedules[scheduleIndex]
-    #TODO save this schedule to the database 
-    return retrieveSchedule() 
+    #TODO save this schedule to the database
+    return retrieveSchedule()
 
 @app.route('/api/retrieveSchedule', methods=['GET','OPTIONS'])
-def retrieveSchedule(): 
+def retrieveSchedule():
     #TODO make sure this query looks right
     res = db.execute("""SELECT * from shift where dept =(SELECT dept from manager where username = '%s');"""%session.get("username"))
     shiftRe = res.fetchall()
@@ -338,7 +354,7 @@ def retrieveSchedule():
       shifts.append(newShift)
     schedule = Schedule(shifts)
 
-    res = schedule.serialize() 
+    res = schedule.serialize()
     return jsonify(res)
 
 @app.route('/', defaults={'path': ''})
