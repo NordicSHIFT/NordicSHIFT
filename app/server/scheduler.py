@@ -101,13 +101,15 @@ class Schedule:
     def __str__(self):
         returnStr = "Assigned Shifts: \n"
         assigned = list(self.assignedShift).sort() 
-        for shift in assigned:
-            returnStr += str(shift)
-            returnStr += "\n"
+        if assigned: 
+            for shift in assigned:
+                returnStr += str(shift)
+                returnStr += "\n"
         unassigned = list(self.unassignedShift).sort() 
-        for shift in unassigned:
-            returnStr += str(shift)
-            returnStr += "\n"
+        if unassigned: 
+            for shift in unassigned:
+                returnStr += str(shift)
+                returnStr += "\n"
         return returnStr
         #return "Assigned Shift: " + str(self.assignedShift) + " \n Unassigned Shift" + str(self.unassignedShift)
     # This function will help with jsonify the object Schedule

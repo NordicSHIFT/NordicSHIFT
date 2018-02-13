@@ -327,9 +327,9 @@ def generateSchedule():
     schedule = Schedule(shifts)
     schedules = scheduler2(schedule, students)
 
-    print("in generate schedules,", suggestedSchedules)
+    print("in generate schedules,", schedules)
     session["suggested_schedules"] = schedules
-    for schedule in suggestedSchedules: 
+    for schedule in schedules: 
         print(schedule)
     res = [schedule.serialize() for schedule in schedules]
     return jsonify(res)
@@ -343,7 +343,7 @@ def chooseSchedule():
     #TODO save this schedule to the database 
     print(choosenSchedule)
     return retrieveSchedule() 
-    
+
 @app.route('/api/retrieveSchedule', methods=['GET','OPTIONS'])
 def retrieveSchedule():
     #TODO make sure this query looks right
