@@ -26,6 +26,7 @@ export default class ManagerSchedule extends Component {
     this.state = {
         startDate: startDate
     }
+    
     console.log(this.props); 
 
     this.chooseSchedule = this.chooseSchedule.bind(this); 

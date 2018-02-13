@@ -55,6 +55,7 @@ export default class SelectSchedule extends Component {
         let newShifts = newSched['assigned shifts'].concat(newSched['unassigned shifts'])
         this.setStateShifts(newShifts); 
         //this.setStateUnassignedShift(newSched['unassigned shifts']);
+        console.log("newShifts", newShifts); 
       }
        
 

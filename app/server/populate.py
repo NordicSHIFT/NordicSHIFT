@@ -174,46 +174,46 @@ DB.execute(EX_STRING%('2017-11-08 16:30:00', '2017-11-08 18:30:00', 'katie'))
 DB.execute(EX_STRING%('2017-11-08 19:00:00', '2017-11-08 21:00:00', 'katie'))
 
 DB.commit()
-# EX_STRING = """INSERT INTO shift\
-#             (starttime, endtime, dept)\
-#             VALUES ('%s', '%s', (SELECT id from department where name = 'LIS'));
-#             """
-# DB.execute(EX_STRING%('2017-11-07 10:00:00', '2017-11-07 11:00:00'))
-# DB.execute(EX_STRING%('2017-11-07 11:00:00', '2017-11-07 12:00:00'))
-# DB.execute(EX_STRING%('2017-11-07 12:00:00', '2017-11-07 13:00:00'))
-# DB.execute(EX_STRING%('2017-11-07 13:00:00', '2017-11-07 14:00:00'))
-# DB.execute(EX_STRING%('2017-11-07 15:00:00', '2017-11-07 16:00:00'))
-# DB.execute(EX_STRING%('2017-11-07 16:00:00', '2017-11-07 17:00:00'))
-# DB.execute(EX_STRING%('2017-11-07 17:00:00', '2017-11-07 18:00:00'))
-#
-# DB.execute(EX_STRING%('2017-11-08 10:00:00', '2017-11-08 11:00:00'))
-# DB.execute(EX_STRING%('2017-11-08 11:00:00', '2017-11-08 12:00:00'))
-# DB.execute(EX_STRING%('2017-11-08 12:00:00', '2017-11-08 13:00:00'))
-# DB.execute(EX_STRING%('2017-11-08 13:00:00', '2017-11-08 14:00:00'))
-# DB.execute(EX_STRING%('2017-11-08 15:00:00', '2017-11-08 16:00:00'))
-# DB.execute(EX_STRING%('2017-11-08 16:00:00', '2017-11-08 17:00:00'))
-# DB.execute(EX_STRING%('2017-11-08 17:00:00', '2017-11-08 18:00:00'))
+EX_STRING = """INSERT INTO shift\
+            (starttime, endtime, dept)\
+            VALUES ('%s', '%s', (SELECT id from department where name = 'LIS'));
+            """
+DB.execute(EX_STRING%('2017-11-07 10:00:00', '2017-11-07 11:00:00'))
+DB.execute(EX_STRING%('2017-11-07 11:00:00', '2017-11-07 12:00:00'))
+DB.execute(EX_STRING%('2017-11-07 12:00:00', '2017-11-07 13:00:00'))
+DB.execute(EX_STRING%('2017-11-07 13:00:00', '2017-11-07 14:00:00'))
+DB.execute(EX_STRING%('2017-11-07 15:00:00', '2017-11-07 16:00:00'))
+DB.execute(EX_STRING%('2017-11-07 16:00:00', '2017-11-07 17:00:00'))
+DB.execute(EX_STRING%('2017-11-07 17:00:00', '2017-11-07 18:00:00'))
 
-# DB.execute(EX_STRING%('2017-11-07 08:00:00', '2017-11-07 10:00:00'))
-# DB.execute(EX_STRING%('2017-11-07 10:00:00', '2017-11-07 12:00:00'))
-# DB.execute(EX_STRING%('2017-11-07 12:00:00', '2017-11-07 15:00:00'))
-# DB.execute(EX_STRING%('2017-11-07 15:00:00', '2017-11-07 17:00:00'))
-# DB.execute(EX_STRING%('2017-11-07 17:00:00', '2017-11-07 19:00:00'))
-# DB.execute(EX_STRING%('2017-11-07 19:00:00', '2017-11-07 21:00:00'))
-# DB.execute(EX_STRING%('2017-11-07 21:00:00', '2017-11-07 23:00:00'))
-# DB.execute(EX_STRING%('2017-11-07 23:00:00', '2017-11-07 24:00:00'))
-#
-# DB.execute(EX_STRING%('2017-11-08 08:00:00', '2017-11-08 10:00:00'))
-# DB.execute(EX_STRING%('2017-11-08 10:00:00', '2017-11-08 12:00:00'))
-# DB.execute(EX_STRING%('2017-11-08 12:00:00', '2017-11-08 15:00:00'))
-# DB.execute(EX_STRING%('2017-11-08 15:00:00', '2017-11-08 17:00:00'))
-# DB.execute(EX_STRING%('2017-11-08 17:00:00', '2017-11-08 19:00:00'))
-# DB.execute(EX_STRING%('2017-11-08 19:00:00', '2017-11-08 21:00:00'))
-# DB.execute(EX_STRING%('2017-11-08 21:00:00', '2017-11-08 23:00:00'))
-# DB.execute(EX_STRING%('2017-11-08 23:00:00', '2017-11-08 24:00:00'))
-# EX_STRING = """INSERT INTO ds\
-#             (department, student)\
-#             VALUES (4, '%d');"""
-# for i in range(22,31):
-#     DB.execute(EX_STRING%(i))
-#     DB.commit()
+DB.execute(EX_STRING%('2017-11-08 10:00:00', '2017-11-08 11:00:00'))
+DB.execute(EX_STRING%('2017-11-08 11:00:00', '2017-11-08 12:00:00'))
+DB.execute(EX_STRING%('2017-11-08 12:00:00', '2017-11-08 13:00:00'))
+DB.execute(EX_STRING%('2017-11-08 13:00:00', '2017-11-08 14:00:00'))
+DB.execute(EX_STRING%('2017-11-08 15:00:00', '2017-11-08 16:00:00'))
+DB.execute(EX_STRING%('2017-11-08 16:00:00', '2017-11-08 17:00:00'))
+DB.execute(EX_STRING%('2017-11-08 17:00:00', '2017-11-08 18:00:00'))
+
+DB.execute(EX_STRING%('2017-11-07 08:00:00', '2017-11-07 10:00:00'))
+DB.execute(EX_STRING%('2017-11-07 10:00:00', '2017-11-07 12:00:00'))
+DB.execute(EX_STRING%('2017-11-07 12:00:00', '2017-11-07 15:00:00'))
+DB.execute(EX_STRING%('2017-11-07 15:00:00', '2017-11-07 17:00:00'))
+DB.execute(EX_STRING%('2017-11-07 17:00:00', '2017-11-07 19:00:00'))
+DB.execute(EX_STRING%('2017-11-07 19:00:00', '2017-11-07 21:00:00'))
+DB.execute(EX_STRING%('2017-11-07 21:00:00', '2017-11-07 23:00:00'))
+DB.execute(EX_STRING%('2017-11-07 23:00:00', '2017-11-07 24:00:00'))
+
+DB.execute(EX_STRING%('2017-11-08 08:00:00', '2017-11-08 10:00:00'))
+DB.execute(EX_STRING%('2017-11-08 10:00:00', '2017-11-08 12:00:00'))
+DB.execute(EX_STRING%('2017-11-08 12:00:00', '2017-11-08 15:00:00'))
+DB.execute(EX_STRING%('2017-11-08 15:00:00', '2017-11-08 17:00:00'))
+DB.execute(EX_STRING%('2017-11-08 17:00:00', '2017-11-08 19:00:00'))
+DB.execute(EX_STRING%('2017-11-08 19:00:00', '2017-11-08 21:00:00'))
+DB.execute(EX_STRING%('2017-11-08 21:00:00', '2017-11-08 23:00:00'))
+DB.execute(EX_STRING%('2017-11-08 23:00:00', '2017-11-08 24:00:00'))
+EX_STRING = """INSERT INTO ds\
+            (department, student)\
+            VALUES (4, '%d');"""
+for i in range(22,31):
+    DB.execute(EX_STRING%(i))
+    DB.commit()

@@ -86,6 +86,7 @@ def mainAuthorize():
     # return response
 
 def mainOauth2callback():
+  print("in mainOauth2callback")
   state = flask.session['state']
   curr_dir = os.path.dirname(os.path.realpath(__file__))
   security_path = os.path.join(curr_dir, 'security')

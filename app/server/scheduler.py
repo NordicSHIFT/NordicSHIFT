@@ -100,10 +100,12 @@ class Schedule:
 
     def __str__(self):
         returnStr = "Assigned Shifts: \n"
-        for shift in self.assignedShift:
+        assigned = list(self.assignedShift).sort() 
+        for shift in assigned:
             returnStr += str(shift)
             returnStr += "\n"
-        for shift in self.unassignedShift:
+        unassigned = list(self.unassignedShift).sort() 
+        for shift in unassigned:
             returnStr += str(shift)
             returnStr += "\n"
         return returnStr
@@ -174,13 +176,13 @@ def scheduler2(schedule, students):
                         if shift.getStudent() == student:
                             hoursLeft -= float(shift.getLength())
                             #TODO check if new shift overlaps with old shift 
-                            if topShift.getStart() > shift.getStart() and topShift.getStart() < shift.getEnd():
+                            if topShift.getStart() >= shift.getStart() and topShift.getStart() <= shift.getEnd():
                                 available = False 
 
-                            if topShift.getEnd() > shift.getStart() and topShift.getEnd() < shift.getEnd():
+                            if topShift.getEnd() >= shift.getStart() and topShift.getEnd() <= shift.getEnd():
                                 available = False 
 
-                            if topShift.getStart() < shift.getStart() and topShift.getEnd() > shift.getEnd():
+                            if topShift.getStart() <= shift.getStart() and topShift.getEnd() >= shift.getEnd():
                                 available = False 
 
                     if hoursLeft >= topShift.getLength() and available:
