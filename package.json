@@ -13,7 +13,7 @@
     "css-loader": "^0.28.7",
     "immutability-helper": "^2.6.4",
     "react": "^16.0.0",
-    "react-data-grid": "^3.0.8",
+    "react-data-grid": "^3.0.11",
     "react-datepicker": "^0.60.2",
     "react-dnd-html5-backend": "^2.5.4",
     "react-dom": "^16.0.0",
