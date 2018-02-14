@@ -311,8 +311,8 @@ def generateSchedule():
     print("about to make calendar call")
     schedule = Schedule(shifts)
     schedules = scheduler2(schedule, students)
-    suggestedSchedules = schedules #TODO this doesn't work to have it available in chooseSchedule 
-    print("in generate schedules,", suggestedSchedules)
+    
+    #print("in generate schedules,", suggestedSchedules)
     res = [schedule.serialize() for schedule in schedules]
     return jsonify(res)
 

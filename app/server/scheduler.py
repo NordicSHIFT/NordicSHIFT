@@ -84,10 +84,16 @@ class Schedule:
 
     def __hash__(self):
         res = ""
-        for shift in self.unassignedShift:
-            res += str(shift)
-        for shift in self.assignedShift:
-            res += str(shift)
+        unassigned = list(self.unassignedShift)
+        unassigned.sort() 
+        if unassigned:
+            for shift in unassigned:
+                res += str(shift)
+        assigned = list(self.assignedShift)
+        assigned.sort() 
+        if assigned: 
+            for shift in assigned:
+                res += str(shift)
         return hash(res)
 
     def getFirstUnassigned(self):
@@ -95,12 +101,20 @@ class Schedule:
 
     def __str__(self):
         returnStr = "Assigned Shifts: \n"
-        for shift in self.assignedShift:
-            returnStr += str(shift)
-            returnStr += "\n"
-        for shift in self.unassignedShift:
-            returnStr += str(shift)
-            returnStr += "\n"
+        assigned = list(self.assignedShift)
+        assigned.sort()
+        print("self.assignedShift", self.assignedShift)
+        print("assigned: ", assigned)
+        if assigned: 
+            for shift in self.assignedShift:
+                returnStr += str(shift)
+                returnStr += "\n"
+        unassigned = list(self.unassignedShift)
+        unassigned.sort() 
+        if unassigned: 
+            for shift in self.unassignedShift:
+                returnStr += str(shift)
+                returnStr += "\n"
         return returnStr
         #return "Assigned Shift: " + str(self.assignedShift) + " \n Unassigned Shift" + str(self.unassignedShift)
     # This function will help with jsonify the object Schedule
@@ -134,6 +148,7 @@ def main():
     scheduler2(schedule, students)
 
 def scheduler2(schedule, students):
+    file_out = open("schedules.txt", 'w', encoding="utf-8")
     scheduleStack = [schedule]
     visited = set()
     complete = set()
@@ -147,11 +162,14 @@ def scheduler2(schedule, students):
             # f.write(str(currSched))
             if currSched not in complete:
                 complete.add(currSched)
+                file_out.write(str(currSched))
+
+                #print(currSched)
         else:
             # print("come in else")
             topShift = currSched.getFirstUnassigned() #should remove it from unassigned as well
             for student in students:
-                # print(student)
+                print(student)
                 if student.isAvailable(topShift):
                     # if (student.username == "ben"):
                         # print("ben is available")
@@ -180,8 +198,9 @@ def scheduler2(schedule, students):
                         if newSched not in visited:
                             scheduleStack.append(newSched)
                             visited.add(newSched)
-    print("schedule complete")
+    #print("schedule complete")
     print("number of schedules", len(complete))
+    file_out.close() 
     return complete 
 
 if __name__ == "__main__":
