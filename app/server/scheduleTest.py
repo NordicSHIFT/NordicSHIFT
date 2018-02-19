@@ -14,19 +14,23 @@ def main():
 
         
     ###### Create Shifts ######
-    shifts = [] 
-    shifts.append(Shift("ITS",datetime.datetime(2018, 2, 13, 8, 0),datetime.datetime(2018, 2, 13, 10, 0), alfred))
+    shifts = []
+    myShift = Shift("ITS",datetime.datetime(2018, 2, 13, 8, 0),datetime.datetime(2018, 2, 13, 10, 0))
+    myShift.setStudent(bob)
+    shifts.append(myShift) 
     schedule1 = Schedule(shifts)
 
     shifts = [] 
-    shifts.append(Shift("ITS",datetime.datetime(2018, 2, 13, 8, 0),datetime.datetime(2018, 2, 13, 10, 0), alfred))
+    myShift = Shift("ITS",datetime.datetime(2018, 2, 13, 8, 0),datetime.datetime(2018, 2, 13, 10, 0))
+    myShift.setStudent(bob)
+    shifts.append(myShift)     
     schedule2 = Schedule(shifts)
     
     scheduleSet = set()
     scheduleSet.add(schedule1)
     scheduleSet.add(schedule2)
     print(len(scheduleSet))
-    
+    print(schedule2 in scheduleSet)
     shifts = [] 
 
     shifts.append(Shift("ITS",datetime.datetime(2018, 2, 13, 8, 0),datetime.datetime(2018, 2, 13, 10, 0)))

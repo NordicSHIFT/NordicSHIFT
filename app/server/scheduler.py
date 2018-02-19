@@ -9,12 +9,13 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from student import Student
 from shift import Shift
+from copy import deepcopy
 
-postgresql_uri=os.environ['DATABASE_URL']
-engine=create_engine(postgresql_uri)
+#postgresql_uri=os.environ['DATABASE_URL']
+#engine=create_engine(postgresql_uri)
 
-Session = sessionmaker(bind=engine)
-db = Session()
+#Session = sessionmaker(bind=engine)
+#db = Session()
 
 class Schedule:
     def __init__(self, shifts):
@@ -80,7 +81,11 @@ class Schedule:
     def getUnassignedShift(self):
         return self.unassignedShift
     def __eq__(self, other):
-        return self.assignedShift == other.getAssignedShift()
+        # for shift in self.getAssignedShift():
+        #     for shift2 in sched2.getAssignedShift():
+        bool1 = len(self.assignedShift - other.getAssignedShift()) == 0 
+        bool2 = len(other.getAssignedShift() - self.assignedShift) == 0
+        return bool1 and bool2
 
     def __hash__(self):
         res = ""
@@ -103,8 +108,6 @@ class Schedule:
         returnStr = "Assigned Shifts: \n"
         assigned = list(self.assignedShift)
         assigned.sort()
-        print("self.assignedShift", self.assignedShift)
-        print("assigned: ", assigned)
         if assigned: 
             for shift in self.assignedShift:
                 returnStr += str(shift)
@@ -151,25 +154,37 @@ def scheduler2(schedule, students):
     file_out = open("schedules.txt", 'w', encoding="utf-8")
     scheduleStack = [schedule]
     visited = set()
+    visited_hash = set() 
     complete = set()
+    complete_hash = set()
     print("in scheduler")
     # f = open('schedulerResult.txt','w')
-    while len(scheduleStack)>0:
+    while len(scheduleStack)>0 and len(complete) < 80:
         currSched = scheduleStack.pop()
+
+        if len(currSched.getUnassignedShift()) > 0:
+            print("checking assigned shifts")
+            for shift in currSched.getAssignedShift():
+                print("assigned student",shift.getStudent())
+            for shift in currSched.getUnassignedShift():
+                print("assigned student",shift.getStudent())
         if len(currSched.getUnassignedShift()) == 0:
             # print('current full Sched: ',currSched)
             # f.write('current full Sched\n')
             # f.write(str(currSched))
-            if currSched not in complete:
+            if hash(currSched) not in complete_hash:
+                print('in currSched Loop')
+                print("before add length: ", len(complete))
                 complete.add(currSched)
+                complete_hash.add(hash(currSched))
+                print("post add length: ", len(complete))
                 file_out.write(str(currSched))
-
-                #print(currSched)
         else:
             # print("come in else")
             topShift = currSched.getFirstUnassigned() #should remove it from unassigned as well
             for student in students:
-                print(student)
+                print("student",student)
+                print("topShift Student",topShift.getStudent())
                 if student.isAvailable(topShift):
                     # if (student.username == "ben"):
                         # print("ben is available")
@@ -180,24 +195,43 @@ def scheduler2(schedule, students):
 
                     # loop through the currShed's assigned shift to see how many hours that
                     # particular student has been assigned and whether the time they have left is enough to assigned new shift
+                    available = True 
                     for shift in currSched.getAssignedShift():
                         #print(shift)
                         if shift.getStudent() == student:
                             hoursLeft -= float(shift.getLength())
+                            #TODO check if new shift overlaps with old shift 
+                            if topShift.getStart() > shift.getStart() and topShift.getStart() < shift.getEnd():
+                                available = False 
 
-                    if hoursLeft >= topShift.getLength():
-                        # if (student.username == "ben"):
-                            # print("ben had hours")
-                        topShift.setStudent(student)
-                        currSched.getAssignedShift().add(topShift)
-                        currSched.getUnassignedShift()
-                        newShifts = currSched.getAssignedShift().union(currSched.getUnassignedShift())
+                            if topShift.getEnd() > shift.getStart() and topShift.getEnd() < shift.getEnd():
+                                available = False 
+                            
+                            if topShift.getStart() < shift.getStart() and topShift.getEnd() > shift.getEnd():
+                                available = False
 
+                            if topShift.getStart() < shift.getStart() and topShift.getEnd() > shift.getEnd():
+                                available = False
+
+                    if hoursLeft >= topShift.getLength() and available:
+                        # if (student.username == "alfred"):
+                        #     print("alfred had hours")
+                        newTop = Shift(topShift.getDept(), topShift.getStart(),topShift.getEnd(),topShift.getStudent())
+                        newTop.setStudent(student)
+                        print("rigth before add", len(currSched.getAssignedShift()))
+                        oldAssigned = deepcopy(currSched.getAssignedShift())
+                        oldAssigned.add(newTop)
+                        newShifts = oldAssigned.union(currSched.getUnassignedShift())
+                        print("len(currSched.getAssignedShift())",len(currSched.getAssignedShift()))
+                        print("len(currSched.getUnassignedShift())",len(currSched.getUnassignedShift()))
+                        print("len(newShifts)",len(newShifts))
                         newSched = Schedule(newShifts)
                         #print("new schedule: ", newSched)
-                        if newSched not in visited:
+                        if hash(newSched) not in visited_hash:
+                            print('adding to visited')
                             scheduleStack.append(newSched)
                             visited.add(newSched)
+                            visited_hash.add(hash(newSched))
     #print("schedule complete")
     print("number of schedules", len(complete))
     file_out.close() 
