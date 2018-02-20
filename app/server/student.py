@@ -10,6 +10,12 @@ class Student:
         self.unavailability = unavailability
         self.shiftAssigned = shiftAssigned
 
+    def __lt__(self, other): 
+        return self.username < other.username
+
+    def __gt__(self, other): 
+        return self.username > other.username 
+
     def getUsername(self):
         return self.username
 
