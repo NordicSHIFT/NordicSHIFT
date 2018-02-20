@@ -21,29 +21,20 @@ export default class SelectSchedule extends Component {
       publishPath: "/managerschedule/" + this.props.match.params.startDate + "/0" 
     }
     this.generateSchedule = this.generateSchedule.bind(this);
-    this.setStateAssignedShift = this.setStateAssignedShift.bind(this);
-    this.setStateUnassignedShift = this.setStateUnassignedShift.bind(this);
+    this.setStateShifts = this.setStateShifts.bind(this);
     this.setAllSchedules = this.setAllSchedules.bind(this); 
     this.changeSchedule = this.changeSchedule.bind(this); 
 
     this.generateSchedule(); 
   }
 
-  setStateAssignedShift(shifts){
+  setStateShifts(shifts){
     this.setState({"assignedShift":shifts});
     var events = util.convertShiftstoEvents(shifts);  
     //console.log("assigned events", events);
-    const theevents = this.refs.calendar.state.events.concat(events); 
-    this.refs.calendar.setState({events: theevents}); 
+    //const theevents = this.refs.calendar.state.events.concat(events); 
+    this.refs.calendar.setState({events: events}); 
 
-  }
-
-  setStateUnassignedShift(shifts){
-    this.setState({"unassignedShift":shifts}); 
-    var events = util.convertShiftstoEvents(shifts);  
-    //console.log("unassigned events", events); 
-    const theevents = this.refs.calendar.state.events.concat(events); 
-    this.refs.calendar.setState({events: theevents});  
   }
 
   setAllSchedules(schedules) {
@@ -52,14 +43,18 @@ export default class SelectSchedule extends Component {
 
   changeSchedule(scheduleNum) {
       console.log("CHANGING SCHEDULE"); 
-      let scheduleIndex = parseInt(scheduleNum);  //TODO change to -1
+      let scheduleIndex = parseInt(scheduleNum)- 1;  //TODO change to -1
       let publishPath = this.state.basePublishPath + "/" + scheduleIndex; 
       this.setState({"scheduleIndex": scheduleIndex, "publishPath": publishPath}); 
       let newSched = this.state.schedules[scheduleIndex]; 
-      this.setStateAssignedShift(newSched['assigned shifts']); 
-      this.setStateUnassignedShift(newSched['unassigned shifts']); 
+      let newShifts = newSched['assigned shifts'].concat(newSched['unassigned shifts'])
+      this.setStateShifts(newShifts); 
+      //this.setStateUnassignedShift(newSched['unassigned shifts']);
+      console.log("newShifts", newShifts); 
 
-      //console.log("this.state: ", this.state); 
+       
+
+      console.log("this: ", this); 
     //   console.log("new schedule index: ", scheduleIndex); 
   }
 
@@ -76,8 +71,7 @@ export default class SelectSchedule extends Component {
       // this.setState({schedule: String(response.data.items)});
       console.log("schedules:", response.data[0]);
       console.log("schedules: ",response.data[1]); 
-      this.setStateAssignedShift(response.data[0]['assigned shifts']);
-      this.setStateUnassignedShift(response.data[0]['unassigned shifts']); 
+      this.setStateShifts(response.data[0]['assigned shifts'].concat(response.data[0]['unassigned shifts']));
       this.setAllSchedules(response.data); 
 
     })

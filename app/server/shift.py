@@ -10,6 +10,27 @@ class Shift:
         self.start = start
         self.end = end
 
+
+    def __lt__(self, other): 
+        if self.student != other.student: 
+            return self.student < other.student
+        if self.start != other.start: 
+             return self.start < other.start
+        if self.end != other.end: 
+            return self.end < other.end
+        if self.dept != other.dept: 
+            return self.dept < other.dept
+ 
+    def __gt__(self, other): 
+        if self.student != other.student: 
+            return self.student > other.student
+        if self.start != other.start: 
+            return self.start > other.start
+        if self.end != other.end: 
+            return self.end > other.end
+        if self.dept != other.dept: 
+            return self.dept > other.dept
+
     def getDept(self):
         return self.dept
 
@@ -32,7 +53,7 @@ class Shift:
         return (other.getStudent() == self.student and other.getDept() == self.dept and other.getStart() == self.start and other.getEnd() == self.end)
 
     def __str__(self):
-        res = str(self.start)+" " +str(self.end)+" "+str(self.dept)
+        res = str(self.start) + " " +str(self.end)+" "+str(self.dept)
         if self.student!=None:
             res+=" "+str(self.student)
         return res
