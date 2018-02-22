@@ -13,7 +13,9 @@ from oauth2client import client
 # app routes don't seem to work if they are imported
 
 # @app.route('/cal')
-def calendarCall():
+
+# Do type checking, check if list or student
+def calendarCall(student):
   print("in calendarCall")
   if 'credentials' not in flask.session:
     print("first")
@@ -26,7 +28,7 @@ def calendarCall():
     print("third")
     http_auth = credentials.authorize(httplib2.Http())
     calendar = discovery.build('calendar', 'v3', http_auth)
-
+    
     #TODO change this to the dates entered from the generateSchedule screen
     now = datetime.datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time
     d = datetime.timedelta(days=7)
@@ -34,22 +36,23 @@ def calendarCall():
     endDate = datetime.datetime.now()
 
     print("Getting the next week's events")
-    studentWorkers = ['chriia01@luther.edu', 'nguyli03@luther.edu', 'hermaa02@luther.edu', 'davial02@luther.edu', 'millro04@luther.edu','hangde01@luther.edu', 'css@luther.edu']
-    for studentId in studentWorkers:
-      eventsResult = calendar.events().list(
-        calendarId=studentId, timeMin=now, timeMax=end, singleEvents=True,
-        orderBy='startTime').execute()
-      events = eventsResult.get('items', [])
-      i = 0
-      for event in events:
-        if i==0:
-          print(studentId, "'s first event")
-          print("start: ",event['start']['dateTime'])
-          print('end: ', event['end']['dateTime'])
-          i = 1
-          #TODO add event to database
-    #print("EVENTS", events)
-    return flask.jsonify(eventsResult)
+
+    if type(student) is list:
+      for studentId in student:
+        eventsResult = calendar.events().list(
+          calendarId=studentId, timeMin=now, timeMax=end, singleEvents=True,
+          orderBy='startTime').execute()
+        events = eventsResult.get('items', [])
+        i = 0
+        for event in events:
+          if i==0:
+            print(studentId, "'s first event")
+            print("start: ",event['start']['dateTime'])
+            print('end: ', event['end']['dateTime'])
+            i = 1
+            #TODO add event to database
+      #print("EVENTS", events)
+      return flask.jsonify(eventsResult)
 
 
 # @app.route('/oauth2callback')
