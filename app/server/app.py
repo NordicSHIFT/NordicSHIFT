@@ -80,6 +80,7 @@ def loginC():
             session['username'] = item['username']
             session['role'] = 'Manager'
             session['logged_in'] = True
+            session['schedules'] = "Schedules"
             print('manager logged in')
             go_to = check_and_redirect_back('/managerdashboard')
             return go_to
@@ -299,7 +300,7 @@ def deleteEvent():
   db.execute("""DELETE from shift WHERE startTime ='%s' and endTime='%s' and dept = (SELECT dept from manager where username = '%s')"""%(start,end, session.get('username')))
   return "done"
 
-@app.route("/api/generateSchedule", methods=['GET','OPTIONS'])
+@app.route("/api/generateSchedule", methods=['GET','OPTIONS','POST'])
 def generateSchedule():
     #calendarCall to fill in all the students' schedules to the db
     #run the algorithm
@@ -328,16 +329,17 @@ def generateSchedule():
 
     #print("in generate schedules,", suggestedSchedules)
     res = [schedule.serialize() for schedule in schedules]
+    session.modified = True
+    print("session.get('schedules')",session.get('schedules'))
     return jsonify(res)
 
 @app.route('/api/chooseSchedule', methods=['POST'])
 def chooseSchedule():
     print ("IN CHOOSE SCHEDULE")
     data = request.get_json(silent=True)
-    scheduleIndex = data.get('scheduleIndex')
-    print("suggested schedule", suggestedSchedules)
-    #choosenSchedule = suggestedSchedules[scheduleIndex]
-    #TODO save this schedule to the database
+    schedule = data.get('schedule')
+    print("schedule", schedule)
+    #TODO LINH save this schedule to the database
     return retrieveSchedule()
 
 @app.route('/api/retrieveSchedule', methods=['GET','OPTIONS'])
