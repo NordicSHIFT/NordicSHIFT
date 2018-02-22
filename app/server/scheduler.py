@@ -10,6 +10,7 @@ from sqlalchemy.orm import sessionmaker
 from student import Student
 from shift import Shift
 from copy import deepcopy
+from collections import Counter
 
 #postgresql_uri=os.environ['DATABASE_URL']
 #engine=create_engine(postgresql_uri)
@@ -83,20 +84,33 @@ class Schedule:
     def __eq__(self, other):
         # for shift in self.getAssignedShift():
         #     for shift2 in sched2.getAssignedShift():
-        bool1 = len(self.assignedShift - other.getAssignedShift()) == 0 
+        bool1 = len(self.assignedShift - other.getAssignedShift()) == 0
         bool2 = len(other.getAssignedShift() - self.assignedShift) == 0
         return bool1 and bool2
+
+# this function will show how many differences that the two schedules have. differences are
+# calculated based on how many different shifts each assigned schedule have
+    def noDifferences(self,other):
+        count = 0
+        for shift in self.assignedShift:
+            if shift not in other.assignedShift:
+                count += 1
+        return count
+
+    def getNoStudents(self):
+        students = set(shift.getStudent for shift in self.assignedShift)
+        return len(students)
 
     def __hash__(self):
         res = ""
         unassigned = list(self.unassignedShift)
-        unassigned.sort() 
+        unassigned.sort()
         if unassigned:
             for shift in unassigned:
                 res += str(shift)
         assigned = list(self.assignedShift)
-        assigned.sort() 
-        if assigned: 
+        assigned.sort()
+        if assigned:
             for shift in assigned:
                 res += str(shift)
         return hash(res)
@@ -108,13 +122,13 @@ class Schedule:
         returnStr = "Assigned Shifts: \n"
         assigned = list(self.assignedShift)
         assigned.sort()
-        if assigned: 
+        if assigned:
             for shift in self.assignedShift:
                 returnStr += str(shift)
                 returnStr += "\n"
         unassigned = list(self.unassignedShift)
-        unassigned.sort() 
-        if unassigned: 
+        unassigned.sort()
+        if unassigned:
             for shift in self.unassignedShift:
                 returnStr += str(shift)
                 returnStr += "\n"
@@ -151,40 +165,40 @@ def main():
     scheduler2(schedule, students)
 
 def scheduler2(schedule, students):
-    file_out = open("schedules.txt", 'w', encoding="utf-8")
+    # file_out = open("schedules.txt", 'w', encoding="utf-8")
     scheduleStack = [schedule]
     visited = set()
-    visited_hash = set() 
+    visited_hash = set()
     complete = set()
     complete_hash = set()
-    print("in scheduler")
+    # print("in scheduler")
     # f = open('schedulerResult.txt','w')
     while len(scheduleStack)>0 and len(complete) < 80:
         currSched = scheduleStack.pop()
 
-        if len(currSched.getUnassignedShift()) > 0:
-            print("checking assigned shifts")
-            for shift in currSched.getAssignedShift():
-                print("assigned student",shift.getStudent())
-            for shift in currSched.getUnassignedShift():
-                print("assigned student",shift.getStudent())
+        # if len(currSched.getUnassignedShift()) > 0:
+        #     print("checking assigned shifts")
+        #     for shift in currSched.getAssignedShift():
+        #         print("assigned student",shift.getStudent())
+        #     for shift in currSched.getUnassignedShift():
+        #         print("assigned student",shift.getStudent())
         if len(currSched.getUnassignedShift()) == 0:
             # print('current full Sched: ',currSched)
             # f.write('current full Sched\n')
             # f.write(str(currSched))
             if hash(currSched) not in complete_hash:
-                print('in currSched Loop')
-                print("before add length: ", len(complete))
+                # print('in currSched Loop')
+                # print("before add length: ", len(complete))
                 complete.add(currSched)
                 complete_hash.add(hash(currSched))
-                print("post add length: ", len(complete))
-                file_out.write(str(currSched))
+                # print("post add length: ", len(complete))
+                # file_out.write(str(currSched))
         else:
             # print("come in else")
             topShift = currSched.getFirstUnassigned() #should remove it from unassigned as well
             for student in students:
-                print("student",student)
-                print("topShift Student",topShift.getStudent())
+                # print("student",student)
+                # print("topShift Student",topShift.getStudent())
                 if student.isAvailable(topShift):
                     # if (student.username == "ben"):
                         # print("ben is available")
@@ -195,18 +209,18 @@ def scheduler2(schedule, students):
 
                     # loop through the currShed's assigned shift to see how many hours that
                     # particular student has been assigned and whether the time they have left is enough to assigned new shift
-                    available = True 
+                    available = True
                     for shift in currSched.getAssignedShift():
                         #print(shift)
                         if shift.getStudent() == student:
                             hoursLeft -= float(shift.getLength())
-                            #TODO check if new shift overlaps with old shift 
+                            #TODO check if new shift overlaps with old shift
                             if topShift.getStart() > shift.getStart() and topShift.getStart() < shift.getEnd():
-                                available = False 
+                                available = False
 
                             if topShift.getEnd() > shift.getStart() and topShift.getEnd() < shift.getEnd():
-                                available = False 
-                            
+                                available = False
+
                             if topShift.getStart() < shift.getStart() and topShift.getEnd() > shift.getEnd():
                                 available = False
 
@@ -218,24 +232,71 @@ def scheduler2(schedule, students):
                         #     print("alfred had hours")
                         newTop = Shift(topShift.getDept(), topShift.getStart(),topShift.getEnd(),topShift.getStudent())
                         newTop.setStudent(student)
-                        print("rigth before add", len(currSched.getAssignedShift()))
+                        # print("rigth before add", len(currSched.getAssignedShift()))
                         oldAssigned = deepcopy(currSched.getAssignedShift())
                         oldAssigned.add(newTop)
                         newShifts = oldAssigned.union(currSched.getUnassignedShift())
-                        print("len(currSched.getAssignedShift())",len(currSched.getAssignedShift()))
-                        print("len(currSched.getUnassignedShift())",len(currSched.getUnassignedShift()))
-                        print("len(newShifts)",len(newShifts))
+                        # print("len(currSched.getAssignedShift())",len(currSched.getAssignedShift()))
+                        # print("len(currSched.getUnassignedShift())",len(currSched.getUnassignedShift()))
+                        # print("len(newShifts)",len(newShifts))
                         newSched = Schedule(newShifts)
                         #print("new schedule: ", newSched)
                         if hash(newSched) not in visited_hash:
-                            print('adding to visited')
+                            # print('adding to visited')
                             scheduleStack.append(newSched)
                             visited.add(newSched)
                             visited_hash.add(hash(newSched))
     #print("schedule complete")
     print("number of schedules", len(complete))
-    file_out.close() 
-    return complete 
+    # file_out.close()
+    return getTopTenSchedule(complete)
+
+# This function will get the top 10 "ideal" schedule. We want to look at schedule with the most student first as priority
+# and then schedules that have the most uniqueness, if that makes any sense
+def getTopTenSchedule(scheduleSet):
+    stuSche = {}
+    for schedule in scheduleSet:
+        noStudent = schedule.getNoStudents()
+        if noStudent not in stuSche.keys():
+            stuSche[noStudent] = set()
+        stuSche[noStudent].add(schedule)
+    stuSche = Counter(stuSche)
+    count = 0
+    maxD = 0
+    # f = open("schedulerResult.txt","w")
+    # this takes the list of schedules that contains the most number of students
+    schedules = list(stuSche[stuSche.most_common(1)[0][0]])
+    res = set()
+    # for i in range(0, len(schedules)):
+    #     # f.write(str(schedules[i]))
+    #     for j in range(i, len(schedules)):
+    #         if schedules[i].noDifferences(schedules[j]) > maxD:
+    #             maxD = schedules[i].noDifferences(schedules[j])
+    #             shift1,shift2 = schedules[i],schedules[j]
+    #     f.write(str("the different from the beforehand schedule is: "+str(maxD)+'\n'))
+    #     res.add(shift1)
+    #     res.add(shift2)
+    # f.close()
+    i = 0
+    # take the shifts that have the most differences 
+    while i < len(schedules) and count < 10:
+        for j in range(i, len(schedules)):
+            if schedules[i].noDifferences(schedules[j]) > maxD:
+                maxD = schedules[i].noDifferences(schedules[j])
+                shift1 = schedules[i]
+                shift2 = schedules[j]
+        # f.write(str("the different from the beforehand schedule is: "+str(maxD)+'\n'))
+        # f.write(str(schedules[i]))
+        # f.write(str(schedules[j]))
+        res.add(shift1)
+        res.add(shift2)
+        schedules.remove(shift1)
+        schedules.remove(shift2)
+        maxD = 0
+        i += 1
+        count += 2
+    # f.close()
+    return stuSche[stuSche.most_common(1)[0][0]]
 
 if __name__ == "__main__":
     main()
