@@ -188,7 +188,6 @@ def managerprofile():
 
 @app.route("/api/getStudents")
 def getStudents():
-    #TODO return all the students for current department
     res = db.execute("""SELECT * from student inner join ds on student.id = ds.student where department = (SELECT dept from manager where username = '%s' );"""%(session.get("username")))
     res = res.fetchall()
     # print(res)
@@ -203,7 +202,6 @@ def getStudents():
 def studentUpdate():
     data = request.get_json(silent=True)
     modifiedStudents = data.get("students")
-    #TODO write changes to database
     for student in modifiedStudents:
         if student['hours'] is None:
             student['hours'] = 0
@@ -294,7 +292,6 @@ def deleteEvent():
   data = request.get_json(silent=True)
   myEvent = data.get('myEvent')
   # print(data, myEvent.get('start'), myEvent.get('end'))
-  # TODO this will delete two shifts if they start and end at the same time
   old_format = "%Y-%m-%dT%H:%M:%S.%fZ"
   new_format = '%Y-%m-%d %H:%M:%S'
   start=datetime.datetime.strptime(myEvent.get('start'), old_format).strftime(new_format)
@@ -328,7 +325,7 @@ def generateSchedule():
     print("about to make calendar call")
     schedule = Schedule(shifts)
     schedules = scheduler2(schedule, students)
-    
+
     #print("in generate schedules,", suggestedSchedules)
     res = [schedule.serialize() for schedule in schedules]
     return jsonify(res)
