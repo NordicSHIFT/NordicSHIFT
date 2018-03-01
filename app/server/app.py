@@ -11,6 +11,7 @@ import hashlib, uuid
 from scheduler import scheduler2, Schedule
 from shift import Shift
 from student import Student
+import calRetrieve
 
 app = Flask(__name__, static_folder="../static/dist", template_folder="../static")
 app.secret_key=os.environ['SECRET_KEY']
@@ -357,6 +358,16 @@ def retrieveSchedule():
     schedule = Schedule(shifts)
     res = schedule.serialize()
     return jsonify(res)
+
+@app.route('/api/calRetrieve', methods=['GET'])
+def calRetieve():
+    #TODO: Implement calRetrieve.py. Pass in either a list or individual
+    studentWorkers = ['chriia01@luther.edu', 'nguyli03@luther.edu', 'hermaa02@luther.edu', 'davial02@luther.edu', 'millro04@luther.edu','hangde01@luther.edu', 'css@luther.edu']
+
+    foo = calRetrieve.calendarCall(studentWorkers)
+    print(foo)
+    print('here')
+    return foo
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
