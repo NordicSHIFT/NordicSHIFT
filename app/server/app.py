@@ -80,6 +80,7 @@ def loginC():
             session['username'] = item['username']
             session['role'] = 'Manager'
             session['logged_in'] = True
+            session['schedules'] = "Schedules"
             print('manager logged in')
             go_to = check_and_redirect_back('/managerdashboard')
             return go_to
@@ -188,7 +189,6 @@ def managerprofile():
 
 @app.route("/api/getStudents")
 def getStudents():
-    #TODO return all the students for current department
     res = db.execute("""SELECT * from student inner join ds on student.id = ds.student where department = (SELECT dept from manager where username = '%s' );"""%(session.get("username")))
     res = res.fetchall()
     # print(res)
@@ -203,7 +203,6 @@ def getStudents():
 def studentUpdate():
     data = request.get_json(silent=True)
     modifiedStudents = data.get("students")
-    #TODO write changes to database
     for student in modifiedStudents:
         if student['hours'] is None:
             student['hours'] = 0
@@ -240,7 +239,7 @@ def calendar():
     shiftRe = res.fetchall()
     shifts = []
     for shift in shiftRe:
-        newShift = Shift(shift[2],shift[4],shift[5])
+        newShift = Shift(shift[0],shift[2],shift[4],shift[5])
         myevents.append(newShift)
     #color scheme colors: #62c462, #5bc0de, #f89406,  #ee5f5b
     print("In calendar!!")
@@ -294,7 +293,6 @@ def deleteEvent():
   data = request.get_json(silent=True)
   myEvent = data.get('myEvent')
   # print(data, myEvent.get('start'), myEvent.get('end'))
-  # TODO this will delete two shifts if they start and end at the same time
   old_format = "%Y-%m-%dT%H:%M:%S.%fZ"
   new_format = '%Y-%m-%d %H:%M:%S'
   start=datetime.datetime.strptime(myEvent.get('start'), old_format).strftime(new_format)
@@ -302,7 +300,7 @@ def deleteEvent():
   db.execute("""DELETE from shift WHERE startTime ='%s' and endTime='%s' and dept = (SELECT dept from manager where username = '%s')"""%(start,end, session.get('username')))
   return "done"
 
-@app.route("/api/generateSchedule", methods=['GET','OPTIONS'])
+@app.route("/api/generateSchedule", methods=['GET','OPTIONS','POST'])
 def generateSchedule():
     #calendarCall to fill in all the students' schedules to the db
     #run the algorithm
@@ -311,8 +309,8 @@ def generateSchedule():
     shiftRe = res.fetchall()
     shifts = []
     for shift in shiftRe:
-      newShift = Shift(shift[2],shift[4],shift[5])
-      shifts.append(newShift)
+        newShift = Shift(shift[0],shift[2],shift[4],shift[5])
+        shifts.append(newShift)
 
     res = db.execute("""SELECT * from student inner join ds on student.id = ds.student where student.hours > 0 and ds.department = (SELECT dept from manager where username ='%s');"""%session.get("username"))
     studentRe = res.fetchall()
@@ -328,20 +326,24 @@ def generateSchedule():
     print("about to make calendar call")
     schedule = Schedule(shifts)
     schedules = scheduler2(schedule, students)
-    
+
     #print("in generate schedules,", suggestedSchedules)
     res = [schedule.serialize() for schedule in schedules]
+    session.modified = True
+    print("session.get('schedules')",session.get('schedules'))
     return jsonify(res)
 
 @app.route('/api/chooseSchedule', methods=['POST'])
 def chooseSchedule():
     print ("IN CHOOSE SCHEDULE")
     data = request.get_json(silent=True)
-    scheduleIndex = data.get('scheduleIndex')
-    print("suggested schedule", suggestedSchedules)
-    #choosenSchedule = suggestedSchedules[scheduleIndex]
-    #TODO save this schedule to the database
-    return retrieveSchedule()
+    schedule = data.get('schedule')['assigned shifts']
+    # print("schedule", schedule)
+    # This function will save the selected schedule in the database by making changes to the shift schedule with student for each shift
+    for shift in schedule:
+        db.execute("UPDATE shift SET student = (select id from student where username = '%s') where id = '%d';"%(shift['student'],shift['id']))
+        db.commit()
+    return "done"
 
 @app.route('/api/retrieveSchedule', methods=['GET','OPTIONS'])
 def retrieveSchedule():
@@ -350,10 +352,9 @@ def retrieveSchedule():
     shiftRe = res.fetchall()
     shifts = []
     for shift in shiftRe:
-      newShift = Shift(shift[2],shift[4],shift[5])
+      newShift = Shift(shift[0],shift[2],shift[4],shift[5])
       shifts.append(newShift)
     schedule = Schedule(shifts)
-
     res = schedule.serialize()
     return jsonify(res)
 

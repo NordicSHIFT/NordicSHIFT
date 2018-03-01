@@ -196,6 +196,7 @@ def scheduler2(schedule, students):
         else:
             # print("come in else")
             topShift = currSched.getFirstUnassigned() #should remove it from unassigned as well
+
             for student in students:
                 # print("student",student)
                 # print("topShift Student",topShift.getStudent())
@@ -211,7 +212,7 @@ def scheduler2(schedule, students):
                     # particular student has been assigned and whether the time they have left is enough to assigned new shift
                     available = True
                     for shift in currSched.getAssignedShift():
-                        #print(shift)
+                        # print(shift)
                         if shift.getStudent() == student:
                             hoursLeft -= float(shift.getLength())
                             #TODO check if new shift overlaps with old shift
@@ -230,7 +231,7 @@ def scheduler2(schedule, students):
                     if hoursLeft >= topShift.getLength() and available:
                         # if (student.username == "alfred"):
                         #     print("alfred had hours")
-                        newTop = Shift(topShift.getDept(), topShift.getStart(),topShift.getEnd(),topShift.getStudent())
+                        newTop = Shift(topShift.getId(), topShift.getDept(), topShift.getStart(),topShift.getEnd(),topShift.getStudent())
                         newTop.setStudent(student)
                         # print("rigth before add", len(currSched.getAssignedShift()))
                         oldAssigned = deepcopy(currSched.getAssignedShift())
@@ -239,7 +240,10 @@ def scheduler2(schedule, students):
                         # print("len(currSched.getAssignedShift())",len(currSched.getAssignedShift()))
                         # print("len(currSched.getUnassignedShift())",len(currSched.getUnassignedShift()))
                         # print("len(newShifts)",len(newShifts))
+
                         newSched = Schedule(newShifts)
+                        # for shift in newSched.assignedShift:
+                        #     print(shift)
                         #print("new schedule: ", newSched)
                         if hash(newSched) not in visited_hash:
                             # print('adding to visited')
@@ -278,7 +282,7 @@ def getTopTenSchedule(scheduleSet):
     #     res.add(shift2)
     # f.close()
     i = 0
-    # take the shifts that have the most differences 
+    # take the shifts that have the most differences
     while i < len(schedules) and count < 10:
         for j in range(i, len(schedules)):
             if schedules[i].noDifferences(schedules[j]) > maxD:

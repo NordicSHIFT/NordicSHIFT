@@ -24,6 +24,7 @@ export default class SelectSchedule extends Component {
     this.setStateShifts = this.setStateShifts.bind(this);
     this.setAllSchedules = this.setAllSchedules.bind(this); 
     this.changeSchedule = this.changeSchedule.bind(this); 
+    this.chooseSchedule = this.chooseSchedule.bind(this); 
 
     this.generateSchedule(); 
   }
@@ -58,10 +59,29 @@ export default class SelectSchedule extends Component {
     //   console.log("new schedule index: ", scheduleIndex); 
   }
 
+  chooseSchedule(scheduleIndex) {
+    var config = { headers: {
+        'Content-Type': 'application/json',
+        },
+        withCredentials: true
+      }
+      //TODO pass needed info with this. 
+      axios.post(origin + '/api/chooseSchedule', {
+        schedule: this.state.schedules[this.state.scheduleIndex]
+        },  config)
+      .then( (response) => {
+        console.log(response)
+        console.log("response", response); 
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }
+
   generateSchedule() {
     var config = { headers: {
-      'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': '*'}
+      'Content-Type': 'application/json'},
+      withCredentials: true
     }
 
     axios.get(origin + '/api/generateSchedule', config)
@@ -91,9 +111,7 @@ export default class SelectSchedule extends Component {
           </Col>
           <Col xs="3">
             <SuggestList changeSchedule={this.changeSchedule}/> 
-            <a href={this.state.publishPath}>
-                <Button>Publish this Schedule</Button>
-            </a>
+            <Button onClick={this.chooseSchedule}>Publish this Schedule</Button>
           </Col>
         </Row>
       </div>

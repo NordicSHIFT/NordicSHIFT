@@ -16,7 +16,6 @@ export default class SuggestList extends Component {
         this.setState({
           selectedSchedule: event.target.value
         });
-        alert("Changed to schedule: "+ event.target.value); 
         this.props.changeSchedule(event.target.value); 
     }
 
