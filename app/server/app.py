@@ -320,6 +320,8 @@ def generateSchedule():
     studentRe = res.fetchall()
     students = []
     for student in studentRe:
+      #TODO Ian, it will get called here
+      #oAuth.calendarCall(student[1])
       newStudent = Student(student[1],student[4])
       res = db.execute("""SELECT starttime, endtime from unavailability where student = %d; """%(int(student[0])))
       res = res.fetchall()
