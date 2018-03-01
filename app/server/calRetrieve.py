@@ -20,7 +20,7 @@ def calendarCall(student):
   if 'credentials' not in flask.session:
     print("first")
     return flask.redirect(flask.url_for('oauth2callback'))
-  credentials = client.OAuth2Credentials.from_json(flask.session['credentials'])
+  credentials = flask.session['credentials']
   if credentials.access_token_expired:
     print("second")
     return flask.redirect(flask.url_for('oauth2callback'))
