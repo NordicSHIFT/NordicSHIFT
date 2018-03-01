@@ -5,6 +5,7 @@ import httplib2
 import os
 import datetime
 
+import google.oauth2.credentials
 from googleapiclient import discovery
 from oauth2client import client
 #
@@ -20,8 +21,11 @@ def calendarCall(student):
   if 'credentials' not in flask.session:
     print("first")
     return flask.redirect(flask.url_for('oauth2callback'))
-  credentials = client.OAuth2Credentials.from_json(flask.session['credentials'])
-  if credentials.access_token_expired:
+  # credentials = client.OAuth2Credentials.from_json(flask.session['credentials'])
+  credentials = google.oauth2.credentials.Credentials(
+      **flask.session['credentials'])
+  # if credentials.access_token_expired:
+  if false:
     print("second")
     return flask.redirect(flask.url_for('oauth2callback'))
   else:
