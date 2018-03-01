@@ -239,7 +239,7 @@ def calendar():
     shiftRe = res.fetchall()
     shifts = []
     for shift in shiftRe:
-        newShift = Shift(shift[2],shift[4],shift[5])
+        newShift = Shift(shift[0],shift[2],shift[4],shift[5])
         myevents.append(newShift)
     #color scheme colors: #62c462, #5bc0de, #f89406,  #ee5f5b
     print("In calendar!!")
@@ -309,8 +309,8 @@ def generateSchedule():
     shiftRe = res.fetchall()
     shifts = []
     for shift in shiftRe:
-      newShift = Shift(shift[2],shift[4],shift[5])
-      shifts.append(newShift)
+        newShift = Shift(shift[0],shift[2],shift[4],shift[5])
+        shifts.append(newShift)
 
     res = db.execute("""SELECT * from student inner join ds on student.id = ds.student where student.hours > 0 and ds.department = (SELECT dept from manager where username ='%s');"""%session.get("username"))
     studentRe = res.fetchall()
@@ -337,10 +337,13 @@ def generateSchedule():
 def chooseSchedule():
     print ("IN CHOOSE SCHEDULE")
     data = request.get_json(silent=True)
-    schedule = data.get('schedule')
-    print("schedule", schedule)
-    #TODO LINH save this schedule to the database
-    return retrieveSchedule()
+    schedule = data.get('schedule')['assigned shifts']
+    # print("schedule", schedule)
+    # This function will save the selected schedule in the database by making changes to the shift schedule with student for each shift
+    for shift in schedule:
+        db.execute("UPDATE shift SET student = (select id from student where username = '%s') where id = '%d';"%(shift['student'],shift['id']))
+        db.commit()
+    return "done"
 
 @app.route('/api/retrieveSchedule', methods=['GET','OPTIONS'])
 def retrieveSchedule():
@@ -349,10 +352,9 @@ def retrieveSchedule():
     shiftRe = res.fetchall()
     shifts = []
     for shift in shiftRe:
-      newShift = Shift(shift[2],shift[4],shift[5])
+      newShift = Shift(shift[0],shift[2],shift[4],shift[5])
       shifts.append(newShift)
     schedule = Schedule(shifts)
-
     res = schedule.serialize()
     return jsonify(res)
 
