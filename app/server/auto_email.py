@@ -3,7 +3,9 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 def sendEmail(recipients, subject, message_body):
-
+    FROMADDR = EMAIL_NAME
+    PASSWORD = EMAIL_PASS
+    
     msg = MIMEMultipart()
     msg['From'] = FROMADDR
     msg['To'] = ", ".join(recipients)
