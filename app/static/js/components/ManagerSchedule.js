@@ -34,15 +34,9 @@ export default class ManagerSchedule extends Component {
     this.setStateAssignedShift = this.setStateAssignedShift.bind(this);
     this.setStateUnassignedShift = this.setStateUnassignedShift.bind(this);
 
-    if (this.props.match.params.scheduleIndex) {
-        //if user is coming directly from planning, then it saves the schedule they selected first
-        this.chooseSchedule(this.props.match.params.scheduleIndex); 
-    }
-    else {
-        //when a schedule index is not passed via url 
-        this.retrieveSchedule(); 
-    }
-    
+    //when a schedule index is not passed via url 
+    this.retrieveSchedule(); 
+
   }
 
   setStateAssignedShift(shifts){

@@ -347,13 +347,19 @@ def chooseSchedule():
 
 @app.route('/api/retrieveSchedule', methods=['GET','OPTIONS'])
 def retrieveSchedule():
-    #TODO make sure this query looks right
     res = db.execute("""SELECT * from shift where dept =(SELECT dept from manager where username = '%s');"""%session.get("username"))
     shiftRe = res.fetchall()
     shifts = []
     for shift in shiftRe:
-      newShift = Shift(shift[0],shift[2],shift[4],shift[5])
-      shifts.append(newShift)
+        #def __init__(self,sid, dept, start, end, student = None):
+        username = None
+        if (shift[3] != None):
+            res = db.execute("""SELECT * from student where id ='%s'"""%shift[3])
+            res = res.fetchall()
+            username = res[0].username
+        newShift = Shift(shift[0],shift[2],shift[4],shift[5],username)
+        shifts.append(newShift)
+        print(newShift)
     schedule = Schedule(shifts)
     res = schedule.serialize()
     return jsonify(res)

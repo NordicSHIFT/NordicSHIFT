@@ -18,7 +18,7 @@ export default class SelectSchedule extends Component {
       unassignedShift: [],
       scheduleIndex: 1, 
       basePublishPath: "/managerschedule/" + this.props.match.params.startDate,
-      publishPath: "/managerschedule/" + this.props.match.params.startDate + "/0" 
+      publishPath: "/managerschedule/" + this.props.match.params.startDate + "/0"
     }
     this.generateSchedule = this.generateSchedule.bind(this);
     this.setStateShifts = this.setStateShifts.bind(this);
@@ -72,6 +72,7 @@ export default class SelectSchedule extends Component {
       .then( (response) => {
         console.log(response)
         console.log("response", response); 
+        return window.location = '/managerschedule';
       })
       .catch(function (error) {
         console.log(error);
@@ -93,8 +94,8 @@ export default class SelectSchedule extends Component {
       console.log("schedules: ",response.data[1]); 
       this.setStateShifts(response.data[0]['assigned shifts'].concat(response.data[0]['unassigned shifts']));
       this.setAllSchedules(response.data); 
-
-    })
+    }
+    )
     .catch(function (error) {
       console.log(error);
     });
