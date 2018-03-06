@@ -3,8 +3,6 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 def sendEmail(recipients, subject, message_body):
-    FROMADDR = "nordicshift@gmail.com"
-    PASSWORD = "MacBook Air"
 
     msg = MIMEMultipart()
     msg['From'] = FROMADDR
