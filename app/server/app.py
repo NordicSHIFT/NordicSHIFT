@@ -321,7 +321,7 @@ def generateSchedule():
     students = []
     for student in studentRe:
         if (student[1].endswith('@luther.edu')):
-            print(oAuth.calendarCall(student[1]))
+            oAuth.calendarCall(student[1])
 
         newStudent = Student(student[1],student[4])
         res = db.execute("""SELECT starttime, endtime from unavailability where student = %d; """%(int(student[0])))
