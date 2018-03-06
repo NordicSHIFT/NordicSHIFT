@@ -56,6 +56,7 @@ export default class RosterTable extends Component {
       this.createRows = this.createRows.bind(this);
       this.handleGridRowsUpdated = this.handleGridRowsUpdated.bind(this);
       this.handleGridSort = this.handleGridSort.bind(this);
+      this.removeStudent = this.removeStudent.bind(this);
       this.state = { rows: [], originalRows: [] };
       //TODO figure out how to update rows length
       console.log(this);
@@ -86,7 +87,7 @@ export default class RosterTable extends Component {
               // userName: ['user1', 'user2', 'user3', 'user4'][Math.floor((Math.random() * 3) + 1)],
               // hours: i,
               seeAvailability: seeAvailabilityUrl("username"),
-              removeStudent: <Button color="success" size="sm">Remove Student</Button>
+              removeStudent: <Button color="success" size="sm" onClick = {this.removeStudent(students[i])}>Remove Student</Button>
             });
           }
           console.log("newRows student",newRows);
@@ -129,6 +130,29 @@ export default class RosterTable extends Component {
         this.setState({ rows });
       };
 
+    removeStudent(student){
+      console.log('click remove student');
+      console.log(student);
+      // const newRows = this.state.rows.slice(0, index).concat(this.state.rows.slice(index + 1));
+      // this.setState({
+      //   rows: newRows,
+      // });
+      // console.log(newRows);
+      var config = { headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'}
+      }
+      axios.post('/api/removeStudent', {
+        sid:student.id
+      }, config)
+      .then( (response) => {
+          console.log("response was ", response.data)
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+    };
+
     render() {
       return  (
         <ReactDataGrid
@@ -139,5 +163,5 @@ export default class RosterTable extends Component {
           rowsCount={this.state.rows.length}
           minHeight={500}
           onGridRowsUpdated={this.handleGridRowsUpdated} ref="table"/>);
-    }
+    };
 }
