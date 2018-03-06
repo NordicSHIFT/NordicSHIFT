@@ -5,11 +5,12 @@ import axios from 'axios';
 import ReactDataGrid from 'react-data-grid';
 import update from 'immutability-helper';
 
-function seeAvailabilityUrl (username) {
+function seeAvailabilityUrl (username, name) {
     //TODO
-    //let url = "/availability/" + username;
-    //return <a href= {url} >See Availability</a>
-    return <a href="/managerdashboard">See Availability</a>
+    let url = "/viewavailability/" + username + "/" + name;
+    console.log("url", url); 
+    return <a href= {url} >See Availability</a>
+    //return <a href="/managerdashboard">See Availability</a>
 }
 
 export default class RosterTable extends Component {
@@ -85,7 +86,7 @@ export default class RosterTable extends Component {
               // name: ['Taylor', 'Ian', 'Linh', 'Alfred'][Math.floor((Math.random() * 3) + 1)],
               // userName: ['user1', 'user2', 'user3', 'user4'][Math.floor((Math.random() * 3) + 1)],
               // hours: i,
-              seeAvailability: seeAvailabilityUrl("username"),
+              seeAvailability: seeAvailabilityUrl(students[i].username, students[i].name),
               removeStudent: <Button color="success" size="sm">Remove Student</Button>
             });
           }

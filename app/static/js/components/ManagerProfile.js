@@ -105,7 +105,6 @@ export default class ManagerProfile extends Component {
                 <InputGroup> 
                 <InputGroupAddon addonType="prepend">Student</InputGroupAddon>
                 <Input type="text" id ='student' placeholder="Enter Student Id" className="student" value ={this.state.student} onChange={this.updateInputValueStudent.bind(this)} required />
-                <InputGroupAddon addonType="append">@luther.edu</InputGroupAddon>
                 <InputGroupButton color="success" addonType="append" type="submit" id='studentButton' onClick ={this.sendNewStudent.bind(this)}>Submit</InputGroupButton>
                 </InputGroup> 
                 </div> 
