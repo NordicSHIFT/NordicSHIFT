@@ -68,7 +68,9 @@ class Shift:
 
 # this function help with jsonify
     def serialize(self):
-        if (None != self.student):
+        if type(self.student) == str: 
+            student = self.student
+        elif (None != self.student):
             student = self.student.serialize()
         else:
             student = ""
