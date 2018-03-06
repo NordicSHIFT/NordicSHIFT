@@ -16,7 +16,7 @@ def authCall():
         return flask.redirect('/authorize')
     return flask.render_template("login.html")
 
-def calendarCall():
+def calendarCall(workers):
   print("in calendar call")
   if 'credentials' not in flask.session:
       print ("not credentials in flask.session")
@@ -35,8 +35,11 @@ def calendarCall():
   endDate = datetime.datetime.now()
 
   print("Getting the next week's events")
-  studentWorkers = ['chriia01@luther.edu', 'davial02@luther.edu', 'millro04@luther.edu','hangde01@luther.edu', 'css@luther.edu', 'nguyli03@luther.edu', 'hermaa02@luther.edu']
-  for studentId in studentWorkers:
+#   studentWorkers = ['chriia01@luther.edu', 'davial02@luther.edu', 'millro04@luther.edu','hangde01@luther.edu', 'css@luther.edu', 'nguyli03@luther.edu', 'hermaa02@luther.edu']
+  if isinstance(workers, list):
+      workers = workers.split()
+
+  for studentId in workers:
     print("studentId", studentId)
     eventsResult = calendar.events().list(
       calendarId=studentId, timeMin=now, timeMax=end, singleEvents=True,

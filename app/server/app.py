@@ -313,27 +313,28 @@ def generateSchedule():
     shiftRe = res.fetchall()
     shifts = []
     for shift in shiftRe:
-      newShift = Shift(shift[2],shift[4],shift[5])
-      shifts.append(newShift)
+        newShift = Shift(shift[2],shift[4],shift[5])
+        shifts.append(newShift)
 
     res = db.execute("""SELECT * from student inner join ds on student.id = ds.student where student.hours > 0 and ds.department = (SELECT dept from manager where username ='%s');"""%session.get("username"))
     studentRe = res.fetchall()
     students = []
     for student in studentRe:
-      #TODO Ian, it will get called here
-      #oAuth.calendarCall(student[1])
-      newStudent = Student(student[1],student[4])
-      res = db.execute("""SELECT starttime, endtime from unavailability where student = %d; """%(int(student[0])))
-      res = res.fetchall()
-      for item in res:
-          newStudent.assignedUnavailability((item[0],item[1]))
-      students.append(newStudent)
+        if (student[1].endswith('@luther.edu')):
+            oAuth.calendarCall(student[1])
+
+        newStudent = Student(student[1],student[4])
+        res = db.execute("""SELECT starttime, endtime from unavailability where student = %d; """%(int(student[0])))
+        res = res.fetchall()
+        for item in res:
+            newStudent.assignedUnavailability((item[0],item[1]))
+        students.append(newStudent)
 
     print("about to make calendar call")
     schedule = Schedule(shifts)
     schedules = scheduler2(schedule, students)
     suggestedSchedules = schedules #TODO this doesn't work to have it available in chooseSchedule
-    print("in generate schedules,", suggestedSchedules)
+    # print("in generate schedules,", suggestedSchedules)
     res = [schedule.serialize() for schedule in schedules]
     return jsonify(res)
 
