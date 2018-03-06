@@ -35,10 +35,11 @@ def calendarCall(workers):
   endDate = datetime.datetime.now()
 
   print("Getting the next week's events")
-#   studentWorkers = ['chriia01@luther.edu', 'davial02@luther.edu', 'millro04@luther.edu','hangde01@luther.edu', 'css@luther.edu', 'nguyli03@luther.edu', 'hermaa02@luther.edu']
-  if isinstance(workers, list):
+#   workers = ['chriia01@luther.edu', 'davial02@luther.edu', 'millro04@luther.edu','hangde01@luther.edu', 'css@luther.edu', 'nguyli03@luther.edu', 'hermaa02@luther.edu']
+  if not isinstance(workers, list):
       workers = workers.split()
-
+      
+  print(workers)
   for studentId in workers:
     print("studentId", studentId)
     eventsResult = calendar.events().list(
