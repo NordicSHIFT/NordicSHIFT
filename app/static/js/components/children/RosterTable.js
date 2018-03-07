@@ -7,9 +7,8 @@ import update from 'immutability-helper';
 
 function seeAvailabilityUrl (username, name) {
     //TODO
-    let url = "/viewavailability/" + username + "/" + name;
-    console.log("url", url); 
-    return <a href= {url} >See Availability</a>
+    let url = "https://calendar.google.com/calendar/embed?mode=WEEK&src=" + username + "&ctz=America/Chicago"; 
+    return <a href={url} target="_blank">See Availability</a>
     //return <a href="/managerdashboard">See Availability</a>
 }
 
