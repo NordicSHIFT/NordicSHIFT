@@ -12,6 +12,7 @@ import Login from './Login'
 import Signup from './Signup'
 import SelectWeek from './managerPlanner/SelectWeek'
 import SelectSchedule from './managerPlanner/SelectSchedule'
+import ManagerViewAvailability from './ManagerViewAvailability';
 
 
 const Main = () => (
@@ -26,6 +27,7 @@ const Main = () => (
       <Route exact path='/managerschedule/:startDate/:scheduleIndex' component={ManagerSchedule}/>
       <Route exact path='/managerschedule/:startDate' component={ManagerSchedule}/>
       <Route exact path='/managerschedule' component={ManagerSchedule}/>
+      <Route exact path='/viewavailability/:username/:name' component={ManagerViewAvailability}/>
       <Route path='/studentprofile' component={StudentProfile}/>
       <Route path='/managerprofile' component={ManagerProfile}/>
       <Route path='/selectweek' component={SelectWeek}/>
