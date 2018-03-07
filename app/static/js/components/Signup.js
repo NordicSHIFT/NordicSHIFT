@@ -1,5 +1,6 @@
 import axios from 'axios';
 import React, { Component } from 'react';
+import { Row, Col, Button, Input, Label, Jumbotron, Option, Select } from 'reactstrap';
 
 const style = {
   backgroundColor:"#f1f1f1"
@@ -13,6 +14,7 @@ class Signup extends Component {
    this.updateInputValueUserName = this.updateInputValueUserName.bind(this);
    this.updateInputValuePassword = this.updateInputValuePassword.bind(this);
    this.updateInputUserRole = this.updateInputUserRole.bind(this);
+   this.redirectLogin = this.redirectLogin.bind(this); 
   }
 
   handleClick(){
@@ -33,26 +35,33 @@ class Signup extends Component {
     this.setState({inputrole: evt.target.value})
   }
 
+  redirectLogin(){
+    return window.location = '/login';
+  }
+
   render() {
     return (
-      <div id ='signup'>
-        <div id="container">
-          <label><b>Username</b></label>
-          <input type="text" id ='username' placeholder="Enter Username" className="inputusername" value = {this.state.inputusername} onChange={this.updateInputValueUserName.bind(this)} required />
+      <Row className='text-center' fluid>
+      <Col sm="12" md={{ size: 6, offset: 3 }}>
+      <Jumbotron>
+        <h2> Sign up for NordicSHIFT</h2>
+          <Label><b>Username</b></Label>
+          <Input type="text" id ='username' placeholder="Enter Username" className="inputusername" value = {this.state.inputusername} onChange={this.updateInputValueUserName.bind(this)} required />
 
-          <label><b>Password</b></label>
-          <input type="password" id ='password' placeholder="Enter Password" className="inputpassword" value ={this.state.inputpassword} onChange={this.updateInputValuePassword.bind(this)} required />
-
-          <select id='userRole' name='userRole' value ={this.state.inputrole} onChange={this.updateInputUserRole.bind(this)} required>
+          <Label><b>Password</b></Label>
+          <Input type="password" id ='password' placeholder="Enter Password" className="inputpassword" value ={this.state.inputpassword} onChange={this.updateInputValuePassword.bind(this)} required />
+          <Label><b>Select Role</b></Label>
+          <Input type="select" name="userRole" id="userRole" value={this.state.inputrole}  onChange={this.updateInputUserRole.bind(this)} required>
             <option value="Manager">Manager</option>
             <option value="Student">Student</option>
-          </select>
-
-          <button type="submit" id='signupButton' onClick ={this.sendInfo.bind(this)}> Signup</button>
-          <input type="checkbox" checked="checked" id='rememberCheckBox' /> Remember me
-        </div>
-
-      </div>
+          </Input>
+          <hr/>
+          <Button type="submit" id='signupButton' color="primary" onClick ={this.sendInfo.bind(this)}> Signup</Button>
+          <hr /> 
+          <Button type ="button" id ='signupButton' color="danger" onClick = {this.redirectLogin}>Return to login</Button>
+      </Jumbotron>
+      </Col>
+      </Row>
     );
   }
 
