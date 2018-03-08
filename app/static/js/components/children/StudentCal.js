@@ -5,7 +5,14 @@ import axios from 'axios';
 import moment from 'moment';  
 import 'react-big-calendar/lib/css/react-big-calendar.css'; 
 
-import { convertEvent } from './../../util.js'; 
+function convertEvent(event) {
+  return {
+    title: "Shift",
+    start: new Date(event.start),
+    end: new Date(event.end),
+    hexColor: event.hexColor
+  }
+}
 
 BigCalendar.setLocalizer(
   BigCalendar.momentLocalizer(moment)
@@ -39,7 +46,7 @@ class StudentCal extends Component {
   }  
 
   retrieveEvents() {
-    var url =  origin + '/api/calendar';  
+    var url =  origin + '/api/studentcalendar';  
     axios.get(url)
     .then(res => {
       var jsevents = res.data.events.map(

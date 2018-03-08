@@ -210,7 +210,7 @@ def studentUpdate():
             student['name'] = 'Empty'
         # if student['name'] is not None and student['hours'] is not None and student['username'] is not None:
         # print(str(student['hours'])+ student['name']+ student['username']+ str(student['id']))
-        db.execute("""UPDATE student SET hours = '%d', name = '%s', username = '%s' where id = '%d'; """%(student['hours'], student['name'], student['username'], student['id']))
+        db.execute("""UPDATE student SET hours = '%d', name = '%s', username = '%s' where id = '%d'; """%(int(student['hours']), student['name'], student['username'], student['id']))
         db.commit()
     return "done"
 
@@ -232,6 +232,65 @@ def getManagerDept():
         return res[0][0]
     return ""
 
+@app.route("/api/getStudentInfo")
+def getStudentInfo():
+    res = db.execute("""SELECT name from department where id =(SELECT department from ds where student=(select id from student where username= '%s'));"""%session.get("username"))
+    res = res.fetchall()
+    if (len(res) > 0):
+        department = res[0][0]
+    else: 
+        department = "Contact your manager to be assigned a department."
+
+    res = db.execute("""SELECT hours, name from student where username = '%s';"""%session.get("username"))
+    res = res.fetchall()
+    if (len(res) > 0):
+        hours = str(res[0].hours)
+        name = str(res[0].name)
+    else:
+        hours = "0"
+        name = ""
+
+    results = {"department": department, "hours": hours, "name": name}
+    return jsonify(results)
+    
+
+@app.route("/api/getStudentDept")
+def getStudentDept():
+    res = db.execute("""SELECT name from department where id =(SELECT department from ds where student=(select id from student where username= '%s'));"""%session.get("username"))
+    res = res.fetchall()
+    if (len(res) > 0):
+        return res[0][0]
+    return "Contact your manager to be assigned a department."
+
+@app.route("/api/getStudentHours")
+def getStudentHours():
+    res = db.execute("""SELECT hours from student where username = '%s';"""%session.get("username"))
+    res = res.fetchall()
+    if (len(res) > 0):
+        return str(res[0][0])
+    return "0"
+
+@app.route("/api/setStudentHours", methods=['POST'])
+def setStudentHours(): 
+    print("in set student hours")
+    data = request.get_json(silent=True)
+    new_hours = data.get("hours")
+    if new_hours!=None:
+        db.execute("""UPDATE student SET hours = '%d' WHERE username = '%s';"""%(float(new_hours), session.get('username')))
+        db.commit()
+    return new_hours
+
+@app.route("/api/setStudentName", methods=['POST'])
+def setStudentName():
+    print("in set student name")
+    data = request.get_json(silent=True)
+    new_name = data.get("name")
+    print("new_name", new_name)
+    if new_name!=None:
+        db.execute("""UPDATE student SET name = '%s' WHERE username = '%s';"""%(new_name, session.get('username')))
+        db.commit()
+    return new_name
+
 @app.route("/api/calendar")
 def calendar():
     myevents = []
@@ -242,7 +301,20 @@ def calendar():
         newShift = Shift(shift[0],shift[2],shift[4],shift[5])
         myevents.append(newShift)
     #color scheme colors: #62c462, #5bc0de, #f89406,  #ee5f5b
-    print("In calendar!!")
+    serialEvents = [event.serialize() for event in myevents]
+    data = {"calData": "Calendar Data", "events": serialEvents}
+    return jsonify(data)
+
+@app.route("/api/studentcalendar")
+def studentCalendar():
+    myevents = []
+    res = db.execute("""SELECT * from shift where student =(SELECT id from student where username = '%s');"""%session.get("username"))
+    shiftRe = res.fetchall()
+    shifts = []
+    for shift in shiftRe:
+        newShift = Shift(shift[0],shift[2],shift[4],shift[5])
+        myevents.append(newShift)
+    #color scheme colors: #62c462, #5bc0de, #f89406,  #ee5f5b
     serialEvents = [event.serialize() for event in myevents]
     data = {"calData": "Calendar Data", "events": serialEvents}
     return jsonify(data)
