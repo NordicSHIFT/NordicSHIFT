@@ -1,7 +1,7 @@
 //ManagerProfile.js
 import axios from 'axios';
 import React, { Component } from 'react';
-import { Row, Col, Button, Label, Input, InputGroup, InputGroupAddon, InputGroupButton, Table} from 'reactstrap';
+import { Row, Col, Button, Label, Input, InputGroup, InputGroupAddon, InputGroupButton, Table, Form, FormGroup} from 'reactstrap';
 import ManagerMenubar from './children/ManagerMenubar';
 import RosterTable from './children/RosterTable';
 
@@ -17,8 +17,10 @@ export default class ManagerProfile extends Component {
    this.state={
        department: "",
        student: "",
+       studentRemove: "",
        isHidden: true,
        isHiddenStud: true,
+       isHiddenRemove: true,
        existingDepartments: [] };
    this.sendDepartmentNew = this.sendDepartmentNew.bind(this);
    this.sendDepartmentExisting = this.sendDepartmentExisting.bind(this);
@@ -26,6 +28,7 @@ export default class ManagerProfile extends Component {
    this.sendNewStudent = this.sendNewStudent.bind(this);
    this.updateInputValueDepartment = this.updateInputValueDepartment.bind(this);
    this.updateInputValueStudent = this.updateInputValueStudent.bind(this);
+   this.updateInputValueStudentDelete = this.updateInputValueStudentDelete.bind(this);
    this.retrieveDepartment = this.retrieveDepartment.bind(this);
    this.editDepartmentClick = this.editDepartmentClick.bind(this);
    this.addStudentClick = this.addStudentClick.bind(this);
@@ -33,6 +36,8 @@ export default class ManagerProfile extends Component {
    this.onDepartmentDropdownSelected = this.onDepartmentDropdownSelected.bind(this);
    this.tableChanged = this.tableChanged.bind(this);
    this.sendStudentChanges = this.sendStudentChanges.bind(this);
+   this.removeStudentClick = this.removeStudentClick.bind(this);
+   this.sendRemoveStudent = this.sendRemoveStudent.bind(this);
 
    this.retrieveDepartment();
    this.retrieveExistingDepartments();
@@ -51,6 +56,10 @@ export default class ManagerProfile extends Component {
     this.setState({student: evt.target.value});
   }
 
+  updateInputValueStudentDelete(evt){
+    this.setState({studentRemove: evt.target.value});
+  }
+
   onDepartmentDropdownSelected(e) {
     //console.log("THE VAL", e.target);
     this.setState({selectDept: e.target.value});
@@ -66,7 +75,7 @@ export default class ManagerProfile extends Component {
   }
 
   removeStudentClick(){
-    this.setState({isHiddenStud: !this.state.isHiddenStud})
+    this.setState({isHiddenRemove: !this.state.isHiddenRemove})
   }
 
   tableChanged(){
@@ -89,45 +98,49 @@ export default class ManagerProfile extends Component {
                 <option key="" value=""></option>
                 {this.state.existingDepartments}
                 </Input>
-                <InputGroupButton color="success" type="submit" id='departmentButton' onClick ={this.sendDepartmentExisting}>Submit</InputGroupButton>
+                <InputGroupAddon color="success" type="submit" id='departmentButton' onClick ={this.sendDepartmentExisting}>Submit</InputGroupAddon>
               </InputGroup>
               <InputGroup>
                 <Input type="text" id ='department' placeholder="Enter New Department" className="department" value = {this.state.newDepartment} onChange={this.updateInputValueDepartment} required />
-                <InputGroupButton color="success" type="submit" id='departmentButton' onClick ={this.sendDepartmentNew}>Submit</InputGroupButton>
+                <InputGroupAddon color="success" type="submit" id='departmentButton' onClick ={this.sendDepartmentNew}>Submit</InputGroupAddon>
               </InputGroup>
               </div>}
           </div>
         </Col>
         <br></br>
-        <Col xs="9">
-          <h5><b>Students: </b> </h5>
-          <div>
-          <Button onClick={this.addStudentClick} size="sm">Add a Student</Button>
-            {this.state.isHiddenStud ? null :
-                <div>
-                <p><i>Enter your students usernames here to add them to your roster. It should be in the format of username@luther.edu</i></p>
-                <InputGroup>
-                <InputGroupAddon addonType="prepend">Student</InputGroupAddon>
-                <Input type="text" id ='student' placeholder="Enter Student Id" className="student" value ={this.state.student} onChange={this.updateInputValueStudent.bind(this)} required />
-                <InputGroupButton color="success" addonType="append" type="submit" id='studentButton' onClick ={this.sendNewStudent.bind(this)}>Submit</InputGroupButton>
-                </InputGroup>
-                </div>
-            }
-          </div>
-          <div>
-          <Button onClick={this.removeStudentClick} size="sm">Remove a Student</Button>
-            {this.state.isHiddenStud ? null :
-                <div>
-                <p><i>Enter your students usernames here to remove them to your roster. It should be in the format of username@luther.edu</i></p>
-                <InputGroup>
-                <InputGroupAddon addonType="prepend">Student</InputGroupAddon>
-                <Input type="text" id ='removedStudent' placeholder="Enter Student Id" className="student" value ={this.state.student} onChange={this.updateInputValueStudent.bind(this)} required />
-                <InputGroupButton color="success" addonType="append" type="submit" id='removeStudentButton' onClick ={this.sendRemoveStudent.bind(this)}>Submit</InputGroupButton>
-                </InputGroup>
-                </div>
-            }
-          </div>
-         </Col>
+          <Row>
+            <Col xs="9">
+              <h5><b>Students: </b> </h5>
+              <div>
+              <Button onClick={this.addStudentClick} size="sm">Add a Student</Button>
+                {this.state.isHiddenStud ? null :
+                    <div>
+                    <p><i>Enter your students usernames here to add them to your roster. It should be in the format of username@luther.edu</i></p>
+                    <InputGroup>
+                    <InputGroupAddon addonType="prepend">Student</InputGroupAddon>
+                    <Input type="text" id ='student' placeholder="Enter Student Id" className="student" value ={this.state.student} onChange={this.updateInputValueStudent.bind(this)} required />
+                    <InputGroupAddon color="success" addonType="append" type="submit" id='studentButton' onClick ={this.sendNewStudent.bind(this)}>Submit</InputGroupAddon>
+                    </InputGroup>
+                    </div>
+                }
+              </div>
+              </Col>
+              <Col xs="9">
+              <div>
+              <Button onClick={this.removeStudentClick} size="sm">Remove a Student</Button>
+                {this.state.isHiddenRemove ? null :
+                    <div>
+                    <p><i>Enter your students usernames here to remove them to your roster. It should be in the format of username@luther.edu</i></p>
+                    <InputGroup>
+                    <InputGroupAddon addonType="prepend">Student</InputGroupAddon>
+                    <Input type="text" id ='removedStudent' placeholder="Enter Student Id" className="studentRemove" value ={this.state.studentRemove} onChange={this.updateInputValueStudentDelete.bind(this)} required />
+                    <InputGroupAddon color="success" addonType="append" type="submit" id='removeStudentButton' onClick ={this.sendRemoveStudent.bind(this)}>Submit</InputGroupAddon>
+                    </InputGroup>
+                    </div>
+                }
+              </div>
+             </Col>
+           </Row>
          <br></br>
           <Col xs="11">
             {!this.state.studTableChanged ? null :
@@ -222,13 +235,13 @@ export default class ManagerProfile extends Component {
     });
   }
 
-  sendDeleteStudent(){
+  sendRemoveStudent(){
     console.log('send student');
-    console.log(this.state.student);
+    console.log(this.state.studentRemove);
     var config = { headers: {
                       'Content-Type': 'application/json'}};
     axios.post('/api/removeStudent',{
-      student: this.state.student,
+      student: this.state.studentRemove,
       department: this.state.department
     }, config)
     .then(response => {
