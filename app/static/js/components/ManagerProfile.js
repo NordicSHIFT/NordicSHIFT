@@ -17,7 +17,8 @@ export default class ManagerProfile extends Component {
    this.state={
        department: "",
        student: "",
-       studentRemove: "",
+       existingStudents: [],
+       studentRemove:"",
        isHidden: true,
        isHiddenStud: true,
        isHiddenRemove: true,
@@ -28,7 +29,7 @@ export default class ManagerProfile extends Component {
    this.sendNewStudent = this.sendNewStudent.bind(this);
    this.updateInputValueDepartment = this.updateInputValueDepartment.bind(this);
    this.updateInputValueStudent = this.updateInputValueStudent.bind(this);
-   this.updateInputValueStudentDelete = this.updateInputValueStudentDelete.bind(this);
+   this.onRemoveStudentSelected = this.onRemoveStudentSelected.bind(this);
    this.retrieveDepartment = this.retrieveDepartment.bind(this);
    this.editDepartmentClick = this.editDepartmentClick.bind(this);
    this.addStudentClick = this.addStudentClick.bind(this);
@@ -38,9 +39,11 @@ export default class ManagerProfile extends Component {
    this.sendStudentChanges = this.sendStudentChanges.bind(this);
    this.removeStudentClick = this.removeStudentClick.bind(this);
    this.sendRemoveStudent = this.sendRemoveStudent.bind(this);
+   this.retrieveExistingStudents = this.retrieveExistingStudents.bind(this);
 
    this.retrieveDepartment();
    this.retrieveExistingDepartments();
+   this.retrieveExistingStudents();
   }
 
   handleClick(){
@@ -56,7 +59,7 @@ export default class ManagerProfile extends Component {
     this.setState({student: evt.target.value});
   }
 
-  updateInputValueStudentDelete(evt){
+  onRemoveStudentSelected(evt){
     this.setState({studentRemove: evt.target.value});
   }
 
@@ -118,7 +121,7 @@ export default class ManagerProfile extends Component {
                     <p><i>Enter your students usernames here to add them to your roster. It should be in the format of username@luther.edu</i></p>
                     <InputGroup>
                     <InputGroupAddon addonType="prepend">Student</InputGroupAddon>
-                    <Input type="text" id ='student' placeholder="Enter Student Id" className="student" value ={this.state.student} onChange={this.updateInputValueStudent.bind(this)} required />
+                    <Input type="text" id ='student' placeholder="Enter Student Id" className="student" value ={this.state.student} onChange={this.updateInputValueStudent} required />
                     <InputGroupAddon color="success" addonType="append" type="submit" id='studentButton' onClick ={this.sendNewStudent.bind(this)}>Submit</InputGroupAddon>
                     </InputGroup>
                     </div>
@@ -130,11 +133,19 @@ export default class ManagerProfile extends Component {
               <Button onClick={this.removeStudentClick} size="sm">Remove a Student</Button>
                 {this.state.isHiddenRemove ? null :
                     <div>
-                    <p><i>Enter your students usernames here to remove them to your roster. It should be in the format of username@luther.edu</i></p>
+                    <p><i>Choose student remove them to your roster. It should be in the format of username@luther.edu</i></p>
+                    // <InputGroup>
+                    // <InputGroupAddon addonType="prepend">Student</InputGroupAddon>
+                    // <Input type="text" id ='removedStudent' placeholder="Enter Student Id" className="studentRemove" value ={this.state.studentRemove} onChange={this.updateInputValueStudentDelete.bind(this)} required />
+                    // <InputGroupAddon color="success" addonType="append" type="submit" id='removeStudentButton' onClick ={this.sendRemoveStudent.bind(this)}>Submit</InputGroupAddon>
+                    // </InputGroup>
                     <InputGroup>
-                    <InputGroupAddon addonType="prepend">Student</InputGroupAddon>
-                    <Input type="text" id ='removedStudent' placeholder="Enter Student Id" className="studentRemove" value ={this.state.studentRemove} onChange={this.updateInputValueStudentDelete.bind(this)} required />
-                    <InputGroupAddon color="success" addonType="append" type="submit" id='removeStudentButton' onClick ={this.sendRemoveStudent.bind(this)}>Submit</InputGroupAddon>
+                    <InputGroupAddon addonType="prepend">Select Existing</InputGroupAddon>
+                    <Input type="select" onChange={this.onRemoveStudentSelected} label="Student Select">
+                    <option key="" value=""></option>
+                    {this.state.existingStudents}
+                    </Input>
+                    <InputGroupAddon color="success" type="submit" id='departmentButton' onClick ={this.sendRemoveStudent}>Submit</InputGroupAddon>
                     </InputGroup>
                     </div>
                 }
@@ -213,6 +224,25 @@ export default class ManagerProfile extends Component {
     });
   }
 
+  retrieveExistingStudents(){
+    axios.get('/api/getStudents')
+    .then(res => {
+      //console.log("res.data",res.data);
+      let items = [];
+      for (let i = 0; i < res.data.length; i++) {
+           items.push(<option key={res.data[i][0]} value={res.data[i][1]}>{res.data[i][1]}</option>);
+           //console.log(res.data[i]);
+           //here I will be creating my options dynamically based on
+           //what props are currently passed to the parent component
+      }
+      this.setState({existingStudents: items});
+      console.log("existing students is loaded");
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+  }
+
   sendNewStudent(){
     var config = { headers: {
                       'Content-Type': 'application/json'}};
@@ -227,7 +257,7 @@ export default class ManagerProfile extends Component {
       else //alert('Your changes have been saved');
       //this.setState({student: response.data});
       console.log("response.data", response.data);
-      this.refs.studentTable.addRow(response.data);
+      this.refs.studentTable.createRows();
       //window.location = '/myprofile';
     })
     .catch(function (error) {
@@ -251,6 +281,7 @@ export default class ManagerProfile extends Component {
       else //alert('Your changes have been saved');
       //this.setState({student: response.data});
       console.log("response.data", response.data);
+      this.refs.studentTable.createRows();
       //window.location = '/myprofile';
     })
     .catch(function (error) {
