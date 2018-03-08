@@ -3,6 +3,7 @@ from flask import Flask, flash, redirect, render_template, request, session, abo
 from oAuth import *
 import datetime
 import os
+import auto_email
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Table, Column, Integer, String, create_engine, Sequence, ForeignKey
 from sqlalchemy.orm import sessionmaker, relationship
@@ -335,14 +336,20 @@ def generateSchedule():
 
 @app.route('/api/chooseSchedule', methods=['POST'])
 def chooseSchedule():
+    workers = []
+
     print ("IN CHOOSE SCHEDULE")
     data = request.get_json(silent=True)
     schedule = data.get('schedule')['assigned shifts']
     # print("schedule", schedule)
     # This function will save the selected schedule in the database by making changes to the shift schedule with student for each shift
     for shift in schedule:
+        cur_worker = shift['student']
+        if cur_worker not in workers:
+            workers.append(cur_worker)
         db.execute("UPDATE shift SET student = (select id from student where username = '%s') where id = '%d';"%(shift['student'],shift['id']))
         db.commit()
+    auto_email.published_sched_notif(workers)
     return "done"
 
 @app.route('/api/retrieveSchedule', methods=['GET','OPTIONS'])
