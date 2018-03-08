@@ -13,6 +13,8 @@ from scheduler import scheduler2, Schedule
 from shift import Shift
 from student import Student
 
+SEND_EMAILS = False
+
 app = Flask(__name__, static_folder="../static/dist", template_folder="../static")
 app.secret_key=os.environ['SECRET_KEY']
 salt =  os.environ['SALT']
@@ -344,9 +346,10 @@ def chooseSchedule():
     # print("schedule", schedule)
     # This function will save the selected schedule in the database by making changes to the shift schedule with student for each shift
     for shift in schedule:
-        cur_worker = shift['student']
-        if cur_worker not in workers:
-            workers.append(cur_worker)
+        if SEND_EMAILS == True:
+            cur_worker = shift['student']
+            if cur_worker not in workers:
+                workers.append(cur_worker)
         db.execute("UPDATE shift SET student = (select id from student where username = '%s') where id = '%d';"%(shift['student'],shift['id']))
         db.commit()
     auto_email.published_sched_notif(workers)
