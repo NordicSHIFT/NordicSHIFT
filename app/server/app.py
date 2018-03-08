@@ -219,7 +219,10 @@ def studentUpdate():
 @app.route("/api/removeStudent", methods = ['POST'])
 def removeStudent():
     # this function is related to the button Remove Student where manager can remove the student from the departments
-    #TODO implemeting this
+    data = request.get_json(silent=True)
+    deletedStudent = data.get("student")
+    db.execute("""DELETE from student where username ='%s';"""%deletedStudent)
+    db.commit()
     return "done"
 
 @app.route("/api/getAllDepartments")

@@ -65,6 +65,10 @@ export default class ManagerProfile extends Component {
     this.setState({isHiddenStud: !this.state.isHiddenStud})
   }
 
+  removeStudentClick(){
+    this.setState({isHiddenStud: !this.state.isHiddenStud})
+  }
+
   tableChanged(){
     this.setState({studTableChanged: true});
   }
@@ -106,6 +110,19 @@ export default class ManagerProfile extends Component {
                 <InputGroupAddon addonType="prepend">Student</InputGroupAddon>
                 <Input type="text" id ='student' placeholder="Enter Student Id" className="student" value ={this.state.student} onChange={this.updateInputValueStudent.bind(this)} required />
                 <InputGroupButton color="success" addonType="append" type="submit" id='studentButton' onClick ={this.sendNewStudent.bind(this)}>Submit</InputGroupButton>
+                </InputGroup>
+                </div>
+            }
+          </div>
+          <div>
+          <Button onClick={this.removeStudentClick} size="sm">Remove a Student</Button>
+            {this.state.isHiddenStud ? null :
+                <div>
+                <p><i>Enter your students usernames here to remove them to your roster. It should be in the format of username@luther.edu</i></p>
+                <InputGroup>
+                <InputGroupAddon addonType="prepend">Student</InputGroupAddon>
+                <Input type="text" id ='removedStudent' placeholder="Enter Student Id" className="student" value ={this.state.student} onChange={this.updateInputValueStudent.bind(this)} required />
+                <InputGroupButton color="success" addonType="append" type="submit" id='removeStudentButton' onClick ={this.sendRemoveStudent.bind(this)}>Submit</InputGroupButton>
                 </InputGroup>
                 </div>
             }
@@ -198,6 +215,29 @@ export default class ManagerProfile extends Component {
       //this.setState({student: response.data});
       console.log("response.data", response.data);
       this.refs.studentTable.addRow(response.data);
+      //window.location = '/myprofile';
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+  }
+
+  sendDeleteStudent(){
+    console.log('send student');
+    console.log(this.state.student);
+    var config = { headers: {
+                      'Content-Type': 'application/json'}};
+    axios.post('/api/removeStudent',{
+      student: this.state.student,
+      department: this.state.department
+    }, config)
+    .then(response => {
+      if (response.data == 'error'){
+        alert('Invalid student username. Please enter a different username');
+      }
+      else //alert('Your changes have been saved');
+      //this.setState({student: response.data});
+      console.log("response.data", response.data);
       //window.location = '/myprofile';
     })
     .catch(function (error) {

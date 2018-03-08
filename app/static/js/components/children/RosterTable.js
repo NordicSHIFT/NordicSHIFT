@@ -1,9 +1,10 @@
 //RosterTable.js
 import React, { Component } from 'react';
-import { Button } from 'reactstrap';
+// import { Button } from 'reactstrap';
 import axios from 'axios';
 import ReactDataGrid from 'react-data-grid';
 import update from 'immutability-helper';
+import { Row, Col, Button, Label, Input, InputGroup, InputGroupAddon, InputGroupButton, Table} from 'reactstrap';
 
 function seeAvailabilityUrl (username) {
     //TODO
@@ -44,11 +45,11 @@ export default class RosterTable extends Component {
           key: 'seeAvailability',
           name: '',
           editable: false
-        },
-        {
-          key: 'removeStudent',
-          name: '',
-          editable: false
+        // },
+        // {
+        //   key: 'removeStudent',
+        //   name: '',
+        //   editable: false
         }
       ];
 
@@ -56,8 +57,10 @@ export default class RosterTable extends Component {
       this.createRows = this.createRows.bind(this);
       this.handleGridRowsUpdated = this.handleGridRowsUpdated.bind(this);
       this.handleGridSort = this.handleGridSort.bind(this);
-      this.removeStudent = this.removeStudent.bind(this);
-      this.state = { rows: [], originalRows: [] };
+      // this.removeStudent = this.removeStudent.bind(this);
+      // this.sendRemoveStudent = this.sendRemoveStudent.bind(this);
+      // this.updateInputValueStudent = this.updateInputValueStudent.bind(this);
+      this.state = { rows: [], originalRows: []};
       //TODO figure out how to update rows length
       console.log(this);
 
@@ -70,7 +73,18 @@ export default class RosterTable extends Component {
         this.setState({rows: rows, originalRows: rows});
         console.log(rows);
     }
-
+    // updateInputValueStudent(evt){
+    //   this.setState({student: evt.target.value});
+    // };
+    // removeStudent(student){
+    //   console.log("click remove student");
+    //   console.log(student);
+    // };
+    // sendRemoveStudent(){
+      // console.log(this.state.isHiddenStud);
+      // this.setState({isHiddenStud: !this.state.isHiddenStud})
+      // this.removeStudent(this.state.student);
+    // };
     createRows(){
         axios.get('/api/getStudents')
         .then(res => {
@@ -87,10 +101,20 @@ export default class RosterTable extends Component {
               // userName: ['user1', 'user2', 'user3', 'user4'][Math.floor((Math.random() * 3) + 1)],
               // hours: i,
               seeAvailability: seeAvailabilityUrl("username"),
-              removeStudent: <Button color="success" size="sm" onClick = {this.removeStudent(students[i])}>Remove Student</Button>
+              // removeStudent: <div><Button color="success" size="sm" onClick = {this.sendRemoveStudent}>Remove Student</Button>
+              // {this.state.isHiddenStud ? null :
+              //     <div>
+              //     <p><i>Enter your students usernames here to confirm the deletion. It should be in the format of username@luther.edu</i></p>
+              //     <InputGroup>
+              //     <InputGroupAddon addonType="prepend">Student</InputGroupAddon>
+              //     <Input type="text" id ='student' placeholder="Enter Student Username" className="student" value ={this.state.student} onChange={this.updateInputValueStudent} required />
+              //     <InputGroupButton color="success" addonType="append" type="submit" id='studentButton' onClick ={this.sendRemoveStudent}>Submit</InputGroupButton>
+              //     </InputGroup>
+              //     </div>
+              // }</div>
             });
           }
-          console.log("newRows student",newRows);
+          // console.log("newRows student",newRows);
           this.setState({ rows: newRows, originalRows: newRows });
         })
         .catch(function (error) {
@@ -130,29 +154,6 @@ export default class RosterTable extends Component {
         this.setState({ rows });
       };
 
-    removeStudent(student){
-      console.log('click remove student');
-      console.log(student);
-      // const newRows = this.state.rows.slice(0, index).concat(this.state.rows.slice(index + 1));
-      // this.setState({
-      //   rows: newRows,
-      // });
-      // console.log(newRows);
-      var config = { headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'}
-      }
-      axios.post('/api/removeStudent', {
-        sid:student.id
-      }, config)
-      .then( (response) => {
-          console.log("response was ", response.data)
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-    };
-
     render() {
       return  (
         <ReactDataGrid
@@ -164,4 +165,5 @@ export default class RosterTable extends Component {
           minHeight={500}
           onGridRowsUpdated={this.handleGridRowsUpdated} ref="table"/>);
     };
+
 }
