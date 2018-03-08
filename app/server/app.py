@@ -232,13 +232,35 @@ def getManagerDept():
         return res[0][0]
     return ""
 
+@app.route("/api/getStudentInfo")
+def getStudentInfo():
+    res = db.execute("""SELECT name from department where id =(SELECT department from ds where student=(select id from student where username= '%s'));"""%session.get("username"))
+    res = res.fetchall()
+    if (len(res) > 0):
+        department = res[0][0]
+    else: 
+        department = "Contact your manager to be assigned a department."
+
+    res = db.execute("""SELECT hours, name from student where username = '%s';"""%session.get("username"))
+    res = res.fetchall()
+    if (len(res) > 0):
+        hours = str(res[0].hours)
+        name = str(res[0].name)
+    else:
+        hours = "0"
+        name = ""
+
+    results = {"department": department, "hours": hours, "name": name}
+    return jsonify(results)
+    
+
 @app.route("/api/getStudentDept")
 def getStudentDept():
     res = db.execute("""SELECT name from department where id =(SELECT department from ds where student=(select id from student where username= '%s'));"""%session.get("username"))
     res = res.fetchall()
     if (len(res) > 0):
         return res[0][0]
-    return "Contact your manager to be assigned a department"
+    return "Contact your manager to be assigned a department."
 
 @app.route("/api/getStudentHours")
 def getStudentHours():
@@ -257,6 +279,17 @@ def setStudentHours():
         db.execute("""UPDATE student SET hours = '%d' WHERE username = '%s';"""%(float(new_hours), session.get('username')))
         db.commit()
     return new_hours
+
+@app.route("/api/setStudentName", methods=['POST'])
+def setStudentName():
+    print("in set student name")
+    data = request.get_json(silent=True)
+    new_name = data.get("name")
+    print("new_name", new_name)
+    if new_name!=None:
+        db.execute("""UPDATE student SET name = '%s' WHERE username = '%s';"""%(new_name, session.get('username')))
+        db.commit()
+    return new_name
 
 @app.route("/api/calendar")
 def calendar():

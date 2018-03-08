@@ -10,18 +10,24 @@ const style = {
 
 class StudentProfile extends Component {
   constructor(props){
-   super(props);
-   this.state={department: "", student: "", hours: "", isHoursHidden: true, newHours: ""};
+    super(props);
+    this.state={department: "", student: "", hours: "", name: "",
+    isHoursHidden: true, isNameHidden: true, 
+    newHours: "", newName: ""};
+    
+    this.retrieveStudentInfo = this.retrieveStudentInfo.bind(this); 
+    this.retrieveDepartment = this.retrieveDepartment.bind(this); 
+    this.retrieveHours = this.retrieveHours.bind(this);
+    this.editHoursClick = this.editHoursClick.bind(this);
+    this.editNameClick = this.editNameClick.bind(this);  
+    this.updateInputValueHours = this.updateInputValueHours.bind(this); 
+    this.updateInputValueName = this.updateInputValueName.bind(this); 
+    this.sendHoursNew = this.sendHoursNew.bind(this); 
+    this.sendNewName = this.sendNewName.bind(this); 
 
-   this.retrieveDepartment = this.retrieveDepartment.bind(this); 
-   this.retrieveHours = this.retrieveHours.bind(this);
-
-   this.editHoursClick = this.editHoursClick.bind(this); 
-   this.updateInputValueHours = this.updateInputValueHours.bind(this); 
-   this.sendHoursNew = this.sendHoursNew.bind(this); 
-
-   this.retrieveDepartment(); 
-   this.retrieveHours(); 
+    this.retrieveStudentInfo(); 
+    //this.retrieveDepartment(); 
+    //this.retrieveHours(); 
   }
 
   handleClick(){
@@ -33,8 +39,16 @@ class StudentProfile extends Component {
     this.setState({newHours: evt.target.value});
   }
 
+  updateInputValueName(evt){
+    this.setState({newName: evt.target.value});
+  }
+
   editHoursClick(){
     this.setState({isHoursHidden: !this.state.isHoursHidden});
+  }
+
+  editNameClick(){
+    this.setState({isNameHidden: !this.state.isNameHidden}); 
   }
 
   render() {
@@ -42,6 +56,14 @@ class StudentProfile extends Component {
       <div id ='myprofile' >
         <StudentMenubar />
         <Col xs="9" sm="12" md={{ size: 6, offset: 1 }}> 
+        <h5><b>Name: </b>{this.state.name}</h5>
+        <Button onClick={this.editNameClick} size="sm">Change Name</Button>
+        {this.state.isNameHidden ? null : 
+        <InputGroup>
+          <Input type="text" id ='name' placeholder="Enter Preferred Name (First and Last)" className="hours" value = {this.state.newName} onChange={this.updateInputValueName} required />
+          <InputGroupButton color="success" type="submit" id='nameButton' onClick ={this.sendNewName}>Submit</InputGroupButton>
+        </InputGroup>}
+        <hr />
         <h5><b>Department: </b>{this.state.department}</h5>
         <p><i>Your manager has control over which department you belong to.</i></p>
         <hr />
@@ -52,9 +74,22 @@ class StudentProfile extends Component {
           <Input type="text" id ='hours' placeholder="Enter Hours Requested" className="hours" value = {this.state.newHours} onChange={this.updateInputValueHours} required />
           <InputGroupButton color="success" type="submit" id='hoursButton' onClick ={this.sendHoursNew}>Submit</InputGroupButton>
         </InputGroup> }
+        <hr />
         </Col>
       </div>
     );
+  }
+
+  retrieveStudentInfo(){
+    //console.log("getting department"); 
+    axios.get('/api/getStudentInfo')
+    .then(res => {
+      //console.log(res); 
+      this.setState({ department: res.data.department, hours: res.data.hours, name: res.data.name }); 
+    })
+    .catch(function (error) {
+      console.log(error);
+    });  
   }
 
   retrieveDepartment(){
@@ -90,6 +125,22 @@ class StudentProfile extends Component {
       console.log("this.state: ", this.state);
       //window.location = '/myprofile';
       this.setState({hours: response.data})
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+  }
+
+  sendNewName(){
+    var config = { headers: {
+                      'Content-Type': 'application/json'}};
+    axios.post('/api/setStudentName',{
+      name: this.state.newName
+    }, config)
+    .then(response => {
+      console.log("in setStudentName this.state: ", this.state);
+      //window.location = '/myprofile';
+      this.setState({name: response.data})
     })
     .catch(function (error) {
       console.log(error);
