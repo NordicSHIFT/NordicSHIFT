@@ -221,7 +221,8 @@ def removeStudent():
     # this function is related to the button Remove Student where manager can remove the student from the departments
     data = request.get_json(silent=True)
     deletedStudent = data.get("student")
-    db.execute("""DELETE from ds where student = (select id from student where username = '%s');"""%deletedStudent)
+    department = data.get("department")
+    db.execute("""DELETE from ds where student = (select id from student where username = '%s') and department = %d;"""%(deletedStudent,department))
     db.execute("""DELETE from student where username ='%s';"""%deletedStudent)
     db.commit()
     return "done"

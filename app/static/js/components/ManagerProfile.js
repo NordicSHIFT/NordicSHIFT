@@ -18,7 +18,7 @@ export default class ManagerProfile extends Component {
        department: "",
        student: "",
        existingStudents: [],
-       studentRemove:"",
+       studentRemove: "",
        isHidden: true,
        isHiddenStud: true,
        isHiddenRemove: true,
@@ -122,7 +122,7 @@ export default class ManagerProfile extends Component {
                     <InputGroup>
                     <InputGroupAddon addonType="prepend">Student</InputGroupAddon>
                     <Input type="text" id ='student' placeholder="Enter Student Id" className="student" value ={this.state.student} onChange={this.updateInputValueStudent} required />
-                    <InputGroupAddon color="success" addonType="append" type="submit" id='studentButton' onClick ={this.sendNewStudent.bind(this)}>Submit</InputGroupAddon>
+                    <InputGroupAddon color="success" addonType="append" type="submit" id='studentButton' onClick ={this.sendNewStudent}>Submit</InputGroupAddon>
                     </InputGroup>
                     </div>
                 }
