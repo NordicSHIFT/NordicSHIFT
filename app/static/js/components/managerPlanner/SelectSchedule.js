@@ -18,13 +18,15 @@ export default class SelectSchedule extends Component {
       unassignedShift: [],
       scheduleIndex: 1, 
       basePublishPath: "/managerschedule/" + this.props.match.params.startDate,
-      publishPath: "/managerschedule/" + this.props.match.params.startDate + "/0"
+      publishPath: "/managerschedule/" + this.props.match.params.startDate + "/0",
+      send_emails:false
     }
     this.generateSchedule = this.generateSchedule.bind(this);
     this.setStateShifts = this.setStateShifts.bind(this);
     this.setAllSchedules = this.setAllSchedules.bind(this); 
     this.changeSchedule = this.changeSchedule.bind(this); 
     this.chooseSchedule = this.chooseSchedule.bind(this); 
+    this.toggleEmail = this.toggleEmail.bind(this);
 
     this.generateSchedule(); 
   }
@@ -68,6 +70,7 @@ export default class SelectSchedule extends Component {
       //TODO pass needed info with this. 
       axios.post(origin + '/api/chooseSchedule', {
         schedule: this.state.schedules[this.state.scheduleIndex]
+        // email: this.state.send_emails
         },  config)
       .then( (response) => {
         console.log(response)
@@ -101,6 +104,11 @@ export default class SelectSchedule extends Component {
     });
   }
 
+  toggleEmail(event) { 
+    this.state.send_emails = !this.state.send_emails;
+    this.setState({send_emails: this.state.send_emails});
+  }
+
   render() {
     return (
       <div className="selectSchedule">
@@ -111,7 +119,11 @@ export default class SelectSchedule extends Component {
             <SuggestCal id="calendar" ref="calendar" startDate={this.props.match.params.startDate} />
           </Col>
           <Col xs="3">
-            <SuggestList changeSchedule={this.changeSchedule}/> 
+            <SuggestList changeSchedule={this.changeSchedule}/>
+            <div>
+              <input type="checkbox" id="toggle_email" checked={this.state.send_emails} onClick={this.toggleEmail}/>
+              <label for="toggle_email">Send email notification</label>
+            </div>
             <Button onClick={this.chooseSchedule}>Publish this Schedule</Button>
           </Col>
         </Row>

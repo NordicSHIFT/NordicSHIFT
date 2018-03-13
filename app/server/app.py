@@ -343,6 +343,7 @@ def chooseSchedule():
     print ("IN CHOOSE SCHEDULE")
     data = request.get_json(silent=True)
     schedule = data.get('schedule')['assigned shifts']
+    # email = data.get('schedule')['send emails']
     # print("schedule", schedule)
     # This function will save the selected schedule in the database by making changes to the shift schedule with student for each shift
     for shift in schedule:
