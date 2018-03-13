@@ -69,8 +69,8 @@ export default class SelectSchedule extends Component {
       }
       //TODO pass needed info with this. 
       axios.post(origin + '/api/chooseSchedule', {
-        schedule: this.state.schedules[this.state.scheduleIndex]
-        // email: this.state.send_emails
+        schedule: this.state.schedules[this.state.scheduleIndex],
+        email: this.state.send_emails
         },  config)
       .then( (response) => {
         console.log(response)

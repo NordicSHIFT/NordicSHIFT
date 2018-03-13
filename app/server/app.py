@@ -343,17 +343,18 @@ def chooseSchedule():
     print ("IN CHOOSE SCHEDULE")
     data = request.get_json(silent=True)
     schedule = data.get('schedule')['assigned shifts']
-    # email = data.get('schedule')['send emails']
+    email = data.get('email')
     # print("schedule", schedule)
     # This function will save the selected schedule in the database by making changes to the shift schedule with student for each shift
     for shift in schedule:
-        if SEND_EMAILS == True:
+        if email == True:
             cur_worker = shift['student']
             if cur_worker not in workers:
                 workers.append(cur_worker)
         db.execute("UPDATE shift SET student = (select id from student where username = '%s') where id = '%d';"%(shift['student'],shift['id']))
         db.commit()
-    auto_email.published_sched_notif(workers)
+    if email == True:
+        auto_email.published_sched_notif(workers)
     return "done"
 
 @app.route('/api/retrieveSchedule', methods=['GET','OPTIONS'])
