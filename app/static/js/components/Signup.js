@@ -14,7 +14,7 @@ class Signup extends Component {
    this.updateInputValueUserName = this.updateInputValueUserName.bind(this);
    this.updateInputValuePassword = this.updateInputValuePassword.bind(this);
    this.updateInputUserRole = this.updateInputUserRole.bind(this);
-   this.redirectLogin = this.redirectLogin.bind(this); 
+   this.redirectLogin = this.redirectLogin.bind(this);
   }
 
   handleClick(){
@@ -57,7 +57,7 @@ class Signup extends Component {
           </Input>
           <hr/>
           <Button type="submit" id='signupButton' color="primary" onClick ={this.sendInfo.bind(this)}> Signup</Button>
-          <hr /> 
+          <hr />
           <Button type ="button" id ='signupButton' color="danger" onClick = {this.redirectLogin}>Return to login</Button>
       </Jumbotron>
       </Col>
@@ -76,7 +76,11 @@ class Signup extends Component {
       inputrole: this.state.inputrole
     }, config)
     .then(function (response) {
-      if (response.data == '/'){
+      if (response.data = 'error'){
+        alert('Please fill in all the information');
+        response.data = '/signup'
+      }
+      else if (response.data == '/'){
         alert("You have successfully signed up!");
       }
        window.location = response.data;

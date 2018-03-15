@@ -6,13 +6,15 @@ const style = {
   width:"50%"
 };
 
-class Login extends Component {
+class ResetPassword extends Component {
   constructor(props){
    super(props);
-   this.state={inputusername: "", inputpassword: ""};
+   this.state={inputusername: "", inputpassword: "", inputretypepassword: ""};
    this.handleClick = this.handleClick.bind(this);
    this.updateInputValueUserName = this.updateInputValueUserName.bind(this);
    this.updateInputValuePassword = this.updateInputValuePassword.bind(this);
+   this.updateInputValueRetypePassword = this.updateInputValueRetypePassword.bind(this);
+   this.sendInfo = this.sendInfo.bind(this);
   }
 
   handleClick(){
@@ -30,28 +32,30 @@ class Login extends Component {
     this.setState({inputpassword: evt.target.value});
   }
 
-  redirectSignUp(){
-    return window.location = '/signup';
+  updateInputValueRetypePassword(evt){
+    this.setState({inputretypepassword: evt.target.value});
   }
+
+  // redirectSignUp(){
+  //   return window.location = '/signup';
+  // }
 
   render() {
     return (
       <Row className='text-center' fluid>
         <Col sm="12" md={{ size: 6, offset: 3 }}>
         <Jumbotron>
-        <h2> Log in to NordicSHIFT</h2>
+        <h2> Reset Password</h2>
         <div>
           <Label><b>Username</b></Label>
           <Input type="text" id ='username' placeholder="Enter Username" className="inputusername" value = {this.state.inputusername} onChange={this.updateInputValueUserName.bind(this)} required />
           <Label><b>Password</b></Label>
-          <Input type="password" id ='password' placeholder="Enter Password" className="inputpassword" value ={this.state.inputpassword} onChange={this.updateInputValuePassword.bind(this)} required />
-          <Button type="submit" id='loginButton' color="primary" onClick ={this.sendInfo.bind(this)}> Login</Button>
+          <Input type="password" id ='password' placeholder="Enter Password" className="inputpassword" value = {this.state.inputpassword} onChange={this.updateInputValuePassword} required />
+          <Label><b>Retype Password</b></Label>
+          <Input type="password" id ='retypepassword' placeholder="Retype Password" className="inputretypepassword" value ={this.state.inputretypepassword} onChange={this.updateInputValueRetypePassword} required />
+          <Button type="submit" id='resetPasswordButton' color="primary" onClick ={this.sendInfo}> Reset</Button>
         </div>
         <hr/>
-        <div id ="signup">
-          <span> Do not have an account?  </span>
-          <Button type ="button" id ='signupButton' color="primary" onClick = {this.redirectSignUp}>Signup</Button>
-        </div>
         </Jumbotron>
         </Col>
       </Row>
@@ -63,28 +67,27 @@ class Login extends Component {
                       'Content-Type': 'application/json',
                       'Access-Control-Allow-Origin': '*'}
     }
-    axios.post('/loginC', {
-      inputusername: this.state.inputusername,
-      inputpassword: this.state.inputpassword
+    axios.post('/api/resetPassword', {
+      username: this.state.inputusername,
+      inputpassword: this.state.inputpassword,
+      inputretypepassword: this.state.inputretypepassword
     }, config)
     .then(function (response) {
-      if (response.data == '/login'){
-        alert('Wrong login, please try again');
-        console.log("wrong login");
-
+      if (response.data == 'error'){
+        alert('Password and Retype Password do not match. Please type again');
+        window.location = '/resetPassword';
       }
-      else if (response.data =='/signup') {
-        alert('Your username is invalid, please create an account or double check the username');
+      else if (response.data =='done') {
+        alert('Your new password has been saved. Please login again');
+        window.location = '/login';
       }
-      else if (response.data == '/resetPassword') {
-        alert('Your username has been created by your manager, please click OK to rest the password');
-      }
-      window.location = response.data;
     })
     .catch(function (error) {
       console.log(error);
     });
+    // console.log(this.state.inputpassword);
+    // console.log(this.state.inputretypepassword);
   }
 }
 
-export default Login;
+export default ResetPassword;

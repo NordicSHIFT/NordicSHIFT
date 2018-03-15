@@ -12,7 +12,8 @@ import Login from './Login'
 import Signup from './Signup'
 import SelectWeek from './managerPlanner/SelectWeek'
 import SelectSchedule from './managerPlanner/SelectSchedule'
-import ManagerViewAvailability from './ManagerViewAvailability';
+import ManagerViewAvailability from './ManagerViewAvailability'
+import ResetPassword from './ResetPassword';
 
 
 const Main = () => (
@@ -21,6 +22,7 @@ const Main = () => (
       <Route exact path='/' component={Home}/>
       <Route path='/login' component={Login}/>
       <Route path='/signup' component={Signup}/>
+      <Route path='/resetPassword' component={ResetPassword} />
       <Route path='/studentdashboard' component={StudentDashboard}/>
       <Route path='/managerdashboard' component={ManagerDashboard}/>
       <Route path='/studentschedule' component={StudentSchedule}/>
