@@ -126,7 +126,9 @@ def signupC():
     item = {'username': data.get('inputusername'), 'password': data.get('inputpassword'),'role': data.get('inputrole')}
     if len(item['username'])<1 or len(item['password'])<1:
         print('empty')
-        return 'error'
+        return 'errorNull'
+    if '@luther.edu' not in item['username']:
+        return 'errorUserName'
     # salt =  uuid.uuid4().hex
     hashed_password = hashlib.sha512(item['password'].encode('utf-8') + salt.encode('utf-8')).hexdigest()
     # item['password'] = hashed_password
