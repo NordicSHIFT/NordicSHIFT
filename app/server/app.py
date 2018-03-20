@@ -59,39 +59,57 @@ def login():
 def loginC():
     data = request.get_json(silent=True)
     item = {'username': data.get('inputusername'), 'password': data.get('inputpassword')}
-    res = db.execute("""SELECT password from student where username = '%s';"""%(item['username']))
+    res = db.execute("""SELECT username, password from student where username = '%s';"""%(item['username']))
     res1= res.fetchall()
-    res = db.execute("""SELECT password from manager where username = '%s';"""%(item['username']))
+    # print(res1)
+    res = db.execute("""SELECT username, password from manager where username = '%s';"""%(item['username']))
     res2 = res.fetchall()
+    # print(res2)
     if len(res1) > 0:
-        hashed_password = hashlib.sha512(item['password'].encode('utf-8') + salt.encode('utf-8')).hexdigest()
-        dbpass = res1[0][0]
-        if hashed_password == dbpass:
-            session['username'] = item['username']
-            session['role'] = 'Student'
-            session['logged_in'] = True
+        if len(res1[0][0])>0 and len(res1[0][1]) >0:
+            hashed_password = hashlib.sha512(item['password'].encode('utf-8') + salt.encode('utf-8')).hexdigest()
+            # print("hashed ",hashed_password)
+            # print("dbpass ",res1[0][1])
+            dbpass = res1[0][1]
+            if hashed_password == dbpass:
+                session['username'] = item['username']
+                session['role'] = 'Student'
+                session['logged_in'] = True
 
-            print('student logged in')
+                print('student logged in')
 
-            go_to = check_and_redirect_back('/studentdashboard')
-            return go_to
-        else:
-            print('wrong combination for username and password for student')
-            return '/login'
+                go_to = check_and_redirect_back('/studentdashboard')
+                return go_to
+            else:
+                print('wrong combination for username and password for student')
+                return '/login'
+        # else:
+        #     print('need create password')
+        #     print(res1[0][0])
+        #     return '/resetPassword'
     elif len(res2)> 0:
         hashed_password = hashlib.sha512(item['password'].encode('utf-8') + salt.encode('utf-8')).hexdigest()
-        dbpass = res2[0][0]
-        if hashed_password == dbpass:
-            session['username'] = item['username']
-            session['role'] = 'Manager'
-            session['logged_in'] = True
-            session['schedules'] = "Schedules"
-            print('manager logged in')
-            go_to = check_and_redirect_back('/managerdashboard')
-            return go_to
-        else:
-            print('wrong combination for username and password for manager')
-            return '/login'
+        dbpass = res2[0][1]
+        if len(res2[0][0])>0 and len(res2[0][1])>0:
+            if hashed_password == dbpass:
+                session['username'] = item['username']
+                session['role'] = 'Manager'
+                session['logged_in'] = True
+                session['schedules'] = "Schedules"
+                print('manager logged in')
+                go_to = check_and_redirect_back('/managerdashboard')
+                return go_to
+            else:
+                print('wrong combination for username and password for manager')
+                return '/login'
+        # else:
+        #     print('need create password')
+        #     print(res2[0][0])
+        #     return '/resetPassword'
+    # elif (len(res1[0][0])>0 and len(res1[0][1]) ==0) or (len(res2[0][0])>0 and len(res2[0][1])==0):
+    #     print('need create password')
+    #     print(res1[0][0])
+    #     return '/resetPassword'
     else:
         print('Username does not exists, please sign up')
         return '/signup'
@@ -111,6 +129,11 @@ def signup():
 def signupC():
     data = request.get_json(silent=True)
     item = {'username': data.get('inputusername'), 'password': data.get('inputpassword'),'role': data.get('inputrole')}
+    if len(item['username'])<1 or len(item['password'])<1:
+        print('empty')
+        return 'errorNull'
+    if '@luther.edu' not in item['username']:
+        return 'errorUserName'
     # salt =  uuid.uuid4().hex
     if '@luther.edu' not in item['username']:
         return 'error'
@@ -119,9 +142,16 @@ def signupC():
     # hashed_password = bcrypt.hashpw('password'.encode('utf-8'), bcrypt.gensalt())
     item['password'] = hashed_password
     print(item)
-    res = db.execute("""SELECT id from %s where username = '%s' and password= '%s';"""%(item['role'], item['username'], item['password']))
+    # res = db.execute("""SELECT id from %s where username = '%s' and password= '%s';"""%(item['role'], item['username'], item['password']))
+    res = db.execute("""SELECT id, password from %s where username = '%s';"""%(item['role'], item['username']))
     res = res.fetchall()
     if len(res) >0:
+        # if len(res[0][1]) == 0:
+        #     hased_username = hashlib.sha512(item['username'].encode('utf-8')+salt.encode('utf-8')).hexdigest()
+        #     print('login redirect to resetPassword')
+        #     res = '/resetPassword/%s/%s'%(hashed_username,hashed_password)
+        #     print(res)
+        #     return (res,item['username'])
         return '/login'
     else:
         db.execute("""INSERT into %s(username, password) VALUES ('%s','%s');"""%(item['role'],item['username'],item['password']))
@@ -141,6 +171,44 @@ def signupC():
             return  go_to
         return '/'
 
+# @app.route('/api/checkUsernamePassword', methods = ['POST'])
+def checkUsernamePassword(username,password):
+    print('in checkUsernamePassword')
+    # data = request.get_json(silent=True)
+    item = {'username':username,'password':password}
+    res = db.execute("""SELECT username,password from student;""")
+    res = res.fetchall()
+    for (student,password) in res:
+        if student == item['username'] and password == item['password']:
+            return {"found": "true","student":student}
+    return {'found':"false","student":""}
+
+@app.route('/api/resetPassword', methods = ['POST'])
+def resetPassword():
+    data = request.get_json(silent=True)
+    # print(data)
+    item = {'username': data.get('username'), 'password': data.get('inputpassword'),'retypepassword': data.get('retypepassword')}
+    if item['password'] != item['retypepassword']:
+        return 'error'
+    else:
+        hashed_password = hashlib.sha512(item['password'].encode('utf-8') + salt.encode('utf-8')).hexdigest()
+        newpassword = hashed_password
+        print(newpassword)
+        print(item['password'])
+        res = db.execute("""SELECT username, password from student where username = '%s';"""%item['username'])
+        print(item['username'])
+        res1= res.fetchall()
+        # print(res1)
+        res = db.execute("""SELECT username, password from manager where username = '%s';"""%item['username'])
+        res2 = res.fetchall()
+        if len(res1) > 0:
+            table = "student"
+        else:
+            table = "manager"
+        print(table)
+        db.execute("""UPDATE %s set password = '%s' where username = '%s';"""%(table,newpassword,item['username']))
+        db.commit()
+        return "done"
 @app.route("/logout")
 def logout():
     session['username'] = None
@@ -245,7 +313,7 @@ def getStudentInfo():
     res = res.fetchall()
     if (len(res) > 0):
         department = res[0][0]
-    else: 
+    else:
         department = "Contact your manager to be assigned a department."
 
     res = db.execute("""SELECT hours, name from student where username = '%s';"""%session.get("username"))
@@ -259,7 +327,7 @@ def getStudentInfo():
 
     results = {"department": department, "hours": hours, "name": name}
     return jsonify(results)
-    
+
 
 @app.route("/api/getStudentDept")
 def getStudentDept():
@@ -278,7 +346,7 @@ def getStudentHours():
     return "0"
 
 @app.route("/api/setStudentHours", methods=['POST'])
-def setStudentHours(): 
+def setStudentHours():
     print("in set student hours")
     data = request.get_json(silent=True)
     new_hours = data.get("hours")
@@ -466,8 +534,21 @@ def calRetrieve():
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def catch_all(path):
-    if session.get("logged_in") == True or path == '/':
+    pathAn = "/"+path
+    res = pathAn.split('/')
+    if session.get("logged_in") == True or path == '/' or path == 'error':
+        print("path ",path)
         return render_template("index.html")
+    elif 'resetPassword' in path:
+        if len(res) <3:
+            return redirect('/error')
+        username = res[2]
+        password = res[3]
+        res = checkUsernamePassword(username,password)
+        if res['found'] == 'true':
+            return render_template('index.html')
+        else:
+            return redirect('/error')
     else:
         print('path', path)
         if path != 'favicon.ico':

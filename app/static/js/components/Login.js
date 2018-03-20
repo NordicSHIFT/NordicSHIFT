@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, { Component } from 'react';
-import { Row, Col, Button, Input, Label, Jumbotron } from 'reactstrap'; 
+import { Row, Col, Button, Input, Label, Jumbotron } from 'reactstrap';
 
 const style = {
   width:"50%"
@@ -40,7 +40,7 @@ class Login extends Component {
         <Col sm="12" md={{ size: 6, offset: 3 }}>
         <Jumbotron>
         <h2> Log in to NordicSHIFT</h2>
-        <div> 
+        <div>
           <Label><b>Username</b></Label>
           <Input type="text" id ='username' placeholder="Enter Username" className="inputusername" value = {this.state.inputusername} onChange={this.updateInputValueUserName.bind(this)} required />
           <Label><b>Password</b></Label>
@@ -74,8 +74,8 @@ class Login extends Component {
 
       }
       else if (response.data =='/signup') {
-        alert('Your username is invalid, please create an account or double check the username')
-      } 
+        alert('Your username is invalid, please create an account or double check the username');
+      }
       window.location = response.data;
     })
     .catch(function (error) {
