@@ -110,6 +110,8 @@ def signupC():
     data = request.get_json(silent=True)
     item = {'username': data.get('inputusername'), 'password': data.get('inputpassword'),'role': data.get('inputrole')}
     # salt =  uuid.uuid4().hex
+    if '@luther.edu' not in item['username']:
+        return 'error'
     hashed_password = hashlib.sha512(item['password'].encode('utf-8') + salt.encode('utf-8')).hexdigest()
     # item['password'] = hashed_password
     # hashed_password = bcrypt.hashpw('password'.encode('utf-8'), bcrypt.gensalt())
