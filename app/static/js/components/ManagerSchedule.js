@@ -8,6 +8,8 @@ import SuggestCal from "./children/SuggestCal";
 
 import * as util from './../util.js'; 
 
+var origin = window.location.origin;
+
 //create a different calendar for this page
 export default class ManagerSchedule extends Component {
 
@@ -28,20 +30,13 @@ export default class ManagerSchedule extends Component {
     }
     console.log(this.props); 
 
-    this.chooseSchedule = this.chooseSchedule.bind(this); 
     this.retrieveSchedule = this.retrieveSchedule.bind(this); 
     this.setStateAssignedShift = this.setStateAssignedShift.bind(this);
     this.setStateUnassignedShift = this.setStateUnassignedShift.bind(this);
 
-    if (this.props.match.params.scheduleIndex) {
-        //if user is coming directly from planning, then it saves the schedule they selected first
-        this.chooseSchedule(this.props.match.params.scheduleIndex); 
-    }
-    else {
-        //when a schedule index is not passed via url 
-        this.retrieveSchedule(); 
-    }
-    
+    //when a schedule index is not passed via url 
+    this.retrieveSchedule(); 
+
   }
 
   setStateAssignedShift(shifts){
@@ -79,26 +74,6 @@ export default class ManagerSchedule extends Component {
     .catch(function (error) {
       console.log(error);
     });
-  }
-
-  chooseSchedule(scheduleIndex) {
-    var config = { headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'}
-      }
-      //TODO pass needed info with this. 
-      axios.post('/api/chooseSchedule', {
-        scheduleIndex: scheduleIndex
-        },  config)
-      .then( (response) => {
-        console.log(response)
-        console.log("response", response); 
-        this.setStateAssignedShift(response.data['assigned shifts']);
-        this.setStateUnassignedShift(response.data['unassigned shifts']);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
   }
 
   render() {

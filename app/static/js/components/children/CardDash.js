@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Card, CardTitle, CardText, CardImg, CardImgOverlay } from 'reactstrap';
+import { Card, CardTitle, CardSubtitle, CardBody, CardText, CardImg, CardImgOverlay } from 'reactstrap';
 
 class CardDash extends Component {
   render() { return (
@@ -8,9 +8,9 @@ class CardDash extends Component {
       <Card inverse>
         <CardImg src={this.props.source} alt="Card image cap" />
         <CardImgOverlay>
-          <CardTitle className="text-outline">{this.props.title}</CardTitle>
-          <CardText>
-            <small className="text-muted text-outline">{this.props.descr}</small>
+          <CardTitle className={this.props.className}>{this.props.title}</CardTitle>
+          <CardText className="text-right">
+            <small className={this.props.className}>{this.props.descr}</small>
           </CardText>
         </CardImgOverlay>
       </Card>

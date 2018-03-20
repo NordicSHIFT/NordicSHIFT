@@ -3,6 +3,7 @@ from flask import Flask, flash, redirect, render_template, request, session, abo
 from oAuth import *
 import datetime
 import os
+import auto_email
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Table, Column, Integer, String, create_engine, Sequence, ForeignKey
 from sqlalchemy.orm import sessionmaker, relationship
@@ -13,6 +14,8 @@ from shift import Shift
 from student import Student
 #import calRetrieve
 import oAuth
+
+SEND_EMAILS = False
 
 app = Flask(__name__, static_folder="../static/dist", template_folder="../static")
 app.secret_key=os.environ['SECRET_KEY']
@@ -82,6 +85,7 @@ def loginC():
             session['username'] = item['username']
             session['role'] = 'Manager'
             session['logged_in'] = True
+            session['schedules'] = "Schedules"
             print('manager logged in')
             go_to = check_and_redirect_back('/managerdashboard')
             return go_to
@@ -108,6 +112,8 @@ def signupC():
     data = request.get_json(silent=True)
     item = {'username': data.get('inputusername'), 'password': data.get('inputpassword'),'role': data.get('inputrole')}
     # salt =  uuid.uuid4().hex
+    if '@luther.edu' not in item['username']:
+        return 'error'
     hashed_password = hashlib.sha512(item['password'].encode('utf-8') + salt.encode('utf-8')).hexdigest()
     # item['password'] = hashed_password
     # hashed_password = bcrypt.hashpw('password'.encode('utf-8'), bcrypt.gensalt())
@@ -190,7 +196,6 @@ def managerprofile():
 
 @app.route("/api/getStudents")
 def getStudents():
-    #TODO return all the students for current department
     res = db.execute("""SELECT * from student inner join ds on student.id = ds.student where department = (SELECT dept from manager where username = '%s' );"""%(session.get("username")))
     res = res.fetchall()
     # print(res)
@@ -205,7 +210,6 @@ def getStudents():
 def studentUpdate():
     data = request.get_json(silent=True)
     modifiedStudents = data.get("students")
-    #TODO write changes to database
     for student in modifiedStudents:
         if student['hours'] is None:
             student['hours'] = 0
@@ -213,7 +217,7 @@ def studentUpdate():
             student['name'] = 'Empty'
         # if student['name'] is not None and student['hours'] is not None and student['username'] is not None:
         # print(str(student['hours'])+ student['name']+ student['username']+ str(student['id']))
-        db.execute("""UPDATE student SET hours = '%d', name = '%s', username = '%s' where id = '%d'; """%(student['hours'], student['name'], student['username'], student['id']))
+        db.execute("""UPDATE student SET hours = '%d', name = '%s', username = '%s' where id = '%d'; """%(int(student['hours']), student['name'], student['username'], student['id']))
         db.commit()
     return "done"
 
@@ -235,6 +239,65 @@ def getManagerDept():
         return res[0][0]
     return ""
 
+@app.route("/api/getStudentInfo")
+def getStudentInfo():
+    res = db.execute("""SELECT name from department where id =(SELECT department from ds where student=(select id from student where username= '%s'));"""%session.get("username"))
+    res = res.fetchall()
+    if (len(res) > 0):
+        department = res[0][0]
+    else: 
+        department = "Contact your manager to be assigned a department."
+
+    res = db.execute("""SELECT hours, name from student where username = '%s';"""%session.get("username"))
+    res = res.fetchall()
+    if (len(res) > 0):
+        hours = str(res[0].hours)
+        name = str(res[0].name)
+    else:
+        hours = "0"
+        name = ""
+
+    results = {"department": department, "hours": hours, "name": name}
+    return jsonify(results)
+    
+
+@app.route("/api/getStudentDept")
+def getStudentDept():
+    res = db.execute("""SELECT name from department where id =(SELECT department from ds where student=(select id from student where username= '%s'));"""%session.get("username"))
+    res = res.fetchall()
+    if (len(res) > 0):
+        return res[0][0]
+    return "Contact your manager to be assigned a department."
+
+@app.route("/api/getStudentHours")
+def getStudentHours():
+    res = db.execute("""SELECT hours from student where username = '%s';"""%session.get("username"))
+    res = res.fetchall()
+    if (len(res) > 0):
+        return str(res[0][0])
+    return "0"
+
+@app.route("/api/setStudentHours", methods=['POST'])
+def setStudentHours(): 
+    print("in set student hours")
+    data = request.get_json(silent=True)
+    new_hours = data.get("hours")
+    if new_hours!=None:
+        db.execute("""UPDATE student SET hours = '%d' WHERE username = '%s';"""%(float(new_hours), session.get('username')))
+        db.commit()
+    return new_hours
+
+@app.route("/api/setStudentName", methods=['POST'])
+def setStudentName():
+    print("in set student name")
+    data = request.get_json(silent=True)
+    new_name = data.get("name")
+    print("new_name", new_name)
+    if new_name!=None:
+        db.execute("""UPDATE student SET name = '%s' WHERE username = '%s';"""%(new_name, session.get('username')))
+        db.commit()
+    return new_name
+
 @app.route("/api/calendar")
 def calendar():
     myevents = []
@@ -242,10 +305,23 @@ def calendar():
     shiftRe = res.fetchall()
     shifts = []
     for shift in shiftRe:
-        newShift = Shift(shift[2],shift[4],shift[5])
+        newShift = Shift(shift[0],shift[2],shift[4],shift[5])
         myevents.append(newShift)
     #color scheme colors: #62c462, #5bc0de, #f89406,  #ee5f5b
-    print("In calendar!!")
+    serialEvents = [event.serialize() for event in myevents]
+    data = {"calData": "Calendar Data", "events": serialEvents}
+    return jsonify(data)
+
+@app.route("/api/studentcalendar")
+def studentCalendar():
+    myevents = []
+    res = db.execute("""SELECT * from shift where student =(SELECT id from student where username = '%s');"""%session.get("username"))
+    shiftRe = res.fetchall()
+    shifts = []
+    for shift in shiftRe:
+        newShift = Shift(shift[0],shift[2],shift[4],shift[5])
+        myevents.append(newShift)
+    #color scheme colors: #62c462, #5bc0de, #f89406,  #ee5f5b
     serialEvents = [event.serialize() for event in myevents]
     data = {"calData": "Calendar Data", "events": serialEvents}
     return jsonify(data)
@@ -296,7 +372,6 @@ def deleteEvent():
   data = request.get_json(silent=True)
   myEvent = data.get('myEvent')
   # print(data, myEvent.get('start'), myEvent.get('end'))
-  # TODO this will delete two shifts if they start and end at the same time
   old_format = "%Y-%m-%dT%H:%M:%S.%fZ"
   new_format = '%Y-%m-%d %H:%M:%S'
   start=datetime.datetime.strptime(myEvent.get('start'), old_format).strftime(new_format)
@@ -304,7 +379,7 @@ def deleteEvent():
   db.execute("""DELETE from shift WHERE startTime ='%s' and endTime='%s' and dept = (SELECT dept from manager where username = '%s')"""%(start,end, session.get('username')))
   return "done"
 
-@app.route("/api/generateSchedule", methods=['GET','OPTIONS'])
+@app.route("/api/generateSchedule", methods=['GET','OPTIONS','POST'])
 def generateSchedule():
     #calendarCall to fill in all the students' schedules to the db
     #run the algorithm
@@ -313,7 +388,7 @@ def generateSchedule():
     shiftRe = res.fetchall()
     shifts = []
     for shift in shiftRe:
-        newShift = Shift(shift[2],shift[4],shift[5])
+        newShift = Shift(shift[0],shift[2],shift[4],shift[5])
         shifts.append(newShift)
 
     res = db.execute("""SELECT * from student inner join ds on student.id = ds.student where student.hours > 0 and ds.department = (SELECT dept from manager where username ='%s');"""%session.get("username"))
@@ -333,32 +408,48 @@ def generateSchedule():
     print("about to make calendar call")
     schedule = Schedule(shifts)
     schedules = scheduler2(schedule, students)
-    suggestedSchedules = schedules #TODO this doesn't work to have it available in chooseSchedule
-    # print("in generate schedules,", suggestedSchedules)
     res = [schedule.serialize() for schedule in schedules]
+    session.modified = True
+    print("session.get('schedules')",session.get('schedules'))
     return jsonify(res)
 
 @app.route('/api/chooseSchedule', methods=['POST'])
 def chooseSchedule():
+    workers = []
+
     print ("IN CHOOSE SCHEDULE")
     data = request.get_json(silent=True)
-    scheduleIndex = data.get('scheduleIndex')
-    print("suggested schedule", suggestedSchedules)
-    #choosenSchedule = suggestedSchedules[scheduleIndex]
-    #TODO save this schedule to the database
-    return retrieveSchedule()
+    schedule = data.get('schedule')['assigned shifts']
+    email = data.get('email')
+    # print("schedule", schedule)
+    # This function will save the selected schedule in the database by making changes to the shift schedule with student for each shift
+    for shift in schedule:
+        if email == True:
+            cur_worker = shift['student']
+            if cur_worker not in workers:
+                workers.append(cur_worker)
+        db.execute("UPDATE shift SET student = (select id from student where username = '%s') where id = '%d';"%(shift['student'],shift['id']))
+        db.commit()
+    if email == True:
+        auto_email.published_sched_notif(workers)
+    return "done"
 
 @app.route('/api/retrieveSchedule', methods=['GET','OPTIONS'])
 def retrieveSchedule():
-    #TODO make sure this query looks right
     res = db.execute("""SELECT * from shift where dept =(SELECT dept from manager where username = '%s');"""%session.get("username"))
     shiftRe = res.fetchall()
     shifts = []
     for shift in shiftRe:
-      newShift = Shift(shift[2],shift[4],shift[5])
-      shifts.append(newShift)
+        #def __init__(self,sid, dept, start, end, student = None):
+        username = None
+        if (shift[3] != None):
+            res = db.execute("""SELECT * from student where id ='%s'"""%shift[3])
+            res = res.fetchall()
+            username = res[0].username
+        newShift = Shift(shift[0],shift[2],shift[4],shift[5],username)
+        shifts.append(newShift)
+        print(newShift)
     schedule = Schedule(shifts)
-
     res = schedule.serialize()
     return jsonify(res)
 

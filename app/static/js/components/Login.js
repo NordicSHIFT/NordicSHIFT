@@ -1,8 +1,9 @@
 import axios from 'axios';
 import React, { Component } from 'react';
+import { Row, Col, Button, Input, Label, Jumbotron } from 'reactstrap'; 
 
 const style = {
-  backgroundColor:"#f1f1f1"
+  width:"50%"
 };
 
 class Login extends Component {
@@ -35,23 +36,25 @@ class Login extends Component {
 
   render() {
     return (
-      <div id ='login'>
-        <div>
-          <label><b>Username</b></label>
-          <input type="text" id ='username' placeholder="Enter Username" className="inputusername" value = {this.state.inputusername} onChange={this.updateInputValueUserName.bind(this)} required />
-
-          <label><b>Password</b></label>
-          <input type="password" id ='password' placeholder="Enter Password" className="inputpassword" value ={this.state.inputpassword} onChange={this.updateInputValuePassword.bind(this)} required />
-
-          <button type="submit" id='loginButton' onClick ={this.sendInfo.bind(this)}> Login</button>
-          <input type="checkbox" checked="checked" id='rememberCheckBox' /> Remember me
+      <Row className='text-center' fluid>
+        <Col sm="12" md={{ size: 6, offset: 3 }}>
+        <Jumbotron>
+        <h2> Log in to NordicSHIFT</h2>
+        <div> 
+          <Label><b>Username</b></Label>
+          <Input type="text" id ='username' placeholder="Enter Username" className="inputusername" value = {this.state.inputusername} onChange={this.updateInputValueUserName.bind(this)} required />
+          <Label><b>Password</b></Label>
+          <Input type="password" id ='password' placeholder="Enter Password" className="inputpassword" value ={this.state.inputpassword} onChange={this.updateInputValuePassword.bind(this)} required />
+          <Button type="submit" id='loginButton' color="primary" onClick ={this.sendInfo.bind(this)}> Login</Button>
         </div>
-
-        <div id ="signup" style = {style}>
-          <span> Do not have an account?</span>
-          <button type ="button" id ='signupButton' onClick = {this.redirectSignUp}>Signup</button>
+        <hr/>
+        <div id ="signup">
+          <span> Do not have an account?  </span>
+          <Button type ="button" id ='signupButton' color="primary" onClick = {this.redirectSignUp}>Signup</Button>
         </div>
-      </div>
+        </Jumbotron>
+        </Col>
+      </Row>
     );
   }
 
