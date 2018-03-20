@@ -15,9 +15,11 @@ def send_email(recipients, subject, message_body):
     fromaddr = os.environ['EMAIL_NAME']
     password = os.environ['EMAIL_PASS']
 
+    if isinstance(recipients, list):
+        recipients =  ", ".join(recipients)
     msg = MIMEMultipart()
     msg['From'] = fromaddr
-    msg['To'] = ", ".join(recipients)
+    msg['To'] = recipients
     msg['Subject'] = subject
 
     msg.attach(MIMEText(message_body, 'plain'))
@@ -42,4 +44,5 @@ def published_sched_notif(recipients):
               "https://nordicshift.herokuapp.com/\n" + \
               "Thank you."
 
-    send_email(recipients, subject, message)
+    for recipient in recipients:
+        send_email(recipient, subject, message)
