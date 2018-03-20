@@ -41,7 +41,7 @@ def published_sched_notif(recipients):
     subject = "Upcoming schedule has been published"
     message = "Management has posted the upcoming schedule.\n" + \
               "Please login to your account to view the full details.\n" + \
-              "https://nordicshift.heroku.com/\n" + \
+              "https://nordicshift.herokuapp.com/\n" + \
               "Thank you."
 
     for recipient in recipients:
