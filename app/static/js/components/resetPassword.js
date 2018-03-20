@@ -9,12 +9,13 @@ const style = {
 class ResetPassword extends Component {
   constructor(props){
    super(props);
-   this.state={inputusername: "", inputpassword: "", inputretypepassword: ""};
+   this.state={inputusername: this.props.match.params.username, inputpassword: "", inputretypepassword: ""};
    this.handleClick = this.handleClick.bind(this);
    this.updateInputValueUserName = this.updateInputValueUserName.bind(this);
    this.updateInputValuePassword = this.updateInputValuePassword.bind(this);
    this.updateInputValueRetypePassword = this.updateInputValueRetypePassword.bind(this);
    this.sendInfo = this.sendInfo.bind(this);
+   // this.getCheckUsernamePassword = this.getCheckUsernamePassword.bind(this);
   }
 
   handleClick(){
@@ -36,10 +37,6 @@ class ResetPassword extends Component {
     this.setState({inputretypepassword: evt.target.value});
   }
 
-  // redirectSignUp(){
-  //   return window.location = '/signup';
-  // }
-
   render() {
     return (
       <Row className='text-center' fluid>
@@ -48,7 +45,7 @@ class ResetPassword extends Component {
         <h2> Reset Password</h2>
         <div>
           <Label><b>Username</b></Label>
-          <Input type="text" id ='username' placeholder="Enter Username" className="inputusername" value = {this.state.inputusername} onChange={this.updateInputValueUserName.bind(this)} required />
+          <Input type="text" id ='username' className="inputusername" value = {this.state.inputusername} readonly="readonly" />
           <Label><b>Password</b></Label>
           <Input type="password" id ='password' placeholder="Enter Password" className="inputpassword" value = {this.state.inputpassword} onChange={this.updateInputValuePassword} required />
           <Label><b>Retype Password</b></Label>
@@ -75,7 +72,6 @@ class ResetPassword extends Component {
     .then(function (response) {
       if (response.data == 'error'){
         alert('Password and Retype Password do not match. Please type again');
-        window.location = '/resetPassword';
       }
       else if (response.data =='done') {
         alert('Your new password has been saved. Please login again');

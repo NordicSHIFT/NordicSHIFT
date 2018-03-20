@@ -76,9 +76,6 @@ class Login extends Component {
       else if (response.data =='/signup') {
         alert('Your username is invalid, please create an account or double check the username');
       }
-      else if (response.data == '/resetPassword') {
-        alert('Your username has been created by your manager, please click OK to rest the password');
-      }
       window.location = response.data;
     })
     .catch(function (error) {

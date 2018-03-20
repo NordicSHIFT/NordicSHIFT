@@ -78,10 +78,10 @@ def loginC():
             else:
                 print('wrong combination for username and password for student')
                 return '/login'
-        else:
-            print('need create password')
-            print(res1[0][0])
-            return '/resetPassword'
+        # else:
+        #     print('need create password')
+        #     print(res1[0][0])
+        #     return '/resetPassword'
     elif len(res2)> 0:
         hashed_password = hashlib.sha512(item['password'].encode('utf-8') + salt.encode('utf-8')).hexdigest()
         dbpass = res2[0][1]
@@ -97,14 +97,14 @@ def loginC():
             else:
                 print('wrong combination for username and password for manager')
                 return '/login'
-        else:
-            print('need create password')
-            print(res2[0][0])
-            return '/resetPassword'
-    elif (len(res1[0][0])>0 and len(res1[0][1]) ==0) or (len(res2[0][0])>0 and len(res2[0][1])==0):
-        print('need create password')
-        print(res1[0][0])
-        return '/resetPassword'
+        # else:
+        #     print('need create password')
+        #     print(res2[0][0])
+        #     return '/resetPassword'
+    # elif (len(res1[0][0])>0 and len(res1[0][1]) ==0) or (len(res2[0][0])>0 and len(res2[0][1])==0):
+    #     print('need create password')
+    #     print(res1[0][0])
+    #     return '/resetPassword'
     else:
         print('Username does not exists, please sign up')
         return '/signup'
@@ -137,9 +137,12 @@ def signupC():
     res = db.execute("""SELECT id, password from %s where username = '%s';"""%(item['role'], item['username']))
     res = res.fetchall()
     if len(res) >0:
-        if len(res[0][1]) == 0:
-            print('login redirect to resetPassword')
-            return '/resetPassword'
+        # if len(res[0][1]) == 0:
+        #     hased_username = hashlib.sha512(item['username'].encode('utf-8')+salt.encode('utf-8')).hexdigest()
+        #     print('login redirect to resetPassword')
+        #     res = '/resetPassword/%s/%s'%(hashed_username,hashed_password)
+        #     print(res)
+        #     return (res,item['username'])
         return '/login'
     else:
         db.execute("""INSERT into %s(username, password) VALUES ('%s','%s');"""%(item['role'],item['username'],item['password']))
@@ -158,12 +161,25 @@ def signupC():
             go_to = check_and_redirect_back('/studentdashboard')
             return  go_to
         return '/'
+
+# @app.route('/api/checkUsernamePassword', methods = ['POST'])
+def checkUsernamePassword(username,password):
+    print('in checkUsernamePassword')
+    # data = request.get_json(silent=True)
+    item = {'username':username,'password':password}
+    res = db.execute("""SELECT username,password from student;""")
+    res = res.fetchall()
+    for (student,password) in res:
+        if student == item['username'] and password == item['password']:
+            return {"found": "true","student":student}
+    return {'found':"false","student":""}
+
 @app.route('/api/resetPassword', methods = ['POST'])
 def resetPassword():
     data = request.get_json(silent=True)
     # print(data)
     item = {'username': data.get('username'), 'password': data.get('inputpassword'),'retypepassword': data.get('retypepassword')}
-    if item['password'] == item['retypepassword']:
+    if item['password'] != item['retypepassword']:
         return 'error'
     else:
         hashed_password = hashlib.sha512(item['password'].encode('utf-8') + salt.encode('utf-8')).hexdigest()
@@ -489,8 +505,21 @@ def retrieveSchedule():
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def catch_all(path):
-    if session.get("logged_in") == True or path == '/' or path=='resetPassword':
+    pathAn = "/"+path
+    res = pathAn.split('/')
+    if session.get("logged_in") == True or path == '/' or path == 'error':
+        print("path ",path)
         return render_template("index.html")
+    elif 'resetPassword' in path:
+        if len(res) <3:
+            return redirect('/error')
+        username = res[2]
+        password = res[3]
+        res = checkUsernamePassword(username,password)
+        if res['found'] == 'true':
+            return render_template('index.html')
+        else:
+            return redirect('/error')
     else:
         print('path', path)
         if path != 'favicon.ico':
