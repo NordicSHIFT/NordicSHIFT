@@ -12,6 +12,8 @@ import hashlib, uuid
 from scheduler import scheduler2, Schedule
 from shift import Shift
 from student import Student
+#import calRetrieve
+import oAuth
 
 SEND_EMAILS = False
 
@@ -393,18 +395,19 @@ def generateSchedule():
     studentRe = res.fetchall()
     students = []
     for student in studentRe:
-      newStudent = Student(student[1],student[4])
-      res = db.execute("""SELECT starttime, endtime from unavailability where student = %d; """%(int(student[0])))
-      res = res.fetchall()
-      for item in res:
-          newStudent.assignedUnavailability((item[0],item[1]))
-      students.append(newStudent)
+        if (student[1].endswith('@luther.edu')):
+            oAuth.calendarCall(student[1])
+
+        newStudent = Student(student[1],student[4])
+        res = db.execute("""SELECT starttime, endtime from unavailability where student = %d; """%(int(student[0])))
+        res = res.fetchall()
+        for item in res:
+            newStudent.assignedUnavailability((item[0],item[1]))
+        students.append(newStudent)
 
     print("about to make calendar call")
     schedule = Schedule(shifts)
     schedules = scheduler2(schedule, students)
-
-    #print("in generate schedules,", suggestedSchedules)
     res = [schedule.serialize() for schedule in schedules]
     session.modified = True
     print("session.get('schedules')",session.get('schedules'))
@@ -449,6 +452,16 @@ def retrieveSchedule():
     schedule = Schedule(shifts)
     res = schedule.serialize()
     return jsonify(res)
+
+@app.route('/api/calRetrieve', methods=['GET'])
+def calRetrieve():
+    #TODO: Implement calRetrieve.py. Pass in either a list or individual
+    studentWorkers = ['chriia01@luther.edu', 'nguyli03@luther.edu', 'hermaa02@luther.edu', 'davial02@luther.edu', 'millro04@luther.edu','hangde01@luther.edu', 'css@luther.edu']
+
+    foo = oAuth.calendarCall() #pass in student workers here, change calendarCall 
+    print(foo)
+    print('here')
+    return foo
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
