@@ -19,6 +19,7 @@ export default class SelectSchedule extends Component {
       scheduleIndex: 1, 
       basePublishPath: "/managerschedule/" + this.props.match.params.startDate,
       publishPath: "/managerschedule/" + this.props.match.params.startDate + "/0",
+      startDate: this.props.match.params.startDate,
       send_emails:false
     }
     this.generateSchedule = this.generateSchedule.bind(this);
@@ -88,7 +89,9 @@ export default class SelectSchedule extends Component {
       withCredentials: true
     }
 
-    axios.get(origin + '/api/generateSchedule', config)
+    axios.post(origin + '/api/generateSchedule', {
+      startDate: this.state.startDate
+    }, config)
     .then( (response) => {
       // alert('response made it back');
       // console.log("response.data.items: ",response.data.items);
