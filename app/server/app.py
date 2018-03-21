@@ -452,6 +452,12 @@ def generateSchedule():
     #calendarCall to fill in all the students' schedules to the db
     #run the algorithm
     #return the results
+    data = request.get_json(silent=True)
+    startDate = int(int(data.get('startDate'))/1000)
+    startDate = datetime.datetime.fromtimestamp(startDate)
+    print("startDate: ", startDate)
+    #TODO Linh, add limitations, so it only selects the shifts
+    # in the same week as the start date. 
     res = db.execute("""SELECT * from shift where dept =(SELECT dept from manager where username = '%s');"""%session.get("username"))
     shiftRe = res.fetchall()
     shifts = []
@@ -463,8 +469,7 @@ def generateSchedule():
     studentRe = res.fetchall()
     students = []
     for student in studentRe:
-        if (student[1].endswith('@luther.edu')):
-            oAuth.calendarCall(student[1])
+        oAuth.calendarCall(student[1], startDate)
 
         newStudent = Student(student[1],student[4])
         res = db.execute("""SELECT starttime, endtime from unavailability where student = %d; """%(int(student[0])))
@@ -473,13 +478,27 @@ def generateSchedule():
             newStudent.assignedUnavailability((item[0],item[1]))
         students.append(newStudent)
 
-    print("about to make calendar call")
+    #print("about to make calendar call")
     schedule = Schedule(shifts)
     schedules = scheduler2(schedule, students)
     res = [schedule.serialize() for schedule in schedules]
     session.modified = True
     print("session.get('schedules')",session.get('schedules'))
     return jsonify(res)
+
+def clearStudentUnavailability(studentUsername):
+    #TODO Linh, remove all rows in the unavailability table where 
+    #the student is equal to this student.
+    db.execute("DELETE from unavailability WHERE student = (SELECT id from student where username = '%s');"%studentUsername)
+    db.commit()
+
+def insertEventIntoDb(studentUsername, startDate, endDate): 
+    EX_STRING = """INSERT INTO unavailability\
+            (starttime, endtime, student)\
+            VALUES ('%s', '%s', (SELECT id from student where username = '%s'))
+            """
+    db.execute(EX_STRING%(startDate, endDate, studentUsername))
+    db.commit()
 
 @app.route('/api/chooseSchedule', methods=['POST'])
 def chooseSchedule():

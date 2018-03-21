@@ -9,6 +9,8 @@ import googleapiclient.discovery
 import webbrowser
 import datetime
 
+from app import insertEventIntoDb, clearStudentUnavailability
+
 def authCall():
     print("in calendar call")
     if 'credentials' not in flask.session:
@@ -16,53 +18,63 @@ def authCall():
         return flask.redirect('/authorize')
     return flask.render_template("login.html")
 
-def calendarCall(workers):
-  print("in calendar call")
+def calendarCall(workers, startDate):
+  #print("in calendar call")
   if 'credentials' not in flask.session:
       print ("not credentials in flask.session")
       return flask.redirect('/authorize')
-  print("before credentials = ")
+  #print("before credentials = ")
   credentials = google.oauth2.credentials.Credentials(
       **flask.session['credentials'])
 
-  print("before calendar = ... ")
+  #print("before calendar = ... ")
   calendar = googleapiclient.discovery.build('calendar', 'v3', credentials=credentials)
 
   #TODO change this to the dates entered from the generateSchedule screen
-  now = datetime.datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time
+  #now = datetime.datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time
+  now = startDate.isoformat() + 'Z'
+  #print(now)
   d = datetime.timedelta(days=7)
-  end = (datetime.datetime.utcnow() + d).isoformat() + 'Z'
-  endDate = datetime.datetime.now()
+  end = (startDate + d).isoformat() + 'Z'
+  #print(end)
 
-  print("Getting the next week's events")
+  #print("Getting the next week's events")
 #   workers = ['chriia01@luther.edu', 'davial02@luther.edu', 'millro04@luther.edu','hangde01@luther.edu', 'css@luther.edu', 'nguyli03@luther.edu', 'hermaa02@luther.edu']
   if not isinstance(workers, list):
       workers = workers.split()
       
-  print(workers)
+  #print(workers)
   for studentId in workers:
-    print("studentId", studentId)
-    eventsResult = calendar.events().list(
-      calendarId=studentId, timeMin=now, timeMax=end, singleEvents=True,
-      orderBy='startTime').execute()
-    events = eventsResult.get('items', [])
-    i = 0
-    for event in events:
-        #TODO write the events to the database here, as unavailability
-      if i==0:
-        print(studentId, "'s first event")
-        print("the event: ", event)
-        if 'dateTime' not in event['start']:
-            #if it is an all day event, the object is a little different millro04 has one on 12/1
-            print("start: ", event['start']['date'])
-            print("end: ", event['end']['date'])
-        else:
-            print("start: ",event['start']['dateTime'])
-            print('end: ', event['end']['dateTime'])
-        i = 1
-        #TODO add event to database
+    #if (studentId.endswith('@luther.edu')):
+    #print("studentId: ", studentId)
+    try: 
+        #print("before eventsResult")
+        eventsResult = calendar.events().list(
+            calendarId=studentId, timeMin=now, timeMax=end, singleEvents=True,
+            orderBy='startTime').execute()
+        #print("got eventsResult")
+        events = eventsResult.get('items', [])
+        clearStudentUnavailability(studentId)
+        i = 0
+        for event in events:
+            # if i==0:
+            #     print(studentId, "'s first event")
+            #     print("the event: ", event)
+            if 'dateTime' in event['start']:
+                start = event['start']['dateTime']
+                end = event['end']['dateTime']
+                # print("start: ",event['start']['dateTime'])
+                # print('end: ', event['end']['dateTime'])
+                #write event to db
+                insertEventIntoDb(studentId, start, end)
+            #else:
+                #if dateTime is not in event['start'], it's an all day event and we'll ignore it
+                #if it is an all day event, the object is a little different millro04 has one on 12/1 
+            i = 1
+    except:
+        pass
   #print("EVENTS", events)
-  return flask.jsonify(eventsResult)
+  #return flask.jsonify(eventsResult)
 
 def mainAuthorize():
     print("in mainAuthorize")
