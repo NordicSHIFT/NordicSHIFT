@@ -134,11 +134,6 @@ export default class ManagerProfile extends Component {
                 {this.state.isHiddenRemove ? null :
                     <div>
                     <p><i>Choose student remove them to your roster. It should be in the format of username@luther.edu</i></p>
-                    // <InputGroup>
-                    // <InputGroupAddon addonType="prepend">Student</InputGroupAddon>
-                    // <Input type="text" id ='removedStudent' placeholder="Enter Student Id" className="studentRemove" value ={this.state.studentRemove} onChange={this.updateInputValueStudentDelete.bind(this)} required />
-                    // <InputGroupAddon color="success" addonType="append" type="submit" id='removeStudentButton' onClick ={this.sendRemoveStudent.bind(this)}>Submit</InputGroupAddon>
-                    // </InputGroup>
                     <InputGroup>
                     <InputGroupAddon addonType="prepend">Select Existing</InputGroupAddon>
                     <Input type="select" onChange={this.onRemoveStudentSelected} label="Student Select">
