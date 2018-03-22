@@ -18,13 +18,17 @@ export default class SelectSchedule extends Component {
       unassignedShift: [],
       scheduleIndex: 1, 
       basePublishPath: "/managerschedule/" + this.props.match.params.startDate,
-      publishPath: "/managerschedule/" + this.props.match.params.startDate + "/0" 
+      publishPath: "/managerschedule/" + this.props.match.params.startDate + "/0",
+      startDate: this.props.match.params.startDate,
+      send_emails:false
     }
     this.generateSchedule = this.generateSchedule.bind(this);
     this.setStateShifts = this.setStateShifts.bind(this);
     this.setAllSchedules = this.setAllSchedules.bind(this); 
     this.changeSchedule = this.changeSchedule.bind(this); 
     this.chooseSchedule = this.chooseSchedule.bind(this); 
+    this.toggleEmail = this.toggleEmail.bind(this);
+
 
     this.generateSchedule(); 
   }
@@ -52,9 +56,6 @@ export default class SelectSchedule extends Component {
       this.setStateShifts(newShifts); 
       //this.setStateUnassignedShift(newSched['unassigned shifts']);
       console.log("newShifts", newShifts); 
-
-       
-
       console.log("this: ", this); 
     //   console.log("new schedule index: ", scheduleIndex); 
   }
@@ -67,11 +68,13 @@ export default class SelectSchedule extends Component {
       }
       //TODO pass needed info with this. 
       axios.post(origin + '/api/chooseSchedule', {
-        schedule: this.state.schedules[this.state.scheduleIndex]
+        schedule: this.state.schedules[this.state.scheduleIndex],
+        email: this.state.send_emails
         },  config)
       .then( (response) => {
         console.log(response)
         console.log("response", response); 
+        return window.location = '/managerschedule';
       })
       .catch(function (error) {
         console.log(error);
@@ -84,7 +87,9 @@ export default class SelectSchedule extends Component {
       withCredentials: true
     }
 
-    axios.get(origin + '/api/generateSchedule', config)
+    axios.post(origin + '/api/generateSchedule', {
+      startDate: this.state.startDate
+    }, config)
     .then( (response) => {
       // alert('response made it back');
       // console.log("response.data.items: ",response.data.items);
@@ -93,11 +98,16 @@ export default class SelectSchedule extends Component {
       console.log("schedules: ",response.data[1]); 
       this.setStateShifts(response.data[0]['assigned shifts'].concat(response.data[0]['unassigned shifts']));
       this.setAllSchedules(response.data); 
-
-    })
+    }
+    )
     .catch(function (error) {
       console.log(error);
     });
+  }
+
+  toggleEmail(event) { 
+    this.state.send_emails = !this.state.send_emails;
+    this.setState({send_emails: this.state.send_emails});
   }
 
   render() {
@@ -110,7 +120,11 @@ export default class SelectSchedule extends Component {
             <SuggestCal id="calendar" ref="calendar" startDate={this.props.match.params.startDate} />
           </Col>
           <Col xs="3">
-            <SuggestList changeSchedule={this.changeSchedule}/> 
+            <SuggestList changeSchedule={this.changeSchedule}/>
+            <div>
+              <input type="checkbox" id="toggle_email" checked={this.state.send_emails} onClick={this.toggleEmail}/>
+              <label for="toggle_email">Send email notification</label>
+            </div>
             <Button onClick={this.chooseSchedule}>Publish this Schedule</Button>
           </Col>
         </Row>

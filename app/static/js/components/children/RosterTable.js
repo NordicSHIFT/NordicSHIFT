@@ -6,11 +6,11 @@ import ReactDataGrid from 'react-data-grid';
 import update from 'immutability-helper';
 import { Row, Col, Button, Label, Input, InputGroup, InputGroupAddon, InputGroupButton, Table} from 'reactstrap';
 
-function seeAvailabilityUrl (username) {
+function seeAvailabilityUrl (username, name) {
     //TODO
-    //let url = "/availability/" + username;
-    //return <a href= {url} >See Availability</a>
-    return <a href="/managerdashboard">See Availability</a>
+    let url = "https://calendar.google.com/calendar/embed?mode=WEEK&src=" + username + "&ctz=America/Chicago"; 
+    return <a href={url} target="_blank">See Availability</a>
+    //return <a href="/managerdashboard">See Availability</a>
 }
 
 export default class RosterTable extends Component {
@@ -101,17 +101,6 @@ export default class RosterTable extends Component {
               // userName: ['user1', 'user2', 'user3', 'user4'][Math.floor((Math.random() * 3) + 1)],
               // hours: i,
               seeAvailability: seeAvailabilityUrl("username"),
-              // removeStudent: <div><Button color="success" size="sm" onClick = {this.sendRemoveStudent}>Remove Student</Button>
-              // {this.state.isHiddenStud ? null :
-              //     <div>
-              //     <p><i>Enter your students usernames here to confirm the deletion. It should be in the format of username@luther.edu</i></p>
-              //     <InputGroup>
-              //     <InputGroupAddon addonType="prepend">Student</InputGroupAddon>
-              //     <Input type="text" id ='student' placeholder="Enter Student Username" className="student" value ={this.state.student} onChange={this.updateInputValueStudent} required />
-              //     <InputGroupButton color="success" addonType="append" type="submit" id='studentButton' onClick ={this.sendRemoveStudent}>Submit</InputGroupButton>
-              //     </InputGroup>
-              //     </div>
-              // }</div>
             });
           }
           // console.log("newRows student",newRows);
