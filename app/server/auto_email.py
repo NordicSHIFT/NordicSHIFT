@@ -49,7 +49,7 @@ def published_sched_notif(recipients):
     for recipient in recipients:
         send_email(recipient, subject, message)
 
-def reset_password(recipient, link):
+def reset_password_email(recipient, link):
     """ Sends out an email telling the recipients that
     their password is able to be reset. Passed in is
     a recipient to receive the password reset, along
