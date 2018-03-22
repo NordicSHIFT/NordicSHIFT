@@ -29,6 +29,7 @@ export default class SelectSchedule extends Component {
     this.chooseSchedule = this.chooseSchedule.bind(this); 
     this.toggleEmail = this.toggleEmail.bind(this);
 
+
     this.generateSchedule(); 
   }
 
@@ -55,9 +56,6 @@ export default class SelectSchedule extends Component {
       this.setStateShifts(newShifts); 
       //this.setStateUnassignedShift(newSched['unassigned shifts']);
       console.log("newShifts", newShifts); 
-
-       
-
       console.log("this: ", this); 
     //   console.log("new schedule index: ", scheduleIndex); 
   }

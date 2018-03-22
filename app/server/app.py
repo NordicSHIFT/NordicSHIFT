@@ -289,6 +289,17 @@ def studentUpdate():
         db.commit()
     return "done"
 
+@app.route("/api/removeStudent", methods = ['POST'])
+def removeStudent():
+    # this function is related to the button Remove Student where manager can remove the student from the departments
+    data = request.get_json(silent=True)
+    deletedStudent = data.get("student")
+    department = data.get("department")
+    db.execute("""DELETE from ds where student = (select id from student where username = '%s') and department = %d;"""%(deletedStudent,department))
+    db.execute("""DELETE from student where username ='%s';"""%deletedStudent)
+    db.commit()
+    return "done"
+
 @app.route("/api/getAllDepartments")
 def getAllDepartments():
     res = db.execute("""SELECT * from department;""")
@@ -531,7 +542,7 @@ def calRetrieve():
     #TODO: Implement calRetrieve.py. Pass in either a list or individual
     studentWorkers = ['chriia01@luther.edu', 'nguyli03@luther.edu', 'hermaa02@luther.edu', 'davial02@luther.edu', 'millro04@luther.edu','hangde01@luther.edu', 'css@luther.edu']
 
-    foo = oAuth.calendarCall() #pass in student workers here, change calendarCall 
+    foo = oAuth.calendarCall() #pass in student workers here, change calendarCall
     print(foo)
     print('here')
     return foo

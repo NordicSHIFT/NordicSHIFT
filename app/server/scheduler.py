@@ -156,6 +156,7 @@ def scheduler2(schedule, students):
                         # print(shift)
                         if shift.getStudent() == student:
                             hoursLeft -= float(shift.getLength())
+
                             #check if new shift overlaps with old shift
                             if topShift.getStart() > shift.getStart() and topShift.getStart() < shift.getEnd():
                                 available = False
