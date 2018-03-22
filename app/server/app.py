@@ -39,12 +39,12 @@ def index():
 @app.route("/authorize")
 def authorize():
     print("in app.py.authorize")
-    return mainAuthorize()
+    return oAuth.mainAuthorize()
 
 @app.route('/oauth2callback')
 def oauth2callback():
     print("in app.py oauth2callback")
-    return mainOauth2callback()
+    return oAuth.mainOauth2callback()
 
 @app.route('/login')
 def login():
@@ -125,7 +125,7 @@ def signup():
         elif session['role'] == 'Student':
             return redirect('/studentdashboard')
     session['l_or_s'] = 's'
-    return authCall()
+    return oAuth.authCall()
 
 @app.route('/signupC', methods = ['POST'])
 def signupC():
