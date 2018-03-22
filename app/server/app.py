@@ -1,6 +1,6 @@
 # server.py
 from flask import Flask, flash, redirect, render_template, request, session, abort, jsonify
-from oAuth import *
+#from oAuth import *
 import datetime
 import os
 import auto_email
@@ -53,7 +53,7 @@ def login():
         elif session['role'] == 'Student':
             return redirect('/studentdashboard')
     session['l_or_s'] = 'l'
-    return authCall()
+    return oAuth.authCall()
 
 @app.route('/loginC', methods = ['POST'])
 def loginC():
