@@ -4,8 +4,9 @@ class ErrorPage extends Component {
   render() {
     return (
       <div>
-        <h1>There is an error!</h1>
-        <p>You are trying to access a page that does not exists or you do not have access to </p>
+        <h1>Error!</h1>
+        <p>Either this page does not exist or you do not have authorization to be here.</p>
+        <img src={require("./../../img/goat1.png")} alt="Goat Image" />
       </div>
     );
   }
