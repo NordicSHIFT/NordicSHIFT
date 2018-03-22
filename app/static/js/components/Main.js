@@ -12,6 +12,9 @@ import Login from './Login'
 import Signup from './Signup'
 import SelectWeek from './managerPlanner/SelectWeek'
 import SelectSchedule from './managerPlanner/SelectSchedule'
+import ManagerViewAvailability from './ManagerViewAvailability'
+import ResetPassword from './ResetPassword';
+import ErrorPage from './ErrorPage'
 
 
 const Main = () => (
@@ -26,11 +29,14 @@ const Main = () => (
       <Route exact path='/managerschedule/:startDate/:scheduleIndex' component={ManagerSchedule}/>
       <Route exact path='/managerschedule/:startDate' component={ManagerSchedule}/>
       <Route exact path='/managerschedule' component={ManagerSchedule}/>
+      <Route exact path='/viewavailability/:username/:name' component={ManagerViewAvailability}/>
+      <Route exact path='/resetPassword/:username/:password' component = {ResetPassword}/>
       <Route path='/studentprofile' component={StudentProfile}/>
       <Route path='/managerprofile' component={ManagerProfile}/>
       <Route path='/selectweek' component={SelectWeek}/>
       <Route path='/selectshifts/:startDate' component={SelectShifts} />
       <Route path='/selectschedule/:startDate' component={SelectSchedule}/>
+      <Route path='/error' component={ErrorPage}/>
     </Switch>
   </main>
 )
