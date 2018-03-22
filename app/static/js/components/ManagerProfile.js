@@ -61,6 +61,7 @@ export default class ManagerProfile extends Component {
 
   onRemoveStudentSelected(evt){
     this.setState({studentRemove: evt.target.value});
+    this.retrieveExistingStudents();
   }
 
   onDepartmentDropdownSelected(e) {
@@ -224,9 +225,8 @@ export default class ManagerProfile extends Component {
     .then(res => {
       //console.log("res.data",res.data);
       let items = [];
-      for (let i = 0; i < res.data.length; i++) {
-           items.push(<option key={res.data[i][0]} value={res.data[i][1]}>{res.data[i][1]}</option>);
-           //console.log(res.data[i]);
+      for (let i = 0; i < res.data.student.length; i++) {
+           items.push(<option key={res.data.student[i]['username']} value={res.data.student[i]['username']}>{res.data.student[i]['name']}</option>);
            //here I will be creating my options dynamically based on
            //what props are currently passed to the parent component
       }
