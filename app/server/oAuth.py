@@ -9,7 +9,28 @@ import googleapiclient.discovery
 import webbrowser
 import datetime
 
-from app import insertEventIntoDb, clearStudentUnavailability
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+
+POSTGRESQL_URI = os.environ['DATABASE_URL']
+ENGINE = create_engine(POSTGRESQL_URI)
+
+SESSION = sessionmaker(bind=ENGINE)
+DB = SESSION()
+
+def clearStudentUnavailability(studentUsername):
+    #TODO Linh, remove all rows in the unavailability table where 
+    #the student is equal to this student.
+    DB.execute("DELETE from unavailability WHERE student = (SELECT id from student where username = '%s');"%studentUsername)
+    DB.commit()
+
+def insertEventIntoDb(studentUsername, startDate, endDate): 
+    EX_STRING = """INSERT INTO unavailability\
+            (starttime, endtime, student)\
+            VALUES ('%s', '%s', (SELECT id from student where username = '%s'))
+            """
+    DB.execute(EX_STRING%(startDate, endDate, studentUsername))
+    DB.commit()
 
 def authCall():
     print("in calendar call")

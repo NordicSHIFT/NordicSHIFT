@@ -37,12 +37,12 @@ def index():
 @app.route("/authorize")
 def authorize():
     print("in app.py.authorize")
-    return mainAuthorize()
+    return oAuth.mainAuthorize()
 
 @app.route('/oauth2callback')
 def oauth2callback():
     print("in app.py oauth2callback")
-    return mainOauth2callback()
+    return oAuth.mainOauth2callback()
 
 @app.route('/login')
 def login():
@@ -485,20 +485,6 @@ def generateSchedule():
     session.modified = True
     print("session.get('schedules')",session.get('schedules'))
     return jsonify(res)
-
-def clearStudentUnavailability(studentUsername):
-    #TODO Linh, remove all rows in the unavailability table where 
-    #the student is equal to this student.
-    db.execute("DELETE from unavailability WHERE student = (SELECT id from student where username = '%s');"%studentUsername)
-    db.commit()
-
-def insertEventIntoDb(studentUsername, startDate, endDate): 
-    EX_STRING = """INSERT INTO unavailability\
-            (starttime, endtime, student)\
-            VALUES ('%s', '%s', (SELECT id from student where username = '%s'))
-            """
-    db.execute(EX_STRING%(startDate, endDate, studentUsername))
-    db.commit()
 
 @app.route('/api/chooseSchedule', methods=['POST'])
 def chooseSchedule():
