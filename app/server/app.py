@@ -14,6 +14,8 @@ from shift import Shift
 from student import Student
 #import calRetrieve
 import oAuth
+import string
+import random
 
 SEND_EMAILS = False
 
@@ -253,7 +255,12 @@ def managerprofile():
         res = db.execute("""SELECT * from student where username ='%s'"""%student)
         res = res.fetchall()
         if len(res)==0:
-            db.execute("""INSERT into student(username, password) VALUES ('%s','student');"""%student)
+            tempass = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(32))
+            db.execute("""INSERT into student(username, password) VALUES ('%s','%s');"""%(student,tempass))
+            hashed = hashlib.sha512(tempass.encode('utf-8') + salt.encode('utf-8')).hexdigest()
+            url = ('https://nordicshift.herokuapp.com/resetPassword/'+student+'/'+hashed)
+            # have a function to send out email
+            # TODO Ian 
         db.execute("""INSERT into ds(department,student) VALUES ((SELECT dept from manager where username = '%s'),(SELECT id from student where username ='%s'));"""%(session.get("username"), student))
         db.commit()
         res = db.execute("""SELECT * from student where username ='%s'"""%student)
@@ -457,7 +464,7 @@ def generateSchedule():
     startDate = datetime.datetime.fromtimestamp(startDate)
     print("startDate: ", startDate)
     #TODO Linh, add limitations, so it only selects the shifts
-    # in the same week as the start date. 
+    # in the same week as the start date.
     res = db.execute("""SELECT * from shift where dept =(SELECT dept from manager where username = '%s');"""%session.get("username"))
     shiftRe = res.fetchall()
     shifts = []
@@ -487,12 +494,12 @@ def generateSchedule():
     return jsonify(res)
 
 def clearStudentUnavailability(studentUsername):
-    #TODO Linh, remove all rows in the unavailability table where 
+    #TODO Linh, remove all rows in the unavailability table where
     #the student is equal to this student.
     db.execute("DELETE from unavailability WHERE student = (SELECT id from student where username = '%s');"%studentUsername)
     db.commit()
 
-def insertEventIntoDb(studentUsername, startDate, endDate): 
+def insertEventIntoDb(studentUsername, startDate, endDate):
     EX_STRING = """INSERT INTO unavailability\
             (starttime, endtime, student)\
             VALUES ('%s', '%s', (SELECT id from student where username = '%s'))
@@ -545,7 +552,7 @@ def calRetrieve():
     #TODO: Implement calRetrieve.py. Pass in either a list or individual
     studentWorkers = ['chriia01@luther.edu', 'nguyli03@luther.edu', 'hermaa02@luther.edu', 'davial02@luther.edu', 'millro04@luther.edu','hangde01@luther.edu', 'css@luther.edu']
 
-    foo = oAuth.calendarCall() #pass in student workers here, change calendarCall 
+    foo = oAuth.calendarCall() #pass in student workers here, change calendarCall
     print(foo)
     print('here')
     return foo
