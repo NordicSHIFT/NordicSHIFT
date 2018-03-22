@@ -5,7 +5,7 @@ class ErrorPage extends Component {
     return (
       <div>
         <h1>Error!</h1>
-        <p>You are trying to access a page that does not exists or you do not have access to </p>
+        <p>Either this page does not exist or you do not have authorization to be here.</p>
         <img src={require("./../../img/goat1.png")} alt="Goat Image" />
       </div>
     );
