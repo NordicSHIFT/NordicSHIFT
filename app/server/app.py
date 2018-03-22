@@ -191,13 +191,13 @@ def managerprofile():
 
 @app.route("/api/getStudents")
 def getStudents():
-    res = db.execute("""SELECT * from student inner join ds on student.id = ds.student where department = (SELECT dept from manager where username = '%s' );"""%(session.get("username")))
+    res = db.execute("""SELECT id, username,name,hours from student inner join ds on student.id = ds.student where department = (SELECT dept from manager where username = '%s' );"""%(session.get("username")))
     res = res.fetchall()
     # print(res)
     # return "students"
     students = {"student":[]}
     for student in res:
-        students["student"].append({"id": student.id, "username": student.username, "name": student.name, "hours": student.hours})
+        students["student"].append({"id": student[0], "username": student[1], "name": student[2], "hours": student[3]})
     # print(students)
     return jsonify(students)
 
@@ -222,7 +222,10 @@ def removeStudent():
     data = request.get_json(silent=True)
     deletedStudent = data.get("student")
     department = data.get("department")
-    db.execute("""DELETE from ds where student = (select id from student where username = '%s') and department = %d;"""%(deletedStudent,department))
+    print(department)
+    db.execute("""DELETE from ds where student = (select id from student where username = '%s') and department = (select id from department where name = '%s');"""%(deletedStudent,department))
+    db.execute("""DELETE from unavailability where student = (select id from student where username = '%s');"""%deletedStudent)
+    db.execute("""DELETE from shift where student = (select id from student where username = '%s');"""%deletedStudent)
     db.execute("""DELETE from student where username ='%s';"""%deletedStudent)
     db.commit()
     return "done"

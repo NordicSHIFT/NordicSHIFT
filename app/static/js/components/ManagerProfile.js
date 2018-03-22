@@ -61,6 +61,7 @@ export default class ManagerProfile extends Component {
 
   onRemoveStudentSelected(evt){
     this.setState({studentRemove: evt.target.value});
+    this.retrieveExistingStudents();
   }
 
   onDepartmentDropdownSelected(e) {
@@ -134,11 +135,6 @@ export default class ManagerProfile extends Component {
                 {this.state.isHiddenRemove ? null :
                     <div>
                     <p><i>Choose student remove them to your roster. It should be in the format of username@luther.edu</i></p>
-                    // <InputGroup>
-                    // <InputGroupAddon addonType="prepend">Student</InputGroupAddon>
-                    // <Input type="text" id ='removedStudent' placeholder="Enter Student Id" className="studentRemove" value ={this.state.studentRemove} onChange={this.updateInputValueStudentDelete.bind(this)} required />
-                    // <InputGroupAddon color="success" addonType="append" type="submit" id='removeStudentButton' onClick ={this.sendRemoveStudent.bind(this)}>Submit</InputGroupAddon>
-                    // </InputGroup>
                     <InputGroup>
                     <InputGroupAddon addonType="prepend">Select Existing</InputGroupAddon>
                     <Input type="select" onChange={this.onRemoveStudentSelected} label="Student Select">
@@ -229,9 +225,8 @@ export default class ManagerProfile extends Component {
     .then(res => {
       //console.log("res.data",res.data);
       let items = [];
-      for (let i = 0; i < res.data.length; i++) {
-           items.push(<option key={res.data[i][0]} value={res.data[i][1]}>{res.data[i][1]}</option>);
-           //console.log(res.data[i]);
+      for (let i = 0; i < res.data.student.length; i++) {
+           items.push(<option key={res.data.student[i]['username']} value={res.data.student[i]['username']}>{res.data.student[i]['name']}</option>);
            //here I will be creating my options dynamically based on
            //what props are currently passed to the parent component
       }
