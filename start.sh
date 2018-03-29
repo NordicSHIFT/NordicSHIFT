@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/bin/bash
 PROGNAME=$0
 
 build() {
