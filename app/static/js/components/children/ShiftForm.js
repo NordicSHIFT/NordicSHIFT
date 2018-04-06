@@ -96,7 +96,6 @@ class ShiftForm extends Component {
   render() {
     return (
       <div>
-        <h1>Add shift</h1> 
         <Form>
         <div>
           <Label for="shiftTitle">Title</Label>

@@ -112,11 +112,11 @@ export default class ManagerProfile extends Component {
           </div>
         </Col>
         <br></br>
-          <Row>
+          <div>
             <Col xs="9">
               <h5><b>Students: </b> </h5>
               <div>
-              <Button onClick={this.addStudentClick} size="sm">Add a Student</Button>
+              <Button onClick={this.addStudentClick} size="sm">  Add a Student </Button>
                 {this.state.isHiddenStud ? null :
                     <div>
                     <p><i>Enter your students usernames here to add them to your roster. It should be in the format of username@luther.edu</i></p>
@@ -129,6 +129,7 @@ export default class ManagerProfile extends Component {
                 }
               </div>
               </Col>
+              <hr/>
               <Col xs="9">
               <div>
               <Button onClick={this.removeStudentClick} size="sm">Remove a Student</Button>
@@ -147,7 +148,7 @@ export default class ManagerProfile extends Component {
                 }
               </div>
              </Col>
-           </Row>
+           </div>
          <br></br>
           <Col xs="11">
             {!this.state.studTableChanged ? null :

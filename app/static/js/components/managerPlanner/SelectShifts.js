@@ -1,7 +1,7 @@
 // SelectShifts.js
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import { Container, Row, Col, Button } from 'reactstrap';
+import { Container, Row, Col, Button, Modal, ModalBody, ModalHeader } from 'reactstrap';
 import axios from 'axios';
 import ManagerMenubar from './../children/ManagerMenubar'; 
 import ManagerCal from './../children/ManagerCal'; 
@@ -102,7 +102,7 @@ function postEvents(theEvents) {
       myEvents: theEvents
     }, config) 
     .then( (response) => {
-        console.log("addEvents was a ", response.data)
+        console.log("addEvents was a ", response.data); 
     })
     .catch(function (error) {
       console.log(error);
@@ -123,6 +123,20 @@ class SelectShifts extends Component {
     this.showDeleteForm = this.showDeleteForm.bind(this); 
     this.deleteShift = this.deleteShift.bind(this); 
     this.stopDelete = this.stopDelete.bind(this); 
+    this.toggle = this.toggle.bind(this);
+    this.toggleDelete = this.toggle.bind(this);  
+  }
+
+  toggle() {
+    this.setState({
+      formInvisible: !this.state.formInvisible
+    });
+  }
+
+  toggleDelete() {
+    this.setState({
+      deleteFormInvisible: !this.state.deleteFormInvisible
+    });
   }
 
   slotInfoToForm(slotInfo) {
@@ -139,6 +153,7 @@ class SelectShifts extends Component {
     var theNewEvents = convertFormToEvents(this.refs.form); 
     //write new events to the database
     postEvents(theNewEvents); 
+    this.setState({formInvisible: true}); 
     //add new events to the calendar on the screen
     var theEvents = this.refs.calendar.state.events.concat(theNewEvents); 
     this.refs.calendar.setState({events: theEvents}); 
@@ -197,20 +212,33 @@ class SelectShifts extends Component {
     return (
       <div className="Calendar">
         <ManagerMenubar /> 
+        <Row><Col xs={{size:"8", offset:1}}>
+        <h6 >Drag a slot on the calendar to create a shift. Click an existing shift to have the option to delete.</h6>
+        </Col>
+        <Col xs="3">
+        <a href={this.state.suggestedPath} xs="3">
+            <Button color="success" size="sm">Generate Schedule</Button>
+        </a>
+        </Col></Row>
         <Row>
-          <Col xs="9">
+          <Col xs="10" md={{ size: 10, offset: 1 }}>
             <ManagerCal id="calendar" ref="calendar" formCalInt = {this.slotInfoToForm} showDeleteForm = {this.showDeleteForm} 
             removeToDelete={this.stopDelete} startDate={this.props.match.params.startDate} />
           </Col>
           <Col xs="3">
-          {!this.state.formInvisible &&
-             <ShiftForm id="form" ref="form" submitForm = {this.processNewShiftForm} style={{hidden: true}} />} 
-          {!this.state.deleteFormInvisible &&
-             <DeleteShiftForm id="deleteForm" ref="deleteForm" deleteShift={this.deleteShift} stopDelete={this.stopDelete}/>}
+
+          <Modal isOpen={!this.state.formInvisible} toggle={this.toggle}>
+          <ModalHeader toggle={this.toggle}>Add Shift</ModalHeader>
+          <ModalBody>
+             <ShiftForm id="form" ref="form" submitForm = {this.processNewShiftForm} style={{hidden: true}} />
+          </ModalBody>
+          </Modal>
+
+          <Modal isOpen={!this.state.deleteFormInvisible} toggle={this.toggleDelete}>          
+          <ModalHeader toggle={this.toggleDelete}>Would you like to delete this shift?</ModalHeader>
+             <DeleteShiftForm id="deleteForm" ref="deleteForm" deleteShift={this.deleteShift} stopDelete={this.stopDelete}/>
+          </Modal>
           <br></br>
-          <a href={this.state.suggestedPath}>
-            <Button color="success">Generate Schedule</Button>
-          </a>
           
           </Col>
         </Row>
