@@ -180,6 +180,7 @@ class ShiftForm extends Component {
         <div>
             <Label>Repeat On:</Label>
             <Row>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
             <Col check inline>
                 <Label check>
                     <Input type="checkbox" id="sunday" checked={this.state.days[0]} onClick={this.toggleSun}/>S
