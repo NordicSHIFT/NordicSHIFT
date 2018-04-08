@@ -105,7 +105,7 @@ class ShiftForm extends Component {
         <Label for="startTime">Start</Label>
           <Row>
           <Col>
-            <select type="select" name="startHour" id="startHour" value={this.state.startHour} onChange={this.changeStartHour}>
+            <Input type="select" name="startHour" id="startHour" value={this.state.startHour} onChange={this.changeStartHour}>
               <option></option>
               <option>1</option>
               <option>2</option>
@@ -119,23 +119,23 @@ class ShiftForm extends Component {
               <option>10</option>
               <option>11</option>
               <option>12</option>
-            </select>
+            </Input>
           </Col>
           <Col>
-            <select type="select" name="startMinute" id="startMinute" value={this.state.startMinute} onChange={this.changeStartMinute}>>
+            <Input type="select" name="startMinute" id="startMinute" value={this.state.startMinute} onChange={this.changeStartMinute}>>
               <option></option>
               <option>00</option>
               <option>15</option>
               <option>30</option>
               <option>45</option>
-            </select>
+            </Input>
           </Col>
           <Col>
-            <select type="select" name="startPeriod" id="startPeriod" value={this.state.startPeriod} onChange={this.changeStartPeriod}>>
+            <Input type="select" name="startPeriod" id="startPeriod" value={this.state.startPeriod} onChange={this.changeStartPeriod}>>
               <option></option>
               <option>AM</option>
               <option>PM</option>
-            </select>
+            </Input>
           </Col>
         </Row>
       </div>
@@ -143,7 +143,7 @@ class ShiftForm extends Component {
           <Label for="endTime">End</Label>
             <Row>
             <Col>
-              <select type="select" name="endHour" id="endHour" value={this.state.endHour} onChange={this.changeEndHour}>
+              <Input type="select" name="endHour" id="endHour" value={this.state.endHour} onChange={this.changeEndHour}>
                 <option></option>
                 <option>1</option>
                 <option>2</option>
@@ -157,63 +157,63 @@ class ShiftForm extends Component {
                 <option>10</option>
                 <option>11</option>
                 <option>12</option>
-              </select>
+              </Input>
             </Col>
             <Col>
-              <select type="select" name="endMinute" id="endMinute" value={this.state.endMinute} onChange={this.changeEndMinute}>
+              <Input type="select" name="endMinute" id="endMinute" value={this.state.endMinute} onChange={this.changeEndMinute}>
                 <option></option>
                 <option>00</option>
                 <option>15</option>
                 <option>30</option>
                 <option>45</option>
-              </select>
+              </Input>
             </Col>
             <Col>
-              <select type="select" name="endPeriod" id="endPeriod" value={this.state.endPeriod} onChange={this.changeEndPeriod}>
+              <Input type="select" name="endPeriod" id="endPeriod" value={this.state.endPeriod} onChange={this.changeEndPeriod}>
                 <option></option>
                 <option>AM</option>
                 <option>PM</option>
-              </select>
+              </Input>
             </Col>
           </Row>
         </div>
             <Label>Repeat On:</Label>
             <Row>
-            <div check inline>
+            <Col check inline>
                 <Label check>
-                    <input type="checkbox" id="sunday" checked={this.state.days[0]} onClick={this.toggleSun}/>S
+                    <Input type="checkbox" id="sunday" checked={this.state.days[0]} onClick={this.toggleSun}/>S
                 </Label>
-            </div>
-            <div check inline>
+            </Col>
+            <Col check inline>
                 <Label check>
-                    <input type="checkbox" id="monday" checked={this.state.days[1]} onClick={this.toggleMon} />M
+                    <Input type="checkbox" id="monday" checked={this.state.days[1]} onClick={this.toggleMon} />M
                 </Label>
-            </div>
-            <div check inline>
+            </Col>
+            <Col check inline>
                 <Label check>
-                    <input type="checkbox" id="tuesday" checked={this.state.days[2]} onClick={this.toggleTues}/>T
+                    <Input type="checkbox" id="tuesday" checked={this.state.days[2]} onClick={this.toggleTues}/>T
                 </Label>
-            </div>
-            <div check inline>
+            </Col>
+            <Col check inline>
                 <Label check>
-                    <input type="checkbox" id="wednesday" checked={this.state.days[3]} onClick={this.toggleWed}/>W
+                    <Input type="checkbox" id="wednesday" checked={this.state.days[3]} onClick={this.toggleWed}/>W
                 </Label>
-            </div>
-            <div check inline>
+            </Col>
+            <Col check inline>
                 <Label check>
-                    <input type="checkbox" id="thursday" checked={this.state.days[4]} onClick={this.toggleThur}/>Th
+                    <Input type="checkbox" id="thursday" checked={this.state.days[4]} onClick={this.toggleThur}/>Th
                 </Label>
-            </div>
-            <div check inline>
+            </Col>
+            <Col check inline>
                 <Label check>
-                    <input type="checkbox" id="friday" checked={this.state.days[5]} onClick={this.toggleFri}/>F
+                    <Input type="checkbox" id="friday" checked={this.state.days[5]} onClick={this.toggleFri}/>F
                 </Label>
-            </div>
-            <div check inline>
+            </Col>
+            <Col check inline>
                 <Label check>
-                    <input type="checkbox" id="saturday" checked={this.state.days[6]} onClick={this.toggleSat}/>S
+                    <Input type="checkbox" id="saturday" checked={this.state.days[6]} onClick={this.toggleSat}/>S
                 </Label>
-            </div>
+            </Col>
             </Row>
         <div>
           <Label for="comment">Comments</Label>
