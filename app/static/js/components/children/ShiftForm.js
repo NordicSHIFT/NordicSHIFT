@@ -177,6 +177,7 @@ class ShiftForm extends Component {
             </Col>
           </Row>
         </div>
+        <div>
             <Label>Repeat On:</Label>
             <Row>
             <Col check inline>
@@ -215,6 +216,7 @@ class ShiftForm extends Component {
                 </Label>
             </Col>
             </Row>
+        </div>
         <div>
           <Label for="comment">Comments</Label>
           <Input name="email" id="comment" placeholder="busy shift"/>
