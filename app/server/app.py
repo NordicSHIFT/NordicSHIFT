@@ -125,7 +125,7 @@ def signup():
         elif session['role'] == 'Student':
             return redirect('/studentdashboard')
     session['l_or_s'] = 's'
-    return authCall()
+    return oAuth.authCall()
 
 @app.route('/signupC', methods = ['POST'])
 def signupC():
