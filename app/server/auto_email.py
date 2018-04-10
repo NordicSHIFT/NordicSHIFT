@@ -15,9 +15,11 @@ def send_email(recipients, subject, message_body):
     fromaddr = os.environ['EMAIL_NAME']
     password = os.environ['EMAIL_PASS']
 
+    if isinstance(recipients, list):
+        recipients =  ", ".join(recipients)
     msg = MIMEMultipart()
     msg['From'] = fromaddr
-    msg['To'] = ", ".join(recipients)
+    msg['To'] = recipients
     msg['Subject'] = subject
 
     msg.attach(MIMEText(message_body, 'plain'))
@@ -39,7 +41,7 @@ def published_sched_notif(recipients):
     subject = "Upcoming schedule has been published"
     message = "Management has posted the upcoming schedule.\n" + \
               "Please login to your account to view the full details.\n" + \
-              "https://nordicshift.heroku.com/\n" + \
+              "https://nordicshift.herokuapp.com/\n" + \
               "Thank you."
 
     send_email(recipients, subject, message)
@@ -59,3 +61,5 @@ def reset_password(recipient, link):
               "Link: %s \n" + \n
               "Thank you, \n" + \
               "The NordicShift Team" % (link)
+    for recipient in recipients:
+        send_email(recipient, subject, message)

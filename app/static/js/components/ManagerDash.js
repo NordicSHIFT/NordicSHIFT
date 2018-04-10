@@ -15,9 +15,12 @@ class ManagerDashboard extends Component {
         </div> */}
         
         <CardColumns>
-          <CardDash source={require("./../../img/profile.jpg")} title={"MyProfile"} descr={"Edit your profile"} linkto={"/managerprofile"} width="30%"/>
-          <CardDash source={require("./../../img/schedule.jpg")} title={"Schedule"} descr={"See Current Schedule"} linkto={"/managerschedule"} width="30%"/>
-          <CardDash source={require("./../../img/planning.jpg")} title={"Shift Planner"} descr={"Add and Remove desired Shifts"} linkto={"/selectweek"} width="30%"/>
+          <CardDash source={require("./../../img/schedulesquare.jpg")} title={"Schedule"} descr={"See Current Schedule"} 
+          className={"text-right text-dark"} linkto={"/managerschedule"} width="30%"/>
+          <CardDash source={require("./../../img/profilesquareflip.jpg")} title={"MyProfile"} descr={"Edit your profile"}
+          className={"text-right text-outline"} linkto={"/managerprofile"} width="30%"/>
+          <CardDash source={require("./../../img/planningsquare.jpg")} title={"Shift Planner"}
+          className={"text-right text-dark text-outline"} descr={"Add and Remove desired Shifts"} linkto={"/selectweek"} width="30%"/>
         </CardColumns>
       </div>
     );

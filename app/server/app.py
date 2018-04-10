@@ -1,6 +1,6 @@
 # server.py
 from flask import Flask, flash, redirect, render_template, request, session, abort, jsonify
-from oAuth import *
+#from oAuth import *
 import datetime
 import os
 import auto_email
@@ -12,6 +12,10 @@ import hashlib, uuid
 from scheduler import scheduler2, Schedule
 from shift import Shift
 from student import Student
+#import calRetrieve
+import oAuth
+
+SEND_EMAILS = False
 
 SEND_EMAILS = False
 
@@ -35,12 +39,12 @@ def index():
 @app.route("/authorize")
 def authorize():
     print("in app.py.authorize")
-    return mainAuthorize()
+    return oAuth.mainAuthorize()
 
 @app.route('/oauth2callback')
 def oauth2callback():
     print("in app.py oauth2callback")
-    return mainOauth2callback()
+    return oAuth.mainOauth2callback()
 
 @app.route('/login')
 def login():
@@ -51,45 +55,63 @@ def login():
         elif session['role'] == 'Student':
             return redirect('/studentdashboard')
     session['l_or_s'] = 'l'
-    return authCall()
+    return oAuth.authCall()
 
 @app.route('/loginC', methods = ['POST'])
 def loginC():
     data = request.get_json(silent=True)
     item = {'username': data.get('inputusername'), 'password': data.get('inputpassword')}
-    res = db.execute("""SELECT password from student where username = '%s';"""%(item['username']))
+    res = db.execute("""SELECT username, password from student where username = '%s';"""%(item['username']))
     res1= res.fetchall()
-    res = db.execute("""SELECT password from manager where username = '%s';"""%(item['username']))
+    # print(res1)
+    res = db.execute("""SELECT username, password from manager where username = '%s';"""%(item['username']))
     res2 = res.fetchall()
+    # print(res2)
     if len(res1) > 0:
-        hashed_password = hashlib.sha512(item['password'].encode('utf-8') + salt.encode('utf-8')).hexdigest()
-        dbpass = res1[0][0]
-        if hashed_password == dbpass:
-            session['username'] = item['username']
-            session['role'] = 'Student'
-            session['logged_in'] = True
+        if len(res1[0][0])>0 and len(res1[0][1]) >0:
+            hashed_password = hashlib.sha512(item['password'].encode('utf-8') + salt.encode('utf-8')).hexdigest()
+            # print("hashed ",hashed_password)
+            # print("dbpass ",res1[0][1])
+            dbpass = res1[0][1]
+            if hashed_password == dbpass:
+                session['username'] = item['username']
+                session['role'] = 'Student'
+                session['logged_in'] = True
 
-            print('student logged in')
+                print('student logged in')
 
-            go_to = check_and_redirect_back('/studentdashboard')
-            return go_to
-        else:
-            print('wrong combination for username and password for student')
-            return '/login'
+                go_to = check_and_redirect_back('/studentdashboard')
+                return go_to
+            else:
+                print('wrong combination for username and password for student')
+                return '/login'
+        # else:
+        #     print('need create password')
+        #     print(res1[0][0])
+        #     return '/resetPassword'
     elif len(res2)> 0:
         hashed_password = hashlib.sha512(item['password'].encode('utf-8') + salt.encode('utf-8')).hexdigest()
-        dbpass = res2[0][0]
-        if hashed_password == dbpass:
-            session['username'] = item['username']
-            session['role'] = 'Manager'
-            session['logged_in'] = True
-            session['schedules'] = "Schedules"
-            print('manager logged in')
-            go_to = check_and_redirect_back('/managerdashboard')
-            return go_to
-        else:
-            print('wrong combination for username and password for manager')
-            return '/login'
+        dbpass = res2[0][1]
+        if len(res2[0][0])>0 and len(res2[0][1])>0:
+            if hashed_password == dbpass:
+                session['username'] = item['username']
+                session['role'] = 'Manager'
+                session['logged_in'] = True
+                session['schedules'] = "Schedules"
+                print('manager logged in')
+                go_to = check_and_redirect_back('/managerdashboard')
+                return go_to
+            else:
+                print('wrong combination for username and password for manager')
+                return '/login'
+        # else:
+        #     print('need create password')
+        #     print(res2[0][0])
+        #     return '/resetPassword'
+    # elif (len(res1[0][0])>0 and len(res1[0][1]) ==0) or (len(res2[0][0])>0 and len(res2[0][1])==0):
+    #     print('need create password')
+    #     print(res1[0][0])
+    #     return '/resetPassword'
     else:
         print('Username does not exists, please sign up')
         return '/signup'
@@ -109,15 +131,29 @@ def signup():
 def signupC():
     data = request.get_json(silent=True)
     item = {'username': data.get('inputusername'), 'password': data.get('inputpassword'),'role': data.get('inputrole')}
+    if len(item['username'])<1 or len(item['password'])<1:
+        print('empty')
+        return 'errorNull'
+    if '@luther.edu' not in item['username']:
+        return 'errorUserName'
     # salt =  uuid.uuid4().hex
+    if '@luther.edu' not in item['username']:
+        return 'error'
     hashed_password = hashlib.sha512(item['password'].encode('utf-8') + salt.encode('utf-8')).hexdigest()
     # item['password'] = hashed_password
     # hashed_password = bcrypt.hashpw('password'.encode('utf-8'), bcrypt.gensalt())
     item['password'] = hashed_password
     print(item)
-    res = db.execute("""SELECT id from %s where username = '%s' and password= '%s';"""%(item['role'], item['username'], item['password']))
+    # res = db.execute("""SELECT id from %s where username = '%s' and password= '%s';"""%(item['role'], item['username'], item['password']))
+    res = db.execute("""SELECT id, password from %s where username = '%s';"""%(item['role'], item['username']))
     res = res.fetchall()
     if len(res) >0:
+        # if len(res[0][1]) == 0:
+        #     hased_username = hashlib.sha512(item['username'].encode('utf-8')+salt.encode('utf-8')).hexdigest()
+        #     print('login redirect to resetPassword')
+        #     res = '/resetPassword/%s/%s'%(hashed_username,hashed_password)
+        #     print(res)
+        #     return (res,item['username'])
         return '/login'
     else:
         db.execute("""INSERT into %s(username, password) VALUES ('%s','%s');"""%(item['role'],item['username'],item['password']))
@@ -137,6 +173,44 @@ def signupC():
             return  go_to
         return '/'
 
+# @app.route('/api/checkUsernamePassword', methods = ['POST'])
+def checkUsernamePassword(username,password):
+    print('in checkUsernamePassword')
+    # data = request.get_json(silent=True)
+    item = {'username':username,'password':password}
+    res = db.execute("""SELECT username,password from student;""")
+    res = res.fetchall()
+    for (student,password) in res:
+        if student == item['username'] and password == item['password']:
+            return {"found": "true","student":student}
+    return {'found':"false","student":""}
+
+@app.route('/api/resetPassword', methods = ['POST'])
+def resetPassword():
+    data = request.get_json(silent=True)
+    # print(data)
+    item = {'username': data.get('username'), 'password': data.get('inputpassword'),'retypepassword': data.get('retypepassword')}
+    if item['password'] != item['retypepassword']:
+        return 'error'
+    else:
+        hashed_password = hashlib.sha512(item['password'].encode('utf-8') + salt.encode('utf-8')).hexdigest()
+        newpassword = hashed_password
+        print(newpassword)
+        print(item['password'])
+        res = db.execute("""SELECT username, password from student where username = '%s';"""%item['username'])
+        print(item['username'])
+        res1= res.fetchall()
+        # print(res1)
+        res = db.execute("""SELECT username, password from manager where username = '%s';"""%item['username'])
+        res2 = res.fetchall()
+        if len(res1) > 0:
+            table = "student"
+        else:
+            table = "manager"
+        print(table)
+        db.execute("""UPDATE %s set password = '%s' where username = '%s';"""%(table,newpassword,item['username']))
+        db.commit()
+        return "done"
 @app.route("/logout")
 def logout():
     session['username'] = None
@@ -192,13 +266,13 @@ def managerprofile():
 
 @app.route("/api/getStudents")
 def getStudents():
-    res = db.execute("""SELECT * from student inner join ds on student.id = ds.student where department = (SELECT dept from manager where username = '%s' );"""%(session.get("username")))
+    res = db.execute("""SELECT id, username,name,hours from student inner join ds on student.id = ds.student where department = (SELECT dept from manager where username = '%s' );"""%(session.get("username")))
     res = res.fetchall()
     # print(res)
     # return "students"
     students = {"student":[]}
     for student in res:
-        students["student"].append({"id": student.id, "username": student.username, "name": student.name, "hours": student.hours})
+        students["student"].append({"id": student[0], "username": student[1], "name": student[2], "hours": student[3]})
     # print(students)
     return jsonify(students)
 
@@ -213,8 +287,22 @@ def studentUpdate():
             student['name'] = 'Empty'
         # if student['name'] is not None and student['hours'] is not None and student['username'] is not None:
         # print(str(student['hours'])+ student['name']+ student['username']+ str(student['id']))
-        db.execute("""UPDATE student SET hours = '%d', name = '%s', username = '%s' where id = '%d'; """%(student['hours'], student['name'], student['username'], student['id']))
+        db.execute("""UPDATE student SET hours = '%d', name = '%s', username = '%s' where id = '%d'; """%(int(student['hours']), student['name'], student['username'], student['id']))
         db.commit()
+    return "done"
+
+@app.route("/api/removeStudent", methods = ['POST'])
+def removeStudent():
+    # this function is related to the button Remove Student where manager can remove the student from the departments
+    data = request.get_json(silent=True)
+    deletedStudent = data.get("student")
+    department = data.get("department")
+    print(department)
+    db.execute("""DELETE from ds where student = (select id from student where username = '%s') and department = (select id from department where name = '%s');"""%(deletedStudent,department))
+    db.execute("""DELETE from unavailability where student = (select id from student where username = '%s');"""%deletedStudent)
+    db.execute("""DELETE from shift where student = (select id from student where username = '%s');"""%deletedStudent)
+    db.execute("""DELETE from student where username ='%s';"""%deletedStudent)
+    db.commit()
     return "done"
 
 @app.route("/api/getAllDepartments")
@@ -235,6 +323,65 @@ def getManagerDept():
         return res[0][0]
     return ""
 
+@app.route("/api/getStudentInfo")
+def getStudentInfo():
+    res = db.execute("""SELECT name from department where id =(SELECT department from ds where student=(select id from student where username= '%s'));"""%session.get("username"))
+    res = res.fetchall()
+    if (len(res) > 0):
+        department = res[0][0]
+    else:
+        department = "Contact your manager to be assigned a department."
+
+    res = db.execute("""SELECT hours, name from student where username = '%s';"""%session.get("username"))
+    res = res.fetchall()
+    if (len(res) > 0):
+        hours = str(res[0].hours)
+        name = str(res[0].name)
+    else:
+        hours = "0"
+        name = ""
+
+    results = {"department": department, "hours": hours, "name": name}
+    return jsonify(results)
+
+
+@app.route("/api/getStudentDept")
+def getStudentDept():
+    res = db.execute("""SELECT name from department where id =(SELECT department from ds where student=(select id from student where username= '%s'));"""%session.get("username"))
+    res = res.fetchall()
+    if (len(res) > 0):
+        return res[0][0]
+    return "Contact your manager to be assigned a department."
+
+@app.route("/api/getStudentHours")
+def getStudentHours():
+    res = db.execute("""SELECT hours from student where username = '%s';"""%session.get("username"))
+    res = res.fetchall()
+    if (len(res) > 0):
+        return str(res[0][0])
+    return "0"
+
+@app.route("/api/setStudentHours", methods=['POST'])
+def setStudentHours():
+    print("in set student hours")
+    data = request.get_json(silent=True)
+    new_hours = data.get("hours")
+    if new_hours!=None:
+        db.execute("""UPDATE student SET hours = '%d' WHERE username = '%s';"""%(float(new_hours), session.get('username')))
+        db.commit()
+    return new_hours
+
+@app.route("/api/setStudentName", methods=['POST'])
+def setStudentName():
+    print("in set student name")
+    data = request.get_json(silent=True)
+    new_name = data.get("name")
+    print("new_name", new_name)
+    if new_name!=None:
+        db.execute("""UPDATE student SET name = '%s' WHERE username = '%s';"""%(new_name, session.get('username')))
+        db.commit()
+    return new_name
+
 @app.route("/api/calendar")
 def calendar():
     myevents = []
@@ -245,7 +392,20 @@ def calendar():
         newShift = Shift(shift[0],shift[2],shift[4],shift[5])
         myevents.append(newShift)
     #color scheme colors: #62c462, #5bc0de, #f89406,  #ee5f5b
-    print("In calendar!!")
+    serialEvents = [event.serialize() for event in myevents]
+    data = {"calData": "Calendar Data", "events": serialEvents}
+    return jsonify(data)
+
+@app.route("/api/studentcalendar")
+def studentCalendar():
+    myevents = []
+    res = db.execute("""SELECT * from shift where student =(SELECT id from student where username = '%s');"""%session.get("username"))
+    shiftRe = res.fetchall()
+    shifts = []
+    for shift in shiftRe:
+        newShift = Shift(shift[0],shift[2],shift[4],shift[5])
+        myevents.append(newShift)
+    #color scheme colors: #62c462, #5bc0de, #f89406,  #ee5f5b
     serialEvents = [event.serialize() for event in myevents]
     data = {"calData": "Calendar Data", "events": serialEvents}
     return jsonify(data)
@@ -308,6 +468,12 @@ def generateSchedule():
     #calendarCall to fill in all the students' schedules to the db
     #run the algorithm
     #return the results
+    data = request.get_json(silent=True)
+    startDate = int(int(data.get('startDate'))/1000)
+    startDate = datetime.datetime.fromtimestamp(startDate)
+    print("startDate: ", startDate)
+    #TODO Linh, add limitations, so it only selects the shifts
+    # in the same week as the start date. 
     res = db.execute("""SELECT * from shift where dept =(SELECT dept from manager where username = '%s');"""%session.get("username"))
     shiftRe = res.fetchall()
     shifts = []
@@ -319,18 +485,18 @@ def generateSchedule():
     studentRe = res.fetchall()
     students = []
     for student in studentRe:
-      newStudent = Student(student[1],student[4])
-      res = db.execute("""SELECT starttime, endtime from unavailability where student = %d; """%(int(student[0])))
-      res = res.fetchall()
-      for item in res:
-          newStudent.assignedUnavailability((item[0],item[1]))
-      students.append(newStudent)
+        oAuth.calendarCall(student[1], startDate)
 
-    print("about to make calendar call")
+        newStudent = Student(student[1],student[4])
+        res = db.execute("""SELECT starttime, endtime from unavailability where student = %d; """%(int(student[0])))
+        res = res.fetchall()
+        for item in res:
+            newStudent.assignedUnavailability((item[0],item[1]))
+        students.append(newStudent)
+
+    #print("about to make calendar call")
     schedule = Schedule(shifts)
     schedules = scheduler2(schedule, students)
-
-    #print("in generate schedules,", suggestedSchedules)
     res = [schedule.serialize() for schedule in schedules]
     session.modified = True
     print("session.get('schedules')",session.get('schedules'))
@@ -376,11 +542,34 @@ def retrieveSchedule():
     res = schedule.serialize()
     return jsonify(res)
 
+@app.route('/api/calRetrieve', methods=['GET'])
+def calRetrieve():
+    #TODO: Implement calRetrieve.py. Pass in either a list or individual
+    studentWorkers = ['chriia01@luther.edu', 'nguyli03@luther.edu', 'hermaa02@luther.edu', 'davial02@luther.edu', 'millro04@luther.edu','hangde01@luther.edu', 'css@luther.edu']
+
+    foo = oAuth.calendarCall() #pass in student workers here, change calendarCall
+    print(foo)
+    print('here')
+    return foo
+
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def catch_all(path):
-    if session.get("logged_in") == True or path == '/':
+    pathAn = "/"+path
+    res = pathAn.split('/')
+    if session.get("logged_in") == True or path == '/' or path == 'error':
+        print("path ",path)
         return render_template("index.html")
+    elif 'resetPassword' in path:
+        if len(res) <3:
+            return redirect('/error')
+        username = res[2]
+        password = res[3]
+        res = checkUsernamePassword(username,password)
+        if res['found'] == 'true':
+            return render_template('index.html')
+        else:
+            return redirect('/error')
     else:
         print('path', path)
         if path != 'favicon.ico':
