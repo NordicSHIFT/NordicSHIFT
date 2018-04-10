@@ -58,7 +58,7 @@ def reset_password(recipient, link):
               "the link below in order to reset your password. \n" + \
               "If you did not request a password reset, please" + \
               "ignore this email or talk to an administrator. \n" + \
-              "Link: %s \n" + \n
+              "Link: %s \n" + \
               "Thank you, \n" + \
               "The NordicShift Team" % (link)
     for recipient in recipients:
