@@ -20,6 +20,7 @@ export default class SelectSchedule extends Component {
       scheduleIndex: 1, 
       basePublishPath: "/managerschedule/" + this.props.match.params.startDate,
       publishPath: "/managerschedule/" + this.props.match.params.startDate + "/0",
+
       startDate: this.props.match.params.startDate,
       send_emails:false, 
       loading: true
@@ -30,7 +31,6 @@ export default class SelectSchedule extends Component {
     this.changeSchedule = this.changeSchedule.bind(this); 
     this.chooseSchedule = this.chooseSchedule.bind(this); 
     this.toggleEmail = this.toggleEmail.bind(this);
-
 
     this.generateSchedule(); 
   }
