@@ -551,6 +551,8 @@ def retrieveSchedule():
             res = db.execute("""SELECT * from student where id ='%s'"""%shift[3])
             res = res.fetchall()
             username = res[0].username
+        else:
+            username = "Unassigned"
         newShift = Shift(shift[0],shift[2],shift[4],shift[5],username)
         shifts.append(newShift)
         print(newShift)
