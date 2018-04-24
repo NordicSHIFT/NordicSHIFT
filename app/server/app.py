@@ -476,7 +476,7 @@ def generateSchedule():
     dayofweek = startDate.weekday()
     # month = startDate.month
     # year = startDate.year
-    startWeek = startDate - datetime.timedelta(days=dayofweek+1)
+    startWeek = startDate - datetime.timedelta(days=dayofweek+2)
     endWeek = startDate + datetime.timedelta(days=6-dayofweek)
     res = db.execute("""SELECT * from shift where dept =(SELECT dept from manager where username = '%s') and starttime >= '%s' and starttime <= '%s';"""%(session.get("username"),startWeek,endWeek))
     shiftRe = res.fetchall()
