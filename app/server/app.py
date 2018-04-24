@@ -382,7 +382,7 @@ def setStudentName():
         db.commit()
     return new_name
 
-@app.route("/api/calendar")
+@app.route("/api/calendar", methods=['GET','OPTIONS','POST'])
 def calendar():
     myevents = []
     res = db.execute("""SELECT * from shift where dept =(SELECT dept from manager where username = '%s');"""%session.get("username"))
@@ -391,6 +391,17 @@ def calendar():
     for shift in shiftRe:
         newShift = Shift(shift[0],shift[2],shift[4],shift[5])
         myevents.append(newShift)
+
+    data = request.get_json(silent=True)
+    startDate = int(int(data.get('startDate'))/1000)
+    startDate = datetime.datetime.fromtimestamp(startDate)
+    print("startDate: ", startDate)
+
+    res = db.execute("""SELECT * from student inner join ds on student.id = ds.student where student.hours > 0 and ds.department = (SELECT dept from manager where username ='%s');"""%session.get("username"))
+    studentRe = res.fetchall()
+    students = []
+    for student in studentRe:
+        oAuth.calendarCall(student[1], startDate)
     #color scheme colors: #62c462, #5bc0de, #f89406,  #ee5f5b
     serialEvents = [event.serialize() for event in myevents]
     data = {"calData": "Calendar Data", "events": serialEvents}
@@ -485,7 +496,7 @@ def generateSchedule():
     studentRe = res.fetchall()
     students = []
     for student in studentRe:
-        oAuth.calendarCall(student[1], startDate)
+        #oAuth.calendarCall(student[1], startDate)
 
         newStudent = Student(student[1],student[4])
         res = db.execute("""SELECT starttime, endtime from unavailability where student = %d; """%(int(student[0])))
