@@ -472,10 +472,15 @@ def generateSchedule():
     startDate = int(int(data.get('startDate'))/1000)
     startDate = datetime.datetime.fromtimestamp(startDate)
     print("startDate: ", startDate)
-    #TODO Linh, add limitations, so it only selects the shifts
-    # in the same week as the start date. 
-    res = db.execute("""SELECT * from shift where dept =(SELECT dept from manager where username = '%s');"""%session.get("username"))
+    # day = startDate.day
+    dayofweek = startDate.weekday()
+    # month = startDate.month
+    # year = startDate.year
+    startWeek = startDate - datetime.timedelta(days=dayofweek+1)
+    endWeek = startDate + datetime.timedelta(days=6-dayofweek)
+    res = db.execute("""SELECT * from shift where dept =(SELECT dept from manager where username = '%s') and starttime >= '%s' and starttime <= '%s';"""%(session.get("username"),startWeek,endWeek))
     shiftRe = res.fetchall()
+    print(shiftRe)
     shifts = []
     for shift in shiftRe:
         newShift = Shift(shift[0],shift[2],shift[4],shift[5])
