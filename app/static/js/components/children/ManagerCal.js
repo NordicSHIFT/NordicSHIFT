@@ -52,7 +52,9 @@ class ManagerCal extends Component {
 
 
   retrieveEvents() { 
-    axios.get('/api/calendar')
+    axios.post(origin + '/api/calendar', {
+      startDate: this.state.scrollTime
+    })
     .then(res => {
       var jsevents = res.data.events.map(
                         event => convertEvent(event)); 
