@@ -261,8 +261,7 @@ def managerprofile():
             db.execute("""INSERT into student(username, password) VALUES ('%s','%s');"""%(student,tempass))
             hashed = hashlib.sha512(tempass.encode('utf-8') + salt.encode('utf-8')).hexdigest()
             url = ('https://nordicshift.herokuapp.com/resetPassword/'+student+'/'+hashed)
-            # have a function to send out email
-            # TODO Ian
+            auto_email.reset_password_email(student, url)
         db.execute("""INSERT into ds(department,student) VALUES ((SELECT dept from manager where username = '%s'),(SELECT id from student where username ='%s'));"""%(session.get("username"), student))
         db.commit()
         res = db.execute("""SELECT * from student where username ='%s'"""%student)
