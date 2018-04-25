@@ -15,6 +15,9 @@ def send_email(recipients, subject, message_body):
     fromaddr = os.environ['EMAIL_NAME']
     password = os.environ['EMAIL_PASS']
 
+    # fromaddr = os.environ['EMAIL_NAME']
+    # password = os.environ['EMAIL_PASS']
+
     if isinstance(recipients, list):
         recipients =  ", ".join(recipients)
     msg = MIMEMultipart()
@@ -35,7 +38,6 @@ def published_sched_notif(recipients):
     they have been scheduled to work. Recipients may
     be provided as a string or an email. The email is
     sent through NordicShift@gmail.com
-
     """
 
     subject = "Upcoming schedule has been published"
@@ -63,3 +65,19 @@ def reset_password(recipient, link):
               "The NordicShift Team" % (link)
     for recipient in recipients:
         send_email(recipient, subject, message)
+
+def reset_password_email(recipient, link):
+    """ Sends out an email telling the recipients that
+    their password is able to be reset. Passed in is
+    a recipient to receive the password reset, along
+    with a password reset link.
+    """
+
+    subject = "NordicSHIFT password reset request"
+    message = "Your password has recently been reset.\n" + \
+              "If you requested a password to be reset, follow the link below. \n" + \
+              "If you did not request a password reset, ignore this email. \n" + \
+              "%s \n"  % (link) + \
+              "Thank you."
+
+    send_email(recipient, subject, message)

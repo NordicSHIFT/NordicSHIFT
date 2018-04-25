@@ -14,6 +14,8 @@ from shift import Shift
 from student import Student
 #import calRetrieve
 import oAuth
+import string
+import random
 
 SEND_EMAILS = False
 
@@ -255,7 +257,11 @@ def managerprofile():
         res = db.execute("""SELECT * from student where username ='%s'"""%student)
         res = res.fetchall()
         if len(res)==0:
-            db.execute("""INSERT into student(username, password) VALUES ('%s','student');"""%student)
+            tempass = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(32))
+            db.execute("""INSERT into student(username, password) VALUES ('%s','%s');"""%(student,tempass))
+            hashed = hashlib.sha512(tempass.encode('utf-8') + salt.encode('utf-8')).hexdigest()
+            url = ('https://nordicshift.herokuapp.com/resetPassword/'+student+'/'+hashed)
+            auto_email.reset_password_email(student, url)
         db.execute("""INSERT into ds(department,student) VALUES ((SELECT dept from manager where username = '%s'),(SELECT id from student where username ='%s'));"""%(session.get("username"), student))
         db.commit()
         res = db.execute("""SELECT * from student where username ='%s'"""%student)
@@ -517,6 +523,20 @@ def generateSchedule():
     session.modified = True
     print("session.get('schedules')",session.get('schedules'))
     return jsonify(res)
+
+def clearStudentUnavailability(studentUsername):
+    #TODO Linh, remove all rows in the unavailability table where
+    #the student is equal to this student.
+    db.execute("DELETE from unavailability WHERE student = (SELECT id from student where username = '%s');"%studentUsername)
+    db.commit()
+
+def insertEventIntoDb(studentUsername, startDate, endDate):
+    EX_STRING = """INSERT INTO unavailability\
+            (starttime, endtime, student)\
+            VALUES ('%s', '%s', (SELECT id from student where username = '%s'))
+            """
+    db.execute(EX_STRING%(startDate, endDate, studentUsername))
+    db.commit()
 
 @app.route('/api/chooseSchedule', methods=['POST'])
 def chooseSchedule():
