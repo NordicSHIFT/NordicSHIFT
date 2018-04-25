@@ -98,7 +98,7 @@ def main():
     for shift in shiftRe:
         newShift = Shift(shift[2],shift[4],shift[5])
         shifts.append(newShift)
-
+    
     res = db.execute("""SELECT * from student where hours > 0;""")
     studentRe = res.fetchall()
     students = []
@@ -156,6 +156,7 @@ def scheduler2(schedule, students):
                         # print(shift)
                         if shift.getStudent() == student:
                             hoursLeft -= float(shift.getLength())
+
                             #check if new shift overlaps with old shift
                             if topShift.getStart() > shift.getStart() and topShift.getStart() < shift.getEnd():
                                 available = False
@@ -192,6 +193,8 @@ def scheduler2(schedule, students):
 # and then schedules that have the most uniqueness, if that makes any sense
 def getTopTenSchedule(scheduleSet):
     stuSche = {}
+    if len(scheduleSet) <10:
+        return scheduleSet
     for schedule in scheduleSet:
         noStudent = schedule.getNoStudents()
         if noStudent not in stuSche.keys():

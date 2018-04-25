@@ -51,8 +51,7 @@ class DeleteShiftForm extends Component {
   render() {
     return (
       <div>
-        <h3>Would you like to delete that shift?</h3> 
-        <Form>
+        <Form className='text-center'>
         <FormGroup>
           <Col>
             <Button onClick={this.props.deleteShift}>Delete</Button>

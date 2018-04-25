@@ -7,6 +7,7 @@ import SuggestList from './../children/SuggestList';
 import { Row, Col, Button } from 'reactstrap'; 
 
 import * as util from './../../util.js'; 
+import './../../../css/index.css'
 var origin = window.location.origin;
 
 export default class SelectSchedule extends Component {
@@ -19,8 +20,10 @@ export default class SelectSchedule extends Component {
       scheduleIndex: 1, 
       basePublishPath: "/managerschedule/" + this.props.match.params.startDate,
       publishPath: "/managerschedule/" + this.props.match.params.startDate + "/0",
+
       startDate: this.props.match.params.startDate,
-      send_emails:false
+      send_emails:false, 
+      loading: true
     }
     this.generateSchedule = this.generateSchedule.bind(this);
     this.setStateShifts = this.setStateShifts.bind(this);
@@ -55,9 +58,6 @@ export default class SelectSchedule extends Component {
       this.setStateShifts(newShifts); 
       //this.setStateUnassignedShift(newSched['unassigned shifts']);
       console.log("newShifts", newShifts); 
-
-       
-
       console.log("this: ", this); 
     //   console.log("new schedule index: ", scheduleIndex); 
   }
@@ -98,6 +98,7 @@ export default class SelectSchedule extends Component {
       // this.setState({schedule: String(response.data.items)});
       console.log("schedules:", response.data[0]);
       console.log("schedules: ",response.data[1]); 
+      this.setState({loading: false});
       this.setStateShifts(response.data[0]['assigned shifts'].concat(response.data[0]['unassigned shifts']));
       this.setAllSchedules(response.data); 
     }
@@ -116,6 +117,14 @@ export default class SelectSchedule extends Component {
     return (
       <div className="selectSchedule">
         <ManagerMenubar />
+        {this.state.loading ? 
+        <div>
+        <h3> Generating a schedule to meet your staffing needs... </h3> 
+        <Col sm="12" md={{ size: 6, offset: 3 }}>
+        <div class="loader"></div>
+        </Col>
+        </div> :
+        <div>
         <h3> Suggested Schedules </h3>
         <Row>
           <Col xs="9">
@@ -130,6 +139,8 @@ export default class SelectSchedule extends Component {
             <Button onClick={this.chooseSchedule}>Publish this Schedule</Button>
           </Col>
         </Row>
+        </div>
+        }
       </div>
     );
   }

@@ -52,7 +52,9 @@ class ManagerCal extends Component {
 
 
   retrieveEvents() { 
-    axios.get('/api/calendar')
+    axios.post(origin + '/api/calendar', {
+      startDate: this.state.scrollTime
+    })
     .then(res => {
       var jsevents = res.data.events.map(
                         event => convertEvent(event)); 
@@ -123,7 +125,6 @@ class ManagerCal extends Component {
     const now = moment(); 
     return (
       <div height="100px">
-        <h6>Drag a slot on the calendar to create a shift. Click an existing shift to have the option to delete.</h6>
         <DragAndDropCalendar
           selectable
           defaultView='week'
@@ -131,7 +132,7 @@ class ManagerCal extends Component {
           step = {15}
           timeslots = {4}
           toolbar={false}
-          style={{height: 550}}
+          style={{height: 500}}
           events={this.state.events}
           formats={this.state.format}
           scrollToTime={this.state.scrollTime}

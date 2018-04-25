@@ -19,6 +19,8 @@ import random
 
 SEND_EMAILS = False
 
+SEND_EMAILS = False
+
 app = Flask(__name__, static_folder="../static/dist", template_folder="../static")
 app.secret_key=os.environ['SECRET_KEY']
 salt =  os.environ['SALT']
@@ -39,12 +41,12 @@ def index():
 @app.route("/authorize")
 def authorize():
     print("in app.py.authorize")
-    return mainAuthorize()
+    return oAuth.mainAuthorize()
 
 @app.route('/oauth2callback')
 def oauth2callback():
     print("in app.py oauth2callback")
-    return mainOauth2callback()
+    return oAuth.mainOauth2callback()
 
 @app.route('/login')
 def login():
@@ -125,7 +127,7 @@ def signup():
         elif session['role'] == 'Student':
             return redirect('/studentdashboard')
     session['l_or_s'] = 's'
-    return authCall()
+    return oAuth.authCall()
 
 @app.route('/signupC', methods = ['POST'])
 def signupC():
@@ -260,7 +262,7 @@ def managerprofile():
             hashed = hashlib.sha512(tempass.encode('utf-8') + salt.encode('utf-8')).hexdigest()
             url = ('https://nordicshift.herokuapp.com/resetPassword/'+student+'/'+hashed)
             # have a function to send out email
-            # TODO Ian 
+            # TODO Ian
         db.execute("""INSERT into ds(department,student) VALUES ((SELECT dept from manager where username = '%s'),(SELECT id from student where username ='%s'));"""%(session.get("username"), student))
         db.commit()
         res = db.execute("""SELECT * from student where username ='%s'"""%student)
@@ -271,13 +273,13 @@ def managerprofile():
 
 @app.route("/api/getStudents")
 def getStudents():
-    res = db.execute("""SELECT * from student inner join ds on student.id = ds.student where department = (SELECT dept from manager where username = '%s' );"""%(session.get("username")))
+    res = db.execute("""SELECT id, username,name,hours from student inner join ds on student.id = ds.student where department = (SELECT dept from manager where username = '%s' );"""%(session.get("username")))
     res = res.fetchall()
     # print(res)
     # return "students"
     students = {"student":[]}
     for student in res:
-        students["student"].append({"id": student.id, "username": student.username, "name": student.name, "hours": student.hours})
+        students["student"].append({"id": student[0], "username": student[1], "name": student[2], "hours": student[3]})
     # print(students)
     return jsonify(students)
 
@@ -294,6 +296,20 @@ def studentUpdate():
         # print(str(student['hours'])+ student['name']+ student['username']+ str(student['id']))
         db.execute("""UPDATE student SET hours = '%d', name = '%s', username = '%s' where id = '%d'; """%(int(student['hours']), student['name'], student['username'], student['id']))
         db.commit()
+    return "done"
+
+@app.route("/api/removeStudent", methods = ['POST'])
+def removeStudent():
+    # this function is related to the button Remove Student where manager can remove the student from the departments
+    data = request.get_json(silent=True)
+    deletedStudent = data.get("student")
+    department = data.get("department")
+    print(department)
+    db.execute("""DELETE from ds where student = (select id from student where username = '%s') and department = (select id from department where name = '%s');"""%(deletedStudent,department))
+    db.execute("""DELETE from unavailability where student = (select id from student where username = '%s');"""%deletedStudent)
+    db.execute("""DELETE from shift where student = (select id from student where username = '%s');"""%deletedStudent)
+    db.execute("""DELETE from student where username ='%s';"""%deletedStudent)
+    db.commit()
     return "done"
 
 @app.route("/api/getAllDepartments")
@@ -373,7 +389,7 @@ def setStudentName():
         db.commit()
     return new_name
 
-@app.route("/api/calendar")
+@app.route("/api/calendar", methods=['GET','OPTIONS','POST'])
 def calendar():
     myevents = []
     res = db.execute("""SELECT * from shift where dept =(SELECT dept from manager where username = '%s');"""%session.get("username"))
@@ -382,6 +398,17 @@ def calendar():
     for shift in shiftRe:
         newShift = Shift(shift[0],shift[2],shift[4],shift[5])
         myevents.append(newShift)
+
+    data = request.get_json(silent=True)
+    startDate = int(int(data.get('startDate'))/1000)
+    startDate = datetime.datetime.fromtimestamp(startDate)
+    print("startDate: ", startDate)
+
+    res = db.execute("""SELECT * from student inner join ds on student.id = ds.student where student.hours > 0 and ds.department = (SELECT dept from manager where username ='%s');"""%session.get("username"))
+    studentRe = res.fetchall()
+    students = []
+    for student in studentRe:
+        oAuth.calendarCall(student[1], startDate)
     #color scheme colors: #62c462, #5bc0de, #f89406,  #ee5f5b
     serialEvents = [event.serialize() for event in myevents]
     data = {"calData": "Calendar Data", "events": serialEvents}
@@ -463,10 +490,15 @@ def generateSchedule():
     startDate = int(int(data.get('startDate'))/1000)
     startDate = datetime.datetime.fromtimestamp(startDate)
     print("startDate: ", startDate)
-    #TODO Linh, add limitations, so it only selects the shifts
-    # in the same week as the start date.
-    res = db.execute("""SELECT * from shift where dept =(SELECT dept from manager where username = '%s');"""%session.get("username"))
+    # day = startDate.day
+    dayofweek = startDate.weekday()
+    # month = startDate.month
+    # year = startDate.year
+    startWeek = startDate - datetime.timedelta(days=dayofweek+2)
+    endWeek = startDate + datetime.timedelta(days=6-dayofweek)
+    res = db.execute("""SELECT * from shift where dept =(SELECT dept from manager where username = '%s') and starttime >= '%s' and starttime <= '%s';"""%(session.get("username"),startWeek,endWeek))
     shiftRe = res.fetchall()
+    print(shiftRe)
     shifts = []
     for shift in shiftRe:
         newShift = Shift(shift[0],shift[2],shift[4],shift[5])
@@ -476,7 +508,7 @@ def generateSchedule():
     studentRe = res.fetchall()
     students = []
     for student in studentRe:
-        oAuth.calendarCall(student[1], startDate)
+        #oAuth.calendarCall(student[1], startDate)
 
         newStudent = Student(student[1],student[4])
         res = db.execute("""SELECT starttime, endtime from unavailability where student = %d; """%(int(student[0])))
@@ -540,6 +572,8 @@ def retrieveSchedule():
             res = db.execute("""SELECT * from student where id ='%s'"""%shift[3])
             res = res.fetchall()
             username = res[0].username
+        else:
+            username = "Unassigned"
         newShift = Shift(shift[0],shift[2],shift[4],shift[5],username)
         shifts.append(newShift)
         print(newShift)

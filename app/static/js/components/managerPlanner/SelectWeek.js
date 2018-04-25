@@ -1,5 +1,5 @@
 //SelectWeek.js
-import { Col, Row, Button, Form, FormGroup, Label, Input } from 'reactstrap';
+import { Col, Row, Button, Form, FormGroup, Label, Input, Jumbotron } from 'reactstrap';
 import React, { Component } from 'react';
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
@@ -33,8 +33,10 @@ export default class SelectWeek extends Component {
     return (
       <div>
         <ManagerMenubar />
+        <Col sm="12" md={{ size: 6, offset: 3 }} className='text-center'>
+        <Jumbotron>
         <h5>Select the Sunday when you would like to start your schedule.</h5>
-        <p>It should align with the dates your workers filled in their calendars</p>
+        <p>It should align with the dates for which your employees filled in their calendars</p>
           Start
           <DatePicker
               selected={this.state.startDate}
@@ -49,10 +51,12 @@ export default class SelectWeek extends Component {
             endDate={this.state.endDate}
             onChange={this.handleChangeEnd}
         /> */}
-
+        <hr/>
         <a href={this.state.startPath}>
-            <Button>Next</Button>
+            <Button color="primary">Next</Button>
         </a>
+        </Jumbotron>
+        </Col>
       </div>)
   }
 
