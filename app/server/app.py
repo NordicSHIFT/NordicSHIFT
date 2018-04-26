@@ -135,6 +135,7 @@ def signupC():
     item = {'username': data.get('inputusername'), 'password': data.get('inputpassword'),'role': data.get('inputrole')}
     if len(item['username'])<1 or len(item['password'])<1:
         print('empty')
+        print(item['username'],item['password'])
         return 'errorNull'
     if '@luther.edu' not in item['username']:
         return 'errorUserName'
@@ -173,7 +174,6 @@ def signupC():
         elif item['role'] == 'Student':
             go_to = check_and_redirect_back('/studentdashboard')
             return  go_to
-        return '/'
 
 # @app.route('/api/checkUsernamePassword', methods = ['POST'])
 def checkUsernamePassword(username,password):
