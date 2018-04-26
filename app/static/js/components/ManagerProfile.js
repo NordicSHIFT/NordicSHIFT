@@ -122,7 +122,7 @@ export default class ManagerProfile extends Component {
                     <p><i>Enter your students usernames here to add them to your roster. It should be in the format of username@luther.edu</i></p>
                     <InputGroup>
                     <InputGroupAddon addonType="prepend">Student</InputGroupAddon>
-                    <Input type="text" id ='student' placeholder="Enter Student Id" className="student" value ={this.state.student} onChange={this.updateInputValueStudent} required />
+                    <Input type="text" id ='student' placeholder="Enter Student Username" className="student" value ={this.state.student} onChange={this.updateInputValueStudent} required />
                     <InputGroupAddon color="success" addonType="append" type="submit" id='studentButton' onClick ={this.sendNewStudent}>Submit</InputGroupAddon>
                     </InputGroup>
                     </div>
