@@ -12,8 +12,8 @@ export function convertShiftstoEvents (shifts) {
     var events = []; 
     var shift, index; 
     for (index in shifts) {
-        shift = shifts[index]; 
-        event = {
+        var shift = shifts[index]; 
+        var event = {
             title: shift.student,
             start: new Date(shift.start),
             end: new Date(shift.end),
