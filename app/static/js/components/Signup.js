@@ -76,13 +76,17 @@ class Signup extends Component {
       inputrole: this.state.inputrole
     }, config)
     .then(function (response) {
-      if (response.data = 'errorNull'){
+      console.log(response);
+      if (response.data == 'errorNull'){
         alert('Please fill in all the information');
       }
-      else if (response.data = 'errorUserName') {
+      else if (response.data == 'errorUserName') {
         alert('Invalid username. Please use your email that ends in @luther.edu');
       }
-      else if (response.data == '/'){
+      else if (response.data == '/login') {
+        alert("You have an account already, we'll redirect you to login");
+        window.location = response.data;
+      } else{
         alert("You have successfully signed up!");
         window.location = response.data;
       }
