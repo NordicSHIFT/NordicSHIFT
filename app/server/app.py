@@ -192,8 +192,6 @@ def resetPassword():
     data = request.get_json(silent=True)
     # print(data)
     item = {'username': data.get('username'), 'password': data.get('inputpassword'),'retypepassword': data.get('retypepassword')}
-    print(item['password'])
-    print(item['retypepassword'])
     if item['password'] != item['retypepassword']:
         return 'error'
     else:
