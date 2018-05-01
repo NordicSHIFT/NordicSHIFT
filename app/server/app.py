@@ -182,6 +182,7 @@ def checkUsernamePassword(username,password):
     item = {'username':username,'password':password}
     res = db.execute("""SELECT username,password from student;""")
     res = res.fetchall()
+    print(password)
     for (student,password) in res:
         if student == item['username'] and password == item['password']:
             return {"found": "true","student":student}
@@ -191,7 +192,9 @@ def checkUsernamePassword(username,password):
 def resetPassword():
     data = request.get_json(silent=True)
     # print(data)
-    item = {'username': data.get('username'), 'password': data.get('inputpassword'),'retypepassword': data.get('retypepassword')}
+    item = {'username': data.get('username'), 'password': data.get('inputpassword'),'retypepassword': data.get('inputretypepassword')}
+    print(item['password'])
+    print(item['retypepassword'])
     if item['password'] != item['retypepassword']:
         return 'error'
     else:
