@@ -46,7 +46,8 @@ def published_sched_notif(recipients):
               "https://nordicshift.herokuapp.com/\n" + \
               "Thank you."
 
-    send_email(recipients, subject, message)
+    for recipeint in recipients:
+        send_email(recipient, subject, message)
 
 def reset_password(recipient, link):
     """Sends out an email allowing the user to reset their
@@ -63,8 +64,7 @@ def reset_password(recipient, link):
               "Link: %s \n" + \
               "Thank you, \n" + \
               "The NordicShift Team" % (link)
-    for recipient in recipients:
-        send_email(recipient, subject, message)
+    send_email(recipient, subject, message)
 
 def reset_password_email(recipient, link):
     """ Sends out an email telling the recipients that
