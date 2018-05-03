@@ -180,12 +180,19 @@ def checkUsernamePassword(username,password):
     print('in checkUsernamePassword')
     # data = request.get_json(silent=True)
     item = {'username':username,'password':password}
-    res = db.execute("""SELECT username,password from student;""")
+    res = db.execute("""SELECT username,password from student where username = '%s';"""%item['username'])
     res = res.fetchall()
-    print(password)
-    for (student,password) in res:
-        if student == item['username'] and password == item['password']:
-            return {"found": "true","student":student}
+    # print(password)
+    # print(item['password'])
+    # print(item['username'])
+    # for (student,password) in res:
+    #     if student == item['username'] and password == item['password']:
+    #         print(student)
+    #         return {"found": "true","student":student}
+    # return {'found':"false","student":""}
+    if len(res) == 1:
+        if password == item['password']:
+            return {"found": "true","student":item['username']}
     return {'found':"false","student":""}
 
 @app.route('/api/resetPassword', methods = ['POST'])
@@ -602,6 +609,7 @@ def catch_all(path):
         print("path ",path)
         return render_template("index.html")
     elif 'resetPassword' in path:
+        print(len(res))
         if len(res) <3:
             return redirect('/error')
         username = res[2]
