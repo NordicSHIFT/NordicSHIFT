@@ -1,6 +1,6 @@
 # NordicSHIFT
 
-A time management software written as part of our senior project.
+A time management software written as part of our senior project. 
 
  
 [![Heroku](https://heroku-badge.herokuapp.com/?app=nordicshift)](https://nordicshift.herokuapp.com/) <br> [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
@@ -46,6 +46,10 @@ Finally, we can run our application back from the base directory (/NordicSHIFT) 
 * Ian Christopherson
 * Taylor Gades
 * Linh Nguyen
+
+## Status
+
+This project is now in a state of minimum maintenance, but may be developed further in the future. 
 
 ## License
 This project is licensed under the MIT Licence - see the [LICENSE.md](LICENSE.md) file for details.
