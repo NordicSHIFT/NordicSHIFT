@@ -9,7 +9,7 @@ psycopg2==2.7.3.2
 SQLAlchemy==1.1.14
 Werkzeug==0.15.3
 gunicorn==19.7.1
-urllib3==1.22
+urllib3==1.24.2
 google-api-python-client==1.6.4
 google-auth-oauthlib==0.1.1
 google-auth==1.2.1
