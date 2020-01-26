@@ -255,6 +255,7 @@ export default class ManagerProfile extends Component {
       console.log("response.data", response.data);
       this.refs.studentTable.createRows();
       //window.location = '/myprofile';
+      this.retrieveExistingStudents();
     })
     .catch(function (error) {
       console.log(error);
